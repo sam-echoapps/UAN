@@ -1,0 +1,74 @@
+<div class="oj-panel oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        Bulk Student Add 
+        <span style="font-weight: 400;font-size: 15px;">
+            (Download the sample template, fill the bulk student data and then upload to add students in bulk)
+        </span>
+    </h6>
+    <a href="../../css/uploads/excelFile/Book1.csv">
+        <oj-button class="" style="color: #fff !important;">
+            <i class="fa-solid fa-download"></i>
+            Download Sample
+        </oj-button>
+    </a>
+</div>
+    
+<div class="oj-panel oj-flex oj-sm-flex-direction-column oj-sm-justify-content-center oj-sm-align-items-center" 
+    style="margin-top: 20px; padding-top: 20px;">
+    <oj-bind-if test="[[userRole() === 'admin' ]]">
+        <oj-select-single id="select" label-hint="Select Office" label-edge="inside" on-oj-value-action="[[officeActionHandler]]"
+            class="oj-form-control-max-width-md" data="[[officesList]]" value="{{office}}"></oj-select-single>
+            <p class="oj-text-color-danger"><oj-bind-text value="[[officeError]]"></oj-bind-text></p>
+        <oj-select-single id="selectCounsilor" label-hint="Select Counselor" label-edge="inside" on-oj-value-action="[[counsilorActionHandler]]"
+            class="oj-form-control-max-width-md" data="[[counselorList]]" value="{{counsilor}}" style="display: none; margin-top: 20px;"></oj-select-single>
+        <p class="oj-text-color-danger"><oj-bind-text value="[[counsilorError]]"></oj-bind-text></p>
+    </oj-bind-if>
+    <oj-bind-if test="[[userRole() === 'director' ]]">
+        <oj-select-single id="select" label-hint="Select Office" label-edge="inside" on-oj-value-action="[[officeActionHandler]]"
+            class="oj-form-control-max-width-md" data="[[officesList]]" value="{{office}}"></oj-select-single>
+            <p class="oj-text-color-danger"><oj-bind-text value="[[officeError]]"></oj-bind-text></p>
+        <oj-select-single id="selectCounsilor" label-hint="Select Counselor" label-edge="inside" on-oj-value-action="[[counsilorActionHandler]]"
+            class="oj-form-control-max-width-md" data="[[counselorList]]" value="{{counsilor}}" style="display: none; margin-top: 20px;"></oj-select-single>
+        <p class="oj-text-color-danger"><oj-bind-text value="[[counsilorError]]"></oj-bind-text></p>
+    </oj-bind-if>
+
+    <oj-bind-if test="[[userRole() === 'manager' ]]">
+        <oj-select-single id="counselorSelect" label-hint="Select Counselor" label-edge="inside" on-oj-value-action="[[counsilorActionHandler]]"
+            class="oj-form-control-max-width-md" data="[[counselorList]]" value="{{counsilor}}"></oj-select-single>
+        <p class="oj-text-color-danger"><oj-bind-text value="[[counsilorError]]"></oj-bind-text></p>
+    </oj-bind-if>
+    
+    <oj-file-picker on-oj-select="[[selectListener]]" primary-text="Bulk Student Add - Select File" secondary-text="" style="margin-top: 20px;"></oj-file-picker>
+    
+    <p class="oj-text-color-danger"><oj-bind-text value="[[fileError]]"></oj-bind-text></p>
+    <oj-bind-text value="[[fileName]]"></oj-bind-text>
+    <oj-button on-oj-action="[[fileUpload]]" class="" style="color: #fff !important;margin-top: 20px">
+        Submit
+    </oj-button>
+</div>
+
+<oj-popup id="popup1" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
+
+<oj-dialog id="successMessage">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">Bulk Upload</p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[messageClose]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <div class="demo-popup-content oj-sm-padding-2x oj-flex oj-sm-flex-direction-column oj-sm-justify-content-center">
+            <p style="font-weight: 500;text-align: left">
+                <oj-bind-text value="[[successMessage]]"></oj-bind-text>
+            </p>
+        </div>
+    </div>
+</oj-dialog>

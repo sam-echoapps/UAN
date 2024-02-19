@@ -1,0 +1,550 @@
+<div style="margin: 30px;">
+    <div class="oj-panel oj-flex  oj-sm-align-items-center oj-sm-justify-content-space-between" style="margin: 10px;">
+        <p style="font-weight: 500; margin-top: 10px;">
+            Student Name : <oj-bind-text value="[[firstName]]"></oj-bind-text> <oj-bind-text value="[[lastName]]"></oj-bind-text>
+        </p>
+        <p style="font-weight: 500; margin-top: 10px;">Student ID :  <oj-bind-text value="[[student]]"></oj-bind-text></p>
+        <p style="font-weight: 500; margin-top: 10px;">Marketing source : <oj-bind-text value="[[marketingSource]]"></oj-bind-text></p>
+        <p style="font-weight: 500; margin-top: 10px;">First Enquiry Date : <oj-bind-text value="[[enquiryDate]]"></oj-bind-text></p>
+    </div>
+
+    <div>
+        <div class="oj-sm-margin-4x-bottom">
+            <div style="padding: 20px">
+                <div class="oj-flex-bar">
+                    <div class="oj-flex-bar-middle oj-flex">
+                        <oj-train id="train2" class="oj-flex-item oj-train-stretch demo-stretched-train" selected-step="{{selectedStep2}}"
+                            steps="[[stepArray2]]" on-selected-step-changed="[[update2]]"></oj-train>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="personalInfo" style="display: block;">
+            <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">Personal Details</h6>
+            <div class="oj-panel">
+                <oj-form-layout id="personal-information" direction="row" max-columns="3" style="padding: 20px;">
+                    <oj-input-text id="firstname" label-hint="First Name" required="true"  value="{{firstName}}"></oj-input-text>
+                    <oj-input-text id="lastName" label-hint="Last Name" required="true"  value="{{lastName}}"></oj-input-text>
+                    <div class="oj-flex">
+                        <div class="oj-flex-item oj-sm-5 oj-sm-padding-2x-end oj-md-padding-3x-end">
+                            <oj-select-single required id="nearestOffice" label-hint="Country Code" label-edge="inside"
+                                data="[[countryCodes]]" value="{{countryCode}}"></oj-select-single>
+                        </div>
+                        <div class="oj-flex-item oj-sm-7 oj-sm-padding-2x-start oj-md-padding-3x-start">
+                            <oj-input-text id="mobile" label-hint="Mobile number" required="true"  value="{{mobileNumber}}"></oj-input-text>
+                        </div>
+                    </div>
+                    <oj-select-single id="select" label-hint="Gender" label-edge="inside" class="oj-form-control-max-width-md" 
+                        data="[[genderSet]]" value="{{gender}}" style="width: 100%;"></oj-select-single>
+                    <oj-input-text id="email" label-hint="Email" required="true"  value="{{email}}"></oj-input-text>
+                    <oj-input-text id="euStatus" label-hint="EU Status" value="{{euStatus}}"></oj-input-text>
+                    <oj-input-date id="euStatus" label-hint="Date of birth" value="{{dob}}" autocomplete="off"></oj-input-date>
+                    <oj-select-single id="select" label-hint="Nationality" label-edge="inside"
+                        data="[[nationalitySet]]" value="{{nationality}}"></oj-select-single>
+                    <oj-input-text id="countryOfBirth" label-hint="Country of birth" value="{{countryBirth}}"></oj-input-text>
+                    <oj-input-text id="enquiryAbout" label-hint="Enquiry About" value="{{enquiryAbout}}"></oj-input-text>
+                    <oj-select-single required id="select" label-hint="Study abroad Destination" label-edge="inside"
+                        data="[[abroadDestionationsDp]]" value="{{studyAbroadDestination}}"></oj-select-single>
+                    <oj-select-single required id="select" label-hint="Hear about UAN" label-edge="inside"
+                        data="[[hearAboutSet]]" value="{{hearAbout}}"></oj-select-single>
+                    <oj-select-single id="select" label-hint="Year of intake" label-edge="inside"
+                        data="[[yearsDp]]" value="{{yearIntake}}"></oj-select-single>
+                    <oj-input-text id="utm_source" label-hint="Campaign Source" value="{{utmSource}}" readonly="true"></oj-input-text>
+                    <oj-input-text id="utm_medium" label-hint="Campaign Medium" value="{{utmMedium}}" readonly="true"></oj-input-text>
+                    <oj-input-text id="utm_campaign" label-hint="Campaign Name" value="{{utmCampaign}}" readonly="true"></oj-input-text>
+                </oj-form-layout>
+                <div class="oj-flex oj-sm-justify-content-center">
+                    <oj-button id="button1" on-oj-action="[[personalUpdate]]">Update</oj-button>
+                </div>
+            </div>
+            
+                <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">Current Status</h6>
+                <div class="oj-panel">
+                    <oj-form-layout id="personal-information" direction="row" max-columns="3" style="padding: 20px;">
+                        <oj-select-single id="select" label-hint="Select Status" label-edge="inside" class="oj-form-control-max-width-md"
+                            data="[[statusesSet]]" value="{{status}}"></oj-select-single>            
+                        <oj-input-text id="marketingSource" label-hint="Marketing Source" required="true"  value="{{marketingSource}}"></oj-input-text>
+                    </oj-form-layout>
+                    <div class="oj-flex oj-sm-justify-content-center">
+                        <oj-button id="button1" on-oj-action="[[statusUpdate]]">Update</oj-button>
+                    </div>
+                </div>
+            
+
+            <div class="oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="width: 100%;">
+                <h6 style="font-weight: 500;font-size: 25px; margin-left: 20px;">Student Log</h6>
+                <div class="oj-flex oj-sm-flex-direction-column" style="margin-right: 20px;">
+                    <oj-button on-oj-action="[[addLog]]">Add Log</oj-button>
+                </div>
+            </div>
+
+            <div class="oj-panel">
+                <div id="notesDiv" class="demo-padding demo-container">
+                    <div id="componentDemoContent" style="width: 1px; min-width: 100%;">
+                        <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[studentsNoteDataprovider]]"
+                            dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+                            columns='[
+                                {"headerText": "Partner Name",  "field": "staffName", "headerClassName": "oj-sm-only-hide",
+                                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                                {"headerText": "Note",  "field": "note", "resizable": "enabled", "id": "depName"},
+                                {"headerText": "Contact Type",  "field": "contact_type", "headerClassName": "oj-sm-only-hide",
+                                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                                {"headerText": "Lead Source",  "field": "lead_source", "resizable": "enabled", "id": "manId"},
+                                {"headerText": "Date Added",  "field": "date", "headerClassName": "oj-md-down-hide",
+                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                                {"headerText": "Action",  "field": "status", "headerClassName": "oj-md-down-hide",
+                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "status", "sortable": "disabled"}]'
+                            class="demo-table-container">
+                            <template slot="rowTemplate" data-oj-as="row">
+                                <tr>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.staffName]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.note]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.contact_type]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.lead_source]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.date]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-if test="[[row.data.complete24 === true ]]">
+                                            <oj-button title="Edit"  on-oj-action="[[editLog]]"
+                                                :id="[[row.data.noteId]]" style="background-color: transparent;">
+                                                <i class="fa-solid fa-pen-to-square" style="color: #06668a;font-size: 20px;"></i>
+                                            </oj-button>
+                                        </oj-bind-if>
+                                        <oj-bind-if test="[[row.data.reminderDate !== null ]]">
+                                            <oj-bind-if test="[[row.data.status === 0 ]]">
+                                                <oj-button title="Task done" id="button1" style="background-color: transparent;">
+                                                    <i class="fa-regular fa-circle-check" style="color: #5cb85c;font-size: 20px;"></i>
+                                                </oj-button>
+                                            </oj-bind-if>
+                                            <oj-bind-if test="[[row.data.status === 1 ]]">
+                                                <oj-button title="Click to mark as done" on-oj-action="[[logStatusChange]]" 
+                                                    :id="[[row.data.noteId]]" style="background-color: transparent;">
+                                                    <i class="fa-regular fa-circle-check" style="color: #d9534f;font-size: 20px;"></i>
+                                                </oj-button>
+                                            </oj-bind-if>
+                                        </oj-bind-if>
+                                    </td>
+                                </tr>
+                            </template>
+                        </oj-table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="application" style="display: none;">
+            <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">Add New Applications</h6>
+            
+            <div class="oj-panel">
+                <oj-validation-group id="applicationValidation" class="form-container" role="group">
+                    <oj-form-layout id="personal-information" direction="row" max-columns="3" style="padding: 20px;">
+                        <oj-select-single id="coursetypeEdit" label-hint="Course type" label-edge="inside" required="true" class="oj-form-control-max-width-md"
+                            data="[[courseTypeSet]]" value="{{courseType}}"></oj-select-single>
+                        <oj-select-single data="[[countrySet]]" value="{{country}}" label-hint="Institution Country"
+                            on-oj-value-action="[[countryChangeHandler]]"></oj-select-single>
+                        <oj-select-single data="[[institutionSet]]" value="{{institutionId}}" required="true" label-hint="Institution" on-oj-value-action="[[instituteChangeHandler]]"></oj-select-single>
+                        <!-- <oj-input-text id="institutionName" label-hint="Institution name" required="true" value="{{institutionName}}" readonly=""></oj-input-text> -->
+                        <oj-input-date label-hint="Course start date" required="true" value="{{courseStartDate}}"></oj-input-date>
+                        <oj-input-text id="courseName" label-hint="Course name" required="true"  value="{{courseName}}"></oj-input-text>
+                        <oj-input-date label-hint="Course end date" value="{{courseEndDate}}"></oj-input-date>
+                        <oj-input-date label-hint="Date of application Sent" required="true" value="{{applicationSentDate}}"></oj-input-date>
+                        <oj-form-layout direction="row" columns="2">
+                            <oj-select-single id="select" label-hint="Currency" label-edge="inside" class="oj-form-control-max-width-md"
+                                data="[[currenciesSet]]" value="{{tutionFeeCurrency}}"></oj-select-single>
+                            <oj-input-number id="input-number-validator" value="{{tutionFee}}" label-hint="Tution fee"></oj-input-number>
+                        </oj-form-layout>
+                        <oj-input-text id="loginUrl" label-hint="Login URL" value="{{loginUrl}}"></oj-input-text>
+                        <oj-input-text id="userName" label-hint="Username" value="{{userName}}"></oj-input-text>
+                        <oj-input-text id="password" label-hint="Password" value="{{password}}"></oj-input-text>
+                        <oj-input-text id="applicationMethod" label-hint="Application method" value="{{applicationMethod}}"></oj-input-text>
+                        <oj-input-text id="counsellingType" label-hint="Councelling Type" value="{{counsellingType}}"></oj-input-text>
+                        <oj-checkboxset id="ielts" label-hint="IELTS/English test required" value="{{ielts}}">
+                            <oj-option value="ielts">IELTS/English test required</oj-option>
+                        </oj-checkboxset>
+                    </oj-form-layout>
+                </oj-validation-group>
+                <div class="oj-flex oj-sm-justify-content-center">
+                    <oj-button id="button1" on-oj-action="[[addNewApplication]]">Add</oj-button>
+                </div>
+            </div>
+
+            <div class="oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="width: 100%;">
+                <h6 style="font-weight: 500;font-size: 22px;color: #06668a; margin-left: 20px;">
+                    Total number of Application : <oj-bind-text value="[[totalNumberOfApplication]]"></oj-bind-text>
+                </h6>
+            </div>
+            <div class="oj-panel">
+                <div id="sampleDemo" class="demo-padding demo-container">
+                    <div id="componentDemoContent" style="width: 1px; min-width: 100%;">
+
+                        <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[applicationDataprovider]]"
+                            dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+                            columns='[
+                                {"headerText": "University",  "field": "university", "headerClassName": "oj-sm-only-hide",
+                                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                                {"headerText": "Course name",  "field": "coursename", "resizable": "enabled", "id": "depName"},
+                                {"headerText": "Login URL",  "field": "loginurl", "headerClassName": "oj-sm-only-hide",
+                                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                                {"headerText": "Username",  "field": "username", "headerClassName": "oj-sm-only-hide",
+                                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                                {"headerText": "Password",  "field": "password", "headerClassName": "oj-sm-only-hide",
+                                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                                {"headerText": "Course start date",  "field": "courseStartDate", "resizable": "enabled", "id": "manId"},
+                                {"headerText": "App Sent date",  "field": "appSentDate", "resizable": "enabled", "id": "manId"},
+                                {"headerText": "Offer",  "field": "EmployeeCount", "headerClassName": "oj-md-down-hide",
+                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                                {"headerText": "Ref",  "field": "EmployeeCount", "headerClassName": "oj-md-down-hide",
+                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                                {"headerText": "Action",  "field": "EmployeeCount", "headerClassName": "oj-md-down-hide",
+                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount", "sortable": "disabled"}
+                                ]'
+                            class="demo-table-container">
+                            <template slot="rowTemplate" data-oj-as="row">
+                                <tr>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.university]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.coursename]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-if test="[[row.data.loginurl != '' ]]">
+                                            <a :id="[[row.data.loginurl]]"  on-click="[[goToPage]]" target="_blank">Click here</a>
+                                        </oj-bind-if>
+                                    </td>
+                                    <td><oj-bind-text value="[[row.data.username]]"></oj-bind-text></td>
+                                    <td><oj-bind-text value="[[row.data.password]]"></oj-bind-text></td>
+                                    <td><oj-bind-text value="[[row.data.courseStartDate]]"></oj-bind-text></td>
+                                    <td><oj-bind-text value="[[row.data.appSentDate]]"></oj-bind-text></td>
+                                    <td><oj-bind-text value="[[row.data.offerDecisionType]]"></oj-bind-text></td>
+                                    <td><oj-bind-text value="[[row.data.ref]]"></oj-bind-text></td>
+                                    <td>
+                                        <oj-button :id="[[row.data.id]]" display="icons" style="background-color: transparent" 
+                                            on-oj-action="[[editApplication]]">
+                                            <i class="fa-solid fa-pen-to-square" style="color: #06668a; font-size: 20px;"></i>
+                                        </oj-button>
+                                        <oj-bind-if test="[[userRole() === 'admin' ]]">
+                                            <oj-button :id="[[row.data.id]]" display="icons" style="background-color: transparent"
+                                                on-oj-action="[[deleteApplication]]">
+                                                <i class="fa-solid fa-trash" style="color: #06668a; font-size: 20px;"></i>
+                                            </oj-button>
+                                        </oj-bind-if>
+                                        <oj-bind-if test="[[userRole() === 'director' ]]">
+                                            <oj-button :id="[[row.data.id]]" display="icons" style="background-color: transparent"
+                                                on-oj-action="[[deleteApplication]]">
+                                                <i class="fa-solid fa-trash" style="color: #06668a; font-size: 20px;"></i>
+                                            </oj-button>
+                                        </oj-bind-if>
+                                    </td>
+                                </tr>
+                            </template>
+                        </oj-table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="width: 100%;">
+                <h6 style="font-weight: 500;font-size: 22px;color: #06668a; margin-left: 20px;">ADD FINAL CHOICE </h6>
+            </div>
+            <div class="oj-panel">
+                <div class="oj-flex oj-sm-justify-content-center" style="margin: 20px;">
+                    <div style="width: 300px;" class="oj-flex oj-sm-justify-content-center">
+                        <oj-select-single id="select" label-hint="Please select a Application" label-edge="inside" class="oj-form-control-max-width-md" 
+                        data="[[finalChoiceDp]]" value="{{selectApplictn}}" style="width: 100%;"></oj-select-single>
+                        <code class="oj-text-color-danger" style="text-align: center;"><oj-bind-text value="[[selectApplicationError]]"></oj-bind-text></code>
+                    </div>
+                    
+                    <div class="oj-flex" style="margin: 0px 10px;">
+                        <oj-button id="button1" on-oj-action="[[addFinalChoice]]">Add</oj-button>
+                    </div>
+                </div>
+            </div>
+            <div class="oj-panel" style="margin-top: 20px;">
+                <div id="sampleDemo" class="demo-padding demo-container">
+                    <div id="componentDemoContent" style="width: 1px; min-width: 100%;">
+                        <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[finalChoiceDataprovider]]"
+                            dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+                            columns='[
+                                {"headerText": "University", "field": "university", "headerClassName": "oj-sm-only-hide",
+                                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                                {"headerText": "Course Name",  "field": "courseName", "resizable": "enabled", "id": "depName"},
+                                {"headerText": "Course Type",  "field": "courseType", "headerClassName": "oj-sm-only-hide", 
+                                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                                {"headerText": "Course Start Date",  "field": "courseStartDate", "resizable": "enabled", "id": "manId"},
+                                {"headerText": "Course End Date", "field": "courseEndDate", "headerClassName": "oj-md-down-hide",
+                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                                {"headerText": "Tution Fee", "field": "TutionFee", "headerClassName": "oj-md-down-hide",
+                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                                {"headerText": "Application ID", "field": "applicationId", "headerClassName": "oj-md-down-hide",
+                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                                {"headerText": "Action", "field": "applicationId", "headerClassName": "oj-md-down-hide",
+                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount", "sortable": "disabled"}
+                                ]'
+                            style="width: 100%;">
+
+                            <template slot="rowTemplate" data-oj-as="row">
+                                <tr>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.university]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.courseName]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.courseType]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.courseStartDate]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.courseEndDate]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.TutionFeeCurrency]]"></oj-bind-text>
+                                        <br>
+                                        <oj-bind-text value="[[row.data.TutionFee]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-bind-text value="[[row.data.applicationId]]"></oj-bind-text>
+                                    </td>
+                                    <td>
+                                        <oj-button :id="[[row.data.applicationId]]" display="icons" style="background-color: #d9534f;"
+                                            on-oj-action="[[removeFinalChoice]]">
+                                            Remove
+                                        </oj-button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </oj-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<oj-bind-if test="[[userRole() === 'admin' ]]">
+    <div class="oj-flex oj-sm-justify-content-center" style="margin-bottom: 30px;">
+        <oj-button id="button1" on-oj-action="[[deletePerson]]" style="background-color: #d9534f;">Delete Student</oj-button>
+    </div>
+</oj-bind-if>
+<oj-bind-if test="[[userRole() === 'director' ]]">
+    <div class="oj-flex oj-sm-justify-content-center" style="margin-bottom: 30px;">
+        <oj-button id="button1" on-oj-action="[[deletePerson]]" style="background-color: #d9534f;">Delete Student</oj-button>
+    </div>
+</oj-bind-if>
+<br>
+
+<oj-dialog id="addLog" style="width: 1000px;">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">
+            Add Log
+        </p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[addLogCancel]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <oj-validation-group id="formValidation" class="form-container" role="group">
+            <oj-form-layout id="personal-information" direction="row" max-columns="2">
+                <oj-input-text id="leadSource" label-hint="Lead Source" value="{{leadSource}}"></oj-input-text>
+                <oj-input-date label-hint="Reminder Date" value="{{reminderDate}}" autocomplete="off"></oj-input-date>                
+                <oj-text-area value="{{note}}" label-hint="Enter your Notes" required="true" rows="3"></oj-text-area>
+            </oj-form-layout>
+        </oj-validation-group>
+        <div class="oj-flex oj-sm-justify-content-center">
+            <oj-button on-oj-action="[[submitNotes]]" style="background-color: #5cb85c;border: none;">Submit</oj-button>
+        </div>
+    </div>
+</oj-dialog>
+
+<oj-dialog id="editLog" style="width: 1000px;">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">
+            Edit Log
+        </p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[editLogCancel]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <oj-validation-group id="formValidation" class="form-container" role="group">
+            <oj-form-layout id="personal-information" direction="row" max-columns="2">
+                <oj-input-text id="leadSource" label-hint="Lead Source" value="{{editLeadSource}}"></oj-input-text>                
+                <oj-text-area value="{{editNote}}" label-hint="Enter your Notes" required="true" rows="3"></oj-text-area>
+                <oj-input-date label-hint="Reminder Date" value="{{editReminderDate}}" autocomplete="off"></oj-input-date>
+            </oj-form-layout>
+        </oj-validation-group>
+        <div class="oj-flex oj-sm-justify-content-center">
+            <oj-button on-oj-action="[[updateNotes]]" style="background-color: #5cb85c;border: none;">Update</oj-button>
+        </div>
+    </div>
+</oj-dialog>
+
+<oj-dialog id="applicationEdit" style="width: 1000px;">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">
+            Application Edit
+        </p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[cancelListener]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <oj-form-layout id="personal-information" direction="row" max-columns="3">
+            <oj-select-single id="coursetypeEdit" label-hint="Course type" label-edge="inside" class="oj-form-control-max-width-md"
+                data="[[courseTypeSet]]" value="{{coursetypeEdit}}"></oj-select-single>
+            <oj-select-single data="[[countrySet]]" value="{{country}}" label-hint="Institution Country"
+                on-oj-value-action="[[countryChangeHandler]]"></oj-select-single>
+            <oj-select-single data="[[institutionSet]]" value="{{institutionIdEdit}}" required="true" label-hint="Institution" on-oj-value-action="[[instituteChangeEditHandler]]"></oj-select-single>
+            <oj-input-text id="universityEdit" label-hint="Institution Name" required="true" value="{{universityEdit}}" readonly=""></oj-input-text>
+            <oj-input-date value="{{courseStartDateEdit}}" label-hint="Course Start Date" autocomplete="off"></oj-input-date>
+            <oj-input-text id="coursenameEdit" label-hint="Course name" required="true" value="{{coursenameEdit}}"></oj-input-text>
+            <oj-input-date value="{{courseEndDateEdit}}" label-hint="Course End Date" autocomplete="off"></oj-input-date>
+            <oj-input-date value="{{applicationSentDateEdit}}" label-hint="Application Sent Date" autocomplete="off"></oj-input-date>
+            <oj-input-text id="partner" label-hint="Partner" value="{{partnerEdit}}"></oj-input-text>
+            <oj-form-layout direction="row" columns="2">
+                <oj-select-single id="select" label-hint="Currency" label-edge="inside" class="oj-form-control-max-width-md"
+                    data="[[currenciesSet]]" value="{{tutionFeeCurrencyEdit}}"></oj-select-single>
+                <oj-input-number id="input-number-validator" value="{{tutionFeeEdit}}" label-hint="Tution fee"></oj-input-number>
+            </oj-form-layout>
+            <oj-input-text id="loginurlEdit" label-hint="Login URL" autocomplete="off" value="{{loginurlEdit}}"></oj-input-text>
+            <oj-input-text id="usernameEdit" label-hint="Username" autocomplete="off" value="{{usernameEdit}}"></oj-input-text>
+            <oj-input-text id="passwordEdit" label-hint="Password" autocomplete="off" value="{{passwordEdit}}"></oj-input-text>
+            <oj-input-text id="applicationMethod" label-hint="Application method" value="{{applicationMethodEdit}}"></oj-input-text>
+            <oj-input-text id="counsellingType" label-hint="Councelling Type" value="{{counsellingTypeEdit}}"></oj-input-text>
+            <oj-input-date value="{{offerCreationDateEdit}}" label-hint="Offer Creation Date" autocomplete="off"></oj-input-date>
+            <oj-select-single id="select" label-hint="Offer Decision Type" label-edge="inside" class="oj-form-control-max-width-md"
+                data="[[decisionTypeDp]]" value="{{offerDecisionTypeEdit}}"></oj-select-single>
+            <oj-input-text id="referenceNoEdit" label-hint="Reference No" autocomplete="off" value="{{referenceNoEdit}}"></oj-input-text>
+            <oj-form-layout direction="row" columns="2">
+                <oj-select-single id="select" label-hint="Currency" label-edge="inside" class="oj-form-control-max-width-md"
+                    data="[[currenciesSet]]" value="{{depositCurrency}}"></oj-select-single>
+                <oj-input-number id="input-number-validator" value="{{depositAmountEdit}}" label-hint="Deposit Amount"></oj-input-number>
+            </oj-form-layout>
+            <oj-checkboxset id="depositIsNotRequired" label-hint="Deposit is not required" value="{{depositIsNotRequiredEdit}}">
+                <oj-option value="depositIsNotRequired">Deposit is not required</oj-option>
+            </oj-checkboxset>
+            <oj-input-date value="{{depositPaidDateEdit}}" label-hint="Deposit paid Date" autocomplete="off"></oj-input-date>
+            <oj-input-date value="{{visaAppliedDateEdit}}" label-hint="Visa applied date" autocomplete="off"></oj-input-date>
+            <oj-select-single id="select" label-hint="Visa Decision" label-edge="inside" class="oj-form-control-max-width-md"
+                data="[[visaDecisionTypeDp]]" value="{{visaDecisionTypeEdit}}"></oj-select-single>
+            <oj-input-date value="{{visaDecisionDateEdit}}" label-hint="Visa decision date" autocomplete="off"></oj-input-date>
+            <oj-checkboxset id="casIssued" label-hint="CAS Issued" value="{{casIssuedEdit}}">
+                <oj-option value="casIssued">CAS Issued</oj-option>
+            </oj-checkboxset>
+            <oj-checkboxset id="ieltsEdit" label-hint="IELTS/English test required" value="{{ieltsEdit}}">
+                <oj-option value="ielts">IELTS/English test required</oj-option>
+            </oj-checkboxset>
+
+            <div>
+                <oj-file-picker primary-text="Offer file upload" on-oj-select="[[selectListener]]"></oj-file-picker>
+                <oj-bind-if test="[[offerFile() != '' ]]">
+                    <div class="oj-flex  oj-sm-justify-content-space-around" style="margin-top: 10px;align-items: center;">
+                        <a id="offerFile" on-click= "[[previewClick]]" target="_blank">
+                            <oj-bind-text value="[[offerFile]]"></oj-bind-text>
+                        </a>
+                        <a id="offerFileButton" on-click= "[[removeFile]]" target="_blank" style="font-size: 15px;margin-top: 10px;">
+                            <span slot="startIcon" class="oj-ux-ico-delete-circle" style="font-size: larger;"></span>
+                        </a>
+                    </div>
+                </oj-bind-if>
+                
+                <p class="oj-text-color-danger" id="offerFileMessage" style="margin-top: 10px;">
+                    <oj-bind-text value="[[offerFileMessage]]"></oj-bind-text>
+                </p>
+            </div>
+            
+        </oj-form-layout>
+        <hr>
+        <div class="oj-flex oj-sm-justify-content-center">
+            <p class="oj-text-color-success"><oj-bind-text value="[[waitText]]"></oj-bind-text></p>
+        </div>
+        <div class="oj-flex oj-sm-justify-content-center">
+            <oj-button :id="[[editApplicationId]]" class="oj-button-sm" display="icons" on-oj-action="[[updateApplication]]">
+                Update
+            </oj-button>
+        </div>
+    </div>
+</oj-dialog>
+
+<oj-popup id="progressBar" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+        position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
+
+
+<oj-dialog id="deleteMsg">
+    <div slot="header">
+        <p id="dialogTitleId" class="oj-dialog-title">Delete Student</p>
+    </div>
+    <div slot="body">
+        <div class="oj-flex oj-sm-flex-direction-column oj-sm-justify-content-center" style="padding: 30px 30px 0px;">
+            <p style="text-align: center;font-weight: 500; font-size: 20px;">
+                Are you sure you want to delete  <oj-bind-text value="[[firstName]]"></oj-bind-text> <oj-bind-text value="[[lastName]]"></oj-bind-text> ?
+            </p>
+        </div>
+    </div>
+    <div slot="footer" class="oj-flex oj-sm-justify-content-center">
+        <oj-button display="icons" on-oj-action="[[cancelDelete]]" style="width: 80px;">
+            Cancel
+        </oj-button> 
+        &nbsp;&nbsp;&nbsp;
+        <oj-button display="icons" on-oj-action="[[deleteConfirm]]" style="width: 80px;">
+            Yes
+        </oj-button>
+    </div>
+</oj-dialog>
+
+<oj-dialog id="applicationDeleteMsg">
+    <div slot="header">
+        <p id="dialogTitleId" class="oj-dialog-title">Delete Application</p>
+    </div>
+    <div slot="body">
+        <div class="oj-flex oj-sm-flex-direction-column oj-sm-justify-content-center" style="padding: 30px 30px 0px;">
+            <p style="text-align: center;font-weight: 500; font-size: 20px;">
+                Applications in final choice cannot be deleted. Please remove them from final choice in order to delete.
+            </p>
+        </div>
+    </div>
+    <div slot="footer" class="oj-flex oj-sm-justify-content-center">
+        <oj-button display="icons" on-oj-action="[[closeApplicationDeletePopUp]]" style="width: 80px;">
+            Okay
+        </oj-button>
+    </div>
+</oj-dialog>
+
+<oj-dialog id="Message">
+    <div slot="header">
+        <p id="dialogTitleId" class="oj-dialog-title">Student not Existed</p>
+    </div>
+    <div slot="body">
+        <div class="oj-flex oj-sm-flex-direction-column oj-sm-justify-content-center" style="padding: 30px 30px 0px;">
+            <p style="text-align: center;font-weight: 500; font-size: 20px;">
+                Student Not Existed
+            </p>
+        </div>
+    </div>
+    <div slot="footer" class="oj-flex oj-sm-justify-content-center">
+        <oj-button display="icons" on-oj-action="[[redirectStudentsPage]]" style="width: 80px;">
+            Okay
+        </oj-button>
+    </div>
+</oj-dialog>

@@ -1,0 +1,348 @@
+<link rel="stylesheet" href="../../css/dashboard.css">
+
+<div class="oj-panel oj-flex  oj-sm-align-items-center" style="margin: 10px;">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        Add and Manage Staffs
+    </h6>
+</div>
+
+<div id="tabbardemo" class="oj-flex oj-sm-justify-content-center">
+    <div class="demo-tabbarcontainer">
+        <oj-buttonset-one id="setMultipleButtons" value="{{selectedTab}}" aria-label="Choose only one format">
+            <oj-bind-for-each data="[[tabData]]">
+                <template>
+                    <oj-option value="[[$current.data.id]]">
+                    <span>
+                        <oj-bind-text value="[[$current.data.label]]"></oj-bind-text>
+                    </span>
+                    </oj-option>
+                </template>
+            </oj-bind-for-each>
+        </oj-buttonset-one>
+    </div>
+</div>
+
+<div class="oj-flex oj-sm-justify-content-space-between" style="margin: 40px 20px;">
+    <div>
+        <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Search" label-edge="inside"
+            placeholder="Search.." on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}" 
+            clear-icon="always" style="width: 300px;"></oj-input-text>
+    </div>
+    <oj-button id="addButton" on-oj-action="[[addUserPopUp]]">
+        <i class="fa-solid fa-user-plus"></i>
+        Add new user
+    </oj-button>
+</div>
+
+<div class="oj-panel" style="margin: 20px;">
+    <div id="sampleDemo" class="demo-padding demo-container">
+        <div id="componentDemoContent" style="width: 1px; min-width: 100%;">
+            <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[usersDataProvider]]"
+                dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+                columns='[
+                    {"headerText": "Name",  "field": "name", "headerClassName": "oj-sm-only-hide",
+                       "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                    {"headerText": "Office",  "field": "office", "resizable": "enabled", "id": "depName"},
+                    {"headerText": "Role",  "field": "role", "headerClassName": "oj-sm-only-hide",
+                       "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                    {"headerText": "Username",  "field": "username", "resizable": "enabled", "id": "manId"},
+                    {"headerText": "Email",  "field": "email", "resizable": "enabled", "id": "manId"},
+                    {"headerText": "Date Added",  "field": "date", "headerClassName": "oj-md-down-hide",
+                        "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                    {"headerText": "Students",  "field": "studentCount", "headerClassName": "oj-md-down-hide",
+                        "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                    {"headerText": "Actions",  "field": "id", "headerClassName": "oj-md-down-hide",
+                        "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount", "sortable": "disabled"}]'
+                class="demo-table-container">
+                <template slot="rowTemplate" data-oj-as="row">
+                    <tr>
+                        <td>
+                            <oj-bind-text value="[[row.data.name]]"></oj-bind-text>
+                        </td>
+                        <td>
+                            <oj-bind-text value="[[row.data.office]]"></oj-bind-text>
+                        </td>
+                        <td>
+                            <oj-bind-text value="[[row.data.role]]"></oj-bind-text>
+                        </td>
+                        <td>
+                            <oj-bind-text value="[[row.data.username]]"></oj-bind-text>
+                        </td>
+                        <td>
+                            <oj-bind-text value="[[row.data.email]]"></oj-bind-text>
+                        </td>
+                        <td>
+                            <oj-bind-text value="[[row.data.date]]"></oj-bind-text>
+                        </td>
+                        <td>
+                            <a :id="[[row.data.id]]" on-click= "[[viewStudents]]" target="_blank">
+                                <oj-bind-text value="[[row.data.studentCount]]"></oj-bind-text>
+                            </a>
+                        </td>
+                        <td>
+                            <oj-button :id="[[row.data.id]]" display="icons" style="background-color: transparent" 
+                                on-oj-action="[[editUser]]">
+                                <i class="fa-solid fa-pen-to-square" style="color: #06668a; font-size: 20px; margin-top: 15px;"></i>
+                                <p style="color: #06668a;">Edit</p>
+                            </oj-button>
+                            <oj-bind-if test="[[row.data.status === 0 ]]">
+                                <oj-button :id="[[row.data.id]]" :class="[[row.data.studentCount]]" display="icons" style="background-color: transparent" 
+                                    on-oj-action="[[deleteUser]]">
+                                    <i class="fa-solid fa-ban" style="color: red; font-size: 20px; margin-top: 15px;"></i>
+                                    <p style="color: #06668a;">Deactivate</p>
+                                </oj-button>
+                            </oj-bind-if>
+                            <oj-bind-if test="[[row.data.status === 1 ]]">
+                                <oj-button :id="[[row.data.id]]" display="icons" style="background-color: transparent" 
+                                    on-oj-action="[[activateUser]]">
+                                    <i class="fa-solid fa-circle-check" style="color: green; font-size: 20px; margin-top: 15px;"></i>
+                                    <p style="color: #06668a;">Activate</p>
+                                </oj-button>
+                            </oj-bind-if>
+                        </td>
+                    </tr>
+                </template>
+            </oj-table>
+        </div>
+    </div>
+</div>
+
+<oj-dialog id="addUser" style="width: 500px;">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">Add Staff</p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[cancelAddUserPopup]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-validation-group id="usersApplication" class="form-container" role="group">
+                <oj-form-layout id="personal-information" direction="row" max-columns="2" style="padding: 20px;">
+                    <oj-input-text id="name" label-hint="Name" required="true" value="{{name}}"></oj-input-text>
+                    <oj-bind-if test="[[userRole() != 'manager' ]]">
+                        <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
+                            data="[[officeDp]]" value="{{selectOffice}}" required="true"></oj-select-single>
+                    </oj-bind-if>
+                    <oj-select-single id="select" label-hint="Select Role" label-edge="inside" class="oj-form-control-max-width-md"
+                        data="[[roleDp]]" value="{{selectRole}}" required="true"></oj-select-single>
+                    <div class="oj-flex">
+                        <oj-input-text id="email" label-hint="email" required="true" value="{{email}}" on-value-changed="[[emailPatternValidator]]"></oj-input-text>
+                        <p class="oj-text-color-danger"><oj-bind-text value="[[emailError]]"></oj-bind-text></p>
+                    </div>
+                    <oj-input-text id="password" label-hint="Password" disabled="true" required="true"  value="{{password}}"></oj-input-text>
+                </oj-form-layout>
+            </oj-validation-group>
+            <div class=" oj-flex oj-sm-justify-content-center">
+                <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[addUser]]" style="width: 100px;">
+                    Submit
+                </oj-button>
+            </div>
+        </div>
+    </div>
+</oj-dialog>
+
+<oj-popup id="progress" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
+
+<oj-dialog id="editUser" style="width: 500px;">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">Edit Staff</p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[cancelEditUserPopup]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-validation-group id="userEdit" class="form-container" role="group">
+                <oj-form-layout id="personal-information" direction="row" max-columns="2" style="padding: 20px;">
+                    <oj-input-text id="name" label-hint="Name" required="true" value="{{editName}}"></oj-input-text>
+                    <oj-bind-if test="[[userRole() != 'manager' ]]">
+                        <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
+                            data="[[officeDp]]" value="{{editOffice}}" required="true"></oj-select-single>    
+                    </oj-bind-if>
+                    <oj-bind-if test="[[editRole() != 'admin' ]]">
+                        <oj-select-single id="select" label-hint="Select Role" label-edge="inside" class="oj-form-control-max-width-md"
+                            data="[[roleDp]]" value="{{editRole}}" required="true"></oj-select-single>
+                    </oj-bind-if>
+                    <div class="oj-flex">
+                        <oj-input-text id="email" label-hint="email" required="true" value="{{editEmail}}" on-value-changed="[[emailPatternValidator]]"></oj-input-text>
+                        <p class="oj-text-color-danger"><oj-bind-text value="[[emailError]]"></oj-bind-text></p>
+                    </div>
+                    <oj-input-text id="password" label-hint="Password" required="true"  value="{{editPassword}}"></oj-input-text>
+                </oj-form-layout>
+            </oj-validation-group>
+            <div class=" oj-flex oj-sm-justify-content-center">
+                <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[updateStudent]]" style="width: 100px;">
+                    Update
+                </oj-button>
+            </div>
+        </div>
+    </div>
+</oj-dialog>
+
+
+<oj-dialog id="deleteMsg">
+    <div slot="header">
+        <p id="dialogTitleId" class="oj-dialog-title">Deactivate Staff</p>
+    </div>
+    <div slot="body">
+        <div class="oj-flex oj-sm-flex-direction-column oj-sm-justify-content-center" style="padding: 30px 30px 0px;">
+            <p style="text-align: center;font-weight: 500; font-size: 20px;">
+                Are you sure you want to deactivate  <oj-bind-text value="[[deleteName]]"></oj-bind-text> ?
+            </p>
+        </div>
+    </div>
+    <div slot="footer" class="oj-flex oj-sm-justify-content-center">
+        <oj-button display="icons" on-oj-action="[[deleteConfirm]]" style="width: 80px;">
+            Yes
+        </oj-button>
+        <oj-button display="icons" on-oj-action="[[cancelDelete]]" style="width: 80px;">
+            Cancel
+        </oj-button> 
+    </div>
+</oj-dialog>
+
+
+<oj-dialog id="studentReassignList" style="width: 900px;">
+    <div slot="header">
+        <p id="dialogTitleId" class="oj-dialog-title">Students</p>
+    </div>
+    <div slot="body">
+        <div class="oj-flex">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <oj-bind-if test="[[userRole() != 'manager' ]]">
+                <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
+                    data="[[officesDP]]" on-value-changed="[[officeSelectedData]]" value="{{officeId}}" style="width: 350px;"></oj-select-single>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </oj-bind-if>
+            <oj-select-single id="select" label-hint="Reassign Counsilor" label-edge="inside" class="oj-form-control-max-width-md"
+                data="[[counsilorsDp]]" value="{{counsilor}}" style="width: 350px;"></oj-select-single>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <oj-button id="button1" on-oj-action="[[reassignData]]" style="background-color: #04812f ">
+                Submit
+            </oj-button>
+        </div>
+        
+        <div class="oj-panel" style="margin: 10px;padding: 20px;">
+            <div style="margin-top: 20px;">
+                <div class="oj-flex oj-sm-justify-content-flex-end">
+                    <oj-button id="button1" on-oj-action="[[downloadData]]" style="background-color: #04812f ">
+                        Export <i class="fa-solid fa-download"></i>
+                    </oj-button>
+                </div>
+                
+                <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[studentDataProvider]]"
+                    dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+                    selection-mode='{"row": "multiple", "column": "multiple"}'
+                    on-selected-changed="[[selectedChangedListener]]"
+                    columns='[
+                        {"headerText": "Student Id",  "field": "id", "headerClassName": "oj-sm-only-hide",
+                            "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                        {"headerText": "First Name",  "field": "firstName", "resizable": "enabled", "id": "depName"},
+                        {"headerText": "Last Name",  "field": "lastNa`me", "headerClassName": "oj-sm-only-hide",
+                            "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                        {"headerText": "Email",  "field": "email", "resizable": "enabled", "id": "manId"},
+                        {"headerText": "Phone", "field": "phone", "headerClassName": "oj-md-down-hide",
+                            "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                        {"headerText": "Counselor", "field": "counselor", "headerClassName": "oj-md-down-hide",
+                            "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                        {"headerText": "Office", "field": "office", "headerClassName": "oj-md-down-hide",
+                            "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"}]'
+                    class="demo-table-container">
+                    <template slot="rowTemplate" data-oj-as="row">
+                        <tr>
+                            <td>
+                                <a :id="[[row.data.id]]" on-click= "[[viewProfile]]" target="_blank">
+                                    <oj-bind-text value="[[row.data.id]]"></oj-bind-text>
+                                </a>
+                            </td>
+                            <td>
+                                <oj-bind-text value="[[row.data.firstName]]"></oj-bind-text>
+                            </td>
+                            <td>
+                                <oj-bind-text value="[[row.data.lastName]]"></oj-bind-text>
+                            </td>
+                            <td>
+                                <oj-bind-text value="[[row.data.email]]"></oj-bind-text>
+                            </td>
+                            <td>
+                                <oj-bind-text value="[[row.data.phone]]"></oj-bind-text>
+                            </td>
+                            <td>
+                                <oj-bind-text value="[[row.data.counselor]]"></oj-bind-text>
+                            </td>
+                            <td>
+                                <oj-bind-text value="[[row.data.office]]"></oj-bind-text>
+                            </td>
+                        </tr>
+                    </template>
+                    <oj-paging-control id="paging" data="[[studentDataProvider]]" page-size="10" slot="bottom"></oj-paging-control>
+                </oj-table>
+            </div>
+        </div>
+    </div>
+    <div slot="footer" class="oj-flex oj-sm-justify-content-center">
+        <oj-button display="icons" on-oj-action="[[closeStudents]]" style="width: 80px;">
+            Close
+        </oj-button> 
+    </div>
+</oj-dialog>
+
+<oj-dialog id="msgBox" style="width:500px;min-width:500px;max-width:500px;">
+    <div slot="header">
+        <p id="dialogTitleId" class="oj-dialog-title">
+            Reassign Students
+        </p>
+    </div>
+    <div slot="body">
+        <oj-bind-text value="[[message]]"></oj-bind-text>
+    </div>
+    <div slot="footer">
+        <oj-button id="okdelButton" on-oj-action="[[closeButton]]">
+            Okay
+        </oj-button>
+    </div>
+</oj-dialog>
+
+<oj-dialog id="warnMsg" style="width:500px;min-width:500px;max-width:500px;">
+    <div slot="header">
+        <p id="dialogTitleId" class="oj-dialog-title">
+            Reassign Students
+        </p>
+    </div>
+    <div slot="body">
+        <oj-bind-text value="[[warnMsg]]"></oj-bind-text>
+    </div>
+    <div slot="footer">
+        <oj-button id="okdelButton" on-oj-action="[[confirmReassign]]">
+            Yes
+        </oj-button>
+        <oj-button id="okdelButton" on-oj-action="[[warnMsgPopupCloseButton]]">
+            Cancel
+        </oj-button>
+    </div>
+</oj-dialog>
+
+<oj-dialog id="resultMsg" style="width:500px;min-width:500px;max-width:500px;">
+    <div slot="header">
+        <p id="dialogTitleId" class="oj-dialog-title">
+            Reassign Students
+        </p>
+    </div>
+    <div slot="body">
+        <oj-bind-text value="[[resultMsg]]"></oj-bind-text>
+    </div>
+    <div slot="footer">
+        <oj-button id="okdelButton" on-oj-action="[[resultPopupCloseButton]]">
+            Okay
+        </oj-button>
+    </div>
+</oj-dialog>

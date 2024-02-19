@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="../../css/addStudent.css">
+<div class="oj-flex oj-sm-justify-content-space-around oj-sm-align-items-center">
+    <div class="oj-panel oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="width: 100%;padding: 10px;">
+        <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">Add New Student</h6>
+        <!-- <div class="oj-flex oj-sm-flex-direction-column oj-sm-justify-content-center">
+            <oj-button on-oj-action="[[selectFiles]]">
+                Bulk Student Add - Select File
+              </oj-button>
+            <oj-bind-text value="[[fileName]]"></oj-bind-text>
+        </div> -->
+    </div>
+
+    <oj-validation-group id="formValidation" class="form-container" role="group">
+        <div id="form-container" class="oj-panel">
+            <oj-form-layout id="personal-information" class="form" direction="row" max-columns="2">
+                <oj-input-text id="firstname" label-hint="First Name" required="true" value="{{firstName}}"></oj-input-text>
+                <oj-input-text id="lastname" label-hint="Last Name" required="true" value="{{lastName}}"></oj-input-text>
+                <div class="oj-flex">
+                    <div class="oj-flex-item oj-sm-5 oj-sm-padding-2x-end oj-md-padding-3x-end">
+                        <oj-select-single required id="nearestOffice" label-hint="Country Code" label-edge="inside"
+                            data="[[countryCodes]]" value="{{countryCode}}"></oj-select-single>
+                    </div>
+                    <div class="oj-flex-item oj-sm-7 oj-sm-padding-2x-start oj-md-padding-3x-start">
+                        <oj-input-text id="phone" label-hint="Phone" required="true" value="{{phone}}" on-value-changed="[[phoneValidator]]"></oj-input-text>
+                    </div>
+                    <div class="oj-text-color-danger"><oj-bind-text value='[[phoneError]]'></oj-bind-text></div></br>
+                </div>
+                <div>
+                    <oj-input-text id="email" label-hint="Email" required="true" value="{{email}}" on-value-changed="[[emailPatternValidator]]"></oj-input-text>
+                    <div class="oj-text-color-danger"><oj-bind-text value='[[emailError]]'></oj-bind-text></div></br>
+                </div>
+                <oj-select-single id="select" label-hint="Nationality" label-edge="inside" data="[[nationalitySet]]" value="{{nationality}}"></oj-select-single>
+                <oj-input-date label-hint="Date of Birth" required="true" autocomplete="off" value="{{dob}}"></oj-input-date>
+                <oj-bind-if test="[[userRole() === 'admin' ]]">
+                    <oj-select-single id="select" label-hint="Select Office" label-edge="inside" required="true" class="oj-form-control-max-width-md" 
+                        data="[[officesList]]" value="{{office}}" on-oj-value-action="[[officeChangeHandler]]"></oj-select-single>
+                    <oj-select-single id="counselorSelect" label-hint="Select Counselor" required="true" label-edge="inside"
+                        class="oj-form-control-max-width-md" data="[[counselorList]]" value="{{counsilor}}"></oj-select-single>
+                </oj-bind-if>
+                <oj-bind-if test="[[userRole() === 'director' ]]">
+                    <oj-select-single id="select" label-hint="Select Office" label-edge="inside" required="true" class="oj-form-control-max-width-md" 
+                        data="[[officesList]]" value="{{office}}" on-oj-value-action="[[officeChangeHandler]]"></oj-select-single>
+                    <oj-select-single id="counselorSelect" label-hint="Select Counselor" required="true" label-edge="inside"
+                        class="oj-form-control-max-width-md" data="[[counselorList]]" value="{{counsilor}}"></oj-select-single>
+                </oj-bind-if>
+                <oj-bind-if test="[[userRole() === 'manager' ]]">
+                    <oj-select-single id="counselorSelect" label-hint="Select Counselor" required="true" label-edge="inside"
+                        class="oj-form-control-max-width-md" data="[[counselorList]]" value="{{counsilor}}"></oj-select-single>
+                </oj-bind-if>
+                <oj-select-single required id="select" label-hint="Study abroad Destination" label-edge="inside"
+                    data="[[abroadDestionationsDp]]" value="{{studyAbroadDestination}}"></oj-select-single>
+                <oj-input-text id="marketingSource" label-hint="Marketing Source" required="true" autocomplete="off" value="{{marketingSource}}"></oj-input-text>
+            </oj-form-layout>
+            <oj-bind-if test="[[userRole() === 'partner' ]]">
+                <oj-button id="save" chroming="outlined" on-oj-action="[[partnerFormSubmit]]">Submit</oj-button>
+            </oj-bind-if>
+            <oj-bind-if test="[[userRole() != 'partner' ]]">
+                <oj-button id="save" chroming="outlined" on-oj-action="[[formSubmit]]">Submit</oj-button>
+            </oj-bind-if>
+        </div>
+    </oj-validation-group>
+
+    <oj-popup id="popup1" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+        position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+        <div class="demo-popup-body">
+            <div class="demo-popup-content oj-sm-padding-2x">
+                <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+            </div>
+        </div>
+    </oj-popup>
+    
+    <oj-dialog id="popup2">
+        <div slot="header" style="display: contents;">
+            <p id="dialogTitleId" class="oj-dialog-title">Successfully Added</p>
+            <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[messageClose]]">
+                <span slot="startIcon" class="oj-ux-ico-close"></span>
+                Cancel
+            </oj-button>
+        </div>
+        <div slot="body">
+            <div class="demo-popup-content oj-sm-padding-2x oj-flex oj-sm-flex-direction-column oj-sm-justify-content-center">
+                <p style="font-weight: 500;text-align: left">Student added successfully</p>
+            </div>
+        </div>
+    </oj-dialog>
+</div>

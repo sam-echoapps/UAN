@@ -1,0 +1,96 @@
+<link rel="stylesheet" href="../../css/help.css">
+<div class="container">
+    <img src="../../css/images/help-banner.jpg" class="banner-image">
+    <div class="overlay">
+        <p>How can we help you?</p><br>
+        <!-- <oj-input-search id="search1" class="oj-form-control-max-width-md" value="{{value}}" suggestions="[[suggestionsDP]]"
+            placeholder="Search..." aria-label="My search field"></oj-input-search> -->
+    </div>
+</div>
+
+<div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
+    <h5>Manage Students</h5>
+    <div class="contents oj-flex oj-sm-justify-content-center" style="width: 100%;">
+        <div class="content oj-flex oj-sm-flex-direction-column">
+            <ul>
+                <li><a id="guideManageStudents" on-click= "[[goToPage]]">How to add a student?</a></li>
+                <li><a id="guideManageStudents%2FguideEditStudent%3Bindex%3D1" on-click= "[[goToPage]]">How to edit a student’s profile?</a></li>
+                <li><a id="guideManageStudents%2FguideChangeStatus%3Bindex%3D2" on-click= "[[goToPage]]">How to change the status, staff or office of a student?</a></li>
+                <li><a id="guideManageStudents%2FguideSearchStudent%3Bindex%3D6" on-click= "[[goToPage]]">How to search for a student?</a></li>
+            </ul>
+        </div>
+        <div class="content oj-flex oj-sm-flex-direction-column">
+            <ul>
+                <li><a id="guideManageStudents%2FguideStudentLog%3Bindex%3D3" on-click= "[[goToPage]]">How to add a student log?</a></li>
+                <li><a id="guideManageStudents%2FguideAddApplication%3Bindex%3D4" on-click= "[[goToPage]]">How to add and edit an application under a student?</a></li>
+                <li><a id="guideManageStudents%2FguideFinalChoiceApplication%3Bindex%3D5" on-click= "[[goToPage]]">How to add a Final Choice application?</a></li>
+                <oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
+                    <li><a id="guideManageStudents%2FguideDeleteStudent%3Bindex%3D6" on-click= "[[goToPage]]">How to delete a student?</a></li>
+                </oj-bind-if>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
+    <div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
+        <h5>Manage Office</h5>
+        <div class="contents oj-flex  oj-sm-justify-content-center" style="width: 100%;">
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManageoffice" on-click= "[[goToPage]]">How to add a new office?</a></li>
+                    <li><a id="guideManageoffice%2FguideEditOffice%3Bindex%3D1" on-click= "[[goToPage]]">How to edit the name of an office?</a></li>
+                </ul>
+            </div>
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManageoffice%2FguideActDeactOffice%3Bindex%3D2" on-click= "[[goToPage]]">How to deactivate and activate an office?</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>    
+</oj-bind-if>
+
+<oj-bind-if test="[[role() === 'admin' || role()=== 'director' || role()=== 'manager' ]]">
+    <div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
+        <h5>Manage Staffs</h5>
+        <div class="contents oj-flex  oj-sm-justify-content-center" style="width: 100%;">
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManageStaff" on-click= "[[goToPage]]">How to add staff?</a></li>
+                    <li><a id="guideManageStaff%2FguideAssignStaff%3Bindex%3D3" on-click= "[[goToPage]]">How to assign an unassigned lead to a staff?</a></li>
+                </ul>
+            </div>
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManageStaff%2FguideEditStaff%3Bindex%3D1" on-click= "[[goToPage]]">How to edit a staff’s details?</a></li>
+                    <li><a id="guideManageStaff%2FguideDeactActStaff%3Bindex%3D2" on-click= "[[goToPage]]">How to deactivate and activate a staff?</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</oj-bind-if>
+
+<oj-bind-if test="[[role() === 'admin' || role()=== 'director' || role()=== 'manager' ]]">
+    <div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
+        <h5>Reports</h5>
+        <div class="contents oj-flex  oj-sm-justify-content-center" style="width: 100%;">
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManageReport%2FguideAllApplicationSummaryReport%3Bindex%3D7" on-click= "[[goToPage]]">How to get All Application Summary Report?</a></li>
+                    <li><a id="guideManageReport%2FguideFinalChoiceReport%3Bindex%3D6" on-click= "[[goToPage]]">How to get Final Choice Report?</a></li>
+                    <li><a id="guideManageReport%2FguideStudentLogReport%3Bindex%3D5" on-click= "[[goToPage]]">How to get Student Log Report?</a></li>
+                    <li><a id="guideManageReport%2FguideReaasignoffStaff%3Bindex%3D1" on-click= "[[goToPage]]">How to reassign a student to another staff/office?</a></li>
+                </ul>
+            </div>
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManageReport%2FguideStudentManagerReport%3Bindex%3D4" on-click= "[[goToPage]]">How to get Student Manager Report?</a></li>
+                    <li><a id="guideManageReport%2FguideApplicantReport%3Bindex%3D3" on-click= "[[goToPage]]">How to get an Applicant Report?</a></li>
+                    <li><a id="guideManageReport%2FguideMissedReminder%3Bindex%3D2" on-click= "[[goToPage]]">How to get Missed Reminder Report?</a></li>
+                    <li><a id="guideManageReport%2FguideApplicationSubmition%3Bindex%3D0" on-click= "[[goToPage]]">How to get a Staff Application Submission Report?</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</oj-bind-if>

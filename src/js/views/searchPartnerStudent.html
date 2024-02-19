@@ -1,0 +1,51 @@
+<div class="oj-panel" style="margin: 10px;">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        Search Student By
+        <span style="font-size: 15px;font-weight: 500;">(student name/student ID)</span>
+    </h6>
+</div>
+
+<div class="oj-panel" style="margin: 10px;padding: 20px;">
+    <div class="oj-flex  oj-sm-justify-content-center">
+        <oj-input-search id="search1" suggestions="[[studentsDP]]" value="{{student}}" on-oj-value-action="[[handleValueAction]]"
+            placeholder="Search..." aria-label="My search field" style="width: 350px;"></oj-input-search>
+    </div>
+    
+    <div style="margin-top: 20px;">
+        <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[searchDataProvider]]"
+            dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+            columns='[
+                {"headerText": "Student Id",  "field": "id", "headerClassName": "oj-sm-only-hide",
+                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                {"headerText": "First Name",  "field": "firstName", "resizable": "enabled", "id": "depName"},
+                {"headerText": "Last Name",  "field": "lastName", "headerClassName": "oj-sm-only-hide",
+                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"}]'
+            class="demo-table-container">
+        
+            <template slot="rowTemplate" data-oj-as="row">
+                <tr>
+                    <td>
+                        <a :id="[[row.data.id]]" on-click= "[[viewProfile]]" target="_blank">
+                            <oj-bind-text value="[[row.data.id]]"></oj-bind-text>
+                        </a>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.firstName]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.lastName]]"></oj-bind-text>
+                    </td>
+                </tr>
+            </template>
+            <oj-menu
+                slot="contextMenu"
+                on-oj-menu-action="[[myActionFunction]]"
+                on-oj-before-open="[[myBeforeOpenFunction]]"
+                aria-label="Employee Edit">
+                <oj-option value="openNewTab">Open link in a new tab</oj-option>
+                <oj-option value="Sort Ascending" data-oj-command="oj-table-sortAsc"></oj-option>
+                <oj-option value="Sort Descending" data-oj-command="oj-table-sortDsc"></oj-option>
+            </oj-menu>
+        </oj-table>
+    </div>
+</div>

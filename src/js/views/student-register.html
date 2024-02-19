@@ -1,0 +1,74 @@
+<link rel="stylesheet" href="../../css/student-register.css">
+
+<div class="oj-panel">
+    <div class="outer-form ">
+        <div class="oj-flex oj-sm-flex-direction-column oj-sm-align-items-center">
+            <div class="oj-flex-item oj-sm-padding-2x-horizontal">
+                <img src="../../css/images/uanlogo.png" alt="UAN Logo"/>
+            </div>
+            <oj-validation-group id="formValidation" role="group" style="width: 100%;">
+                <p class="heading">Greetings from University Admissions Networks!</p>
+                <p>
+                    Kindly fill out the following form and help us to know more about you.
+                    <br>
+                    This will help us to place you in the best class university in the world.
+                </p>
+                <oj-form-layout id="personal-information" direction="row" max-columns="2" style="margin-top: 40px;">
+                    <oj-input-text required id="firstName" value="{{firstName}}" label-hint="First Name"></oj-input-text>
+                    <oj-input-text required id="lastName" value="{{lastName}}" label-hint="Last Name"></oj-input-text>
+                    
+                    <oj-form-layout direction="row" columns="2">
+                        <oj-select-single required id="nearestOffice" label-hint="Country Code" label-edge="inside"
+                            data="[[countryCodes]]" value="{{countryCode}}"></oj-select-single>
+                        <div>
+                            <oj-input-text required id="mobileNumber" value="{{mobileNumber}}" label-hint="Mobile Number" 
+                            on-value-changed="[[phoneValidator]]"></oj-input-text>
+                            <div class="oj-text-color-danger"><oj-bind-text value='[[phoneError]]'></oj-bind-text></div></br>
+                        </div>
+                    </oj-form-layout>
+                    <div>
+                        <oj-input-text required id="email" value="{{email}}" label-hint="Email" on-value-changed="[[emailPatternValidator]]"></oj-input-text>
+                        <div class="oj-text-color-danger"><oj-bind-text value='[[emailError]]'></oj-bind-text></div></br>
+                    </div>
+                </oj-form-layout>
+                <oj-form-layout direction="row" max-columns="3">
+                    <oj-select-single required id="nearestOffice" label-hint="Your nearest office" label-edge="inside"
+                        data="[[officeDp]]" value="{{nearestOffice}}"></oj-select-single>
+                    <oj-select-single required id="select" label-hint="Which course are you intrested in ?" label-edge="inside"
+                        data="[[coursesDp]]" value="{{intrestedCourse}}"></oj-select-single>
+                    <oj-select-single required id="select" label-hint="Study abroad Destination" label-edge="inside"
+                        data="[[abroadDestionationsDp]]" value="{{studyAbroadDestination}}"></oj-select-single>
+                </oj-form-layout>
+            </oj-validation-group>
+            <oj-button id="button1" on-oj-action="[[formSubmit]]">Submit</oj-button>
+            
+    
+            <oj-popup id="popup1" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+                position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+                <div class="demo-popup-body">
+                    <div class="demo-popup-content oj-sm-padding-2x">
+                        <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+                    </div>
+                </div>
+            </oj-popup>
+    
+            <oj-popup id="popup2" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+                position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+                <div class="demo-popup-body">
+                    <div class="demo-popup-header" >
+                        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[cancelListener]]">
+                            <span slot="startIcon" class="oj-ux-ico-close"></span>
+                            Cancel
+                        </oj-button>
+                    </div>
+                    <div class="demo-popup-content oj-sm-padding-2x">
+                        <img src="../../css/images/uanlogo.png" alt="UAN Logo"/>
+                        <p class="heading">
+                            Thank you for registering with us. Our team will get in touch with you soon.
+                        </p>
+                    </div>
+                </div>
+            </oj-popup>
+        </div>
+    </div>
+</div>

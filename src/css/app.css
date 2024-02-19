@@ -1,0 +1,190 @@
+/*
+    Document   : override
+    Created on : <date>
+    Author     : <author>
+    Description:
+        This is where any of your application specific styles should be included
+*/
+:root {
+  --oj-dialog-header-padding: .6rem;
+  --oj-dialog-body-padding: 1rem;
+
+  --oj-dialog-header-border-color: green;
+  --oj-dialog-cancel-icon-margin-end: .7rem;
+  --oj-dialog-cancel-icon-margin-top: .1rem;
+
+  --oj-dialog-title-line-height : var(--oj-typography-subheading-lg-line-height);
+  --oj-dialog-title-text-color :#012552;
+}
+
+.sendOffScreen {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.demo-oracle-icon {
+  width:137px;
+  height:18px
+}
+
+.demo-oracle-icon:before {
+  content:url("images/oracle_logo.svg")
+}
+
+html:not([dir="rtl"]) .demo-oracle-icon {
+  padding-right:4px
+}
+
+html[dir="rtl"] .demo-oracle-icon {
+  padding-left:4px
+}
+
+.demo-oracle-icon:before {
+  display:inline
+}
+
+.demo-appheader-avatar {
+  width:24px;
+  height:24px
+}
+
+.demo-controls{
+  background-color: #fff;
+  margin: 10px;
+  border-radius: 10px;
+}
+
+.demo-appheader-avatar:before {
+  content:url("images/avatar_24px.png")
+}
+
+oj-button{
+  background-color: #06668a;
+  border-radius: 10px;
+  border: none !important;
+}
+
+.oj-button-text{
+  color: #fff !important;
+}
+
+.oj-button-button{
+  border: none;
+}
+
+.oj-button-icon{
+  color: #fff !important;
+}
+
+.oj-drawer-reflow-wrapper{
+  height: 100vh;
+  background-color: #093748;
+}
+
+oj-drawer-layout {
+  background-color: #093748;
+}
+
+.oj-drawer-layout-main-content{
+  background-color: #f2f4f4;
+}
+
+.oj-web-applayout-max-width{
+  height: 100vh;
+}
+
+.oj-navigationlist-item-label{
+  color: #e6e6dc !important;
+}
+
+.oj-navigationlist-toolbar{
+  display: none;
+}
+
+.oj-drawer-overlay{
+  background-color: #093748 !important;
+}
+
+#nav-close{
+  display: none;
+}
+
+.demo-table-container {
+  width: 100%;
+  max-height: 30rem;
+}
+
+.demo-table-container tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.oj-table-column-header-cell{
+  text-align: center;
+}
+
+.oj-table-column-header-text{
+  font-size: 11px;
+}
+
+tr{
+  font-size: 11px !important;
+}
+
+td{
+  text-align: center !important;
+}
+
+.oj-navigationlist-collapsible-transition .oj-navigationlist-item-content{
+  padding-left: 20px !important;
+}
+
+.oj-navigationlist-item-icon{
+  color: #fff;
+}
+
+.oj-navigationlist-item-label{
+  color: #fff;
+}
+
+.oj-navigationlist-item-icon:hover{
+  color: #fff !important;
+}
+
+.oj-navigationlist-expand-icon{
+  color: #fff !important;
+}
+
+.oj-navigationlist-collapse-icon{
+  color: #fff !important;
+}
+
+
+@media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi), (min-resolution: 1.5dppx) {
+  .demo-appheader-avatar:before {
+      content:url("images/avatar_24px_2x.png");
+      -webkit-transform:translate(-25%, -25%) scale(0.5);
+      transform:translate(-25%, -25%) scale(0.5)
+  }
+}
+
+@media (max-width: 1023px) {
+  #nav-close{
+    display: block;
+  }
+}
+
+.oj-selected > a.oj-tabbar-item-content > .oj-tabbar-item-label {
+  color: #f2f2f2;
+}
+
+.oj-tabbar-horizontal:not(.oj-tabbar-icon-only) .oj-tabbar-item.oj-selected {
+  border-color: rgb(90 163 191);
+}
+
+.oj-tabbar .oj-tabbar-item.oj-selected {
+  background-color: #06668a;
+}

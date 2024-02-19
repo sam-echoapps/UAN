@@ -1,0 +1,16 @@
+#form-container{
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.form{
+    width: 100%;
+}
+
+#formValidation{
+    width: 100%;
+}

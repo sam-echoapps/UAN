@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="../../css/signin.css">
+
+<div class="login-div ojet-flex">
+    <div class="login-form">
+        <img src="../../css/images/uanlogo.png" alt="UAN Logo">
+        <oj-validation-group id="formValidation"role="group">
+            <oj-form-layout label-edge="top" id="form-container">
+                <oj-input-text required id="control1" value="{{username}}" label-hint="Username"></oj-input-text>
+                <oj-input-password required id="control3" value="{{password}}" label-hint="Password"></oj-input-password>
+            </oj-form-layout>
+        </oj-validation-group>
+          <oj-button id="button1" on-oj-action="[[signIn]]">Login</oj-button>
+    </div>
+    <oj-popup id="popup1" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center" 
+        position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+        <div class="demo-popup-body">
+            <div class="demo-popup-content oj-sm-padding-2x">
+                <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+            </div>
+        </div>
+    </oj-popup>
+
+    <oj-dialog id="errorLog" style="width:500px;min-width:500px;max-width:500px;">
+        <div slot="header">
+            <p id="dialogTitleId" class="oj-dialog-title">
+                Login Error
+            </p>
+        </div>
+        <div slot="body">
+            Invalid Login Credentials
+        </div>
+        <div slot="footer">
+            <oj-button id="okdelButton" on-oj-action="[[LoginMsgOKClose]]">
+                OK
+            </oj-button>
+        </div>
+    </oj-dialog>
+</div>

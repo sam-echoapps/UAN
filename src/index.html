@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>UAN</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1"/>
+    <link rel="icon" href="css/images/uanlogo.png" type="image/x-icon" />
+
+    <!-- This is the main css file for the default theme -->
+    <!-- injector:theme -->
+    <!-- endinjector -->
+
+    <!-- This contains icon fonts used by the starter template -->
+    <link rel="stylesheet" id="uxiconFont" href="https://static.oracle.com/cdn/fnd/gallery/2304.0.0/images/iconfont/ojuxIconFont.min.css"/>
+
+    <!-- This is where you would add any app specific styling -->
+    <link rel="stylesheet" href="css/app.css" type="text/css" />
+    <script src="https://kit.fontawesome.com/654f86f867.js" crossorigin="anonymous"></script>
+  </head>
+  <body class="oj-web-applayout-body">
+    <!-- Template for rendering navigation items shared between nav bar and nav list -->
+    <script type="text/html" id="navTemplate">
+      <li>
+        <a href="#">
+          <span :class="[[$data.detail.iconClass]]"></span>
+          <oj-bind-text value="[[$data.detail.label]]"></oj-bind-text>
+        </a>
+      </li>
+    </script>
+
+    <div id="globalBody">
+      <div id="announce" tabindex="-1" class="sendOffScreen" :aria-live="[[manner]]" aria-atomic="true">
+        <p id="ariaLiveMessage">
+          <oj-bind-text value="[[message]]"></oj-bind-text>
+        </p>
+      </div>
+
+      <div id="pageContent" class="oj-web-applayout-page">
+        <header role="banner" class="oj-web-applayout-header">
+          <oj-bind-if test="[[SignIn() === 'Y' ]]">
+            <oj-drawer-layout start-opened="{{startOpened}}" end-opened="{{endOpened}}" class="demo-full-height">
+              <div class="demo-padding" style="margin: 10px">
+                <div class="demo-controls oj-flex oj-sm-justify-content-space-between">
+                  <oj-button id="buttonOpener" display="icons" on-oj-action="[[startToggle]]" style="margin: 8px 0px 0px 5px">
+                    <span slot="startIcon" class="oj-ux-ico-menu"></span>
+                    Start
+                  </oj-button>
+                  <div class="oj-flex-bar-end" style="margin: 5px"> 
+                                      
+                    <oj-toolbar>
+                      <a on-click= "[[notifyToggle]]" style="text-decoration: none; display: flex; flex-direction: column; align-items: center;">
+                        <i class="fa-solid fa-bell"></i>
+                        <oj-bind-if test="[[reminderCount() != 0 ]]">
+                          <span class="oj-badge oj-badge-sm oj-badge-danger" style="border-radius: 50%; margin-top: -30px;margin-left: 20px;">
+                            <oj-bind-text value="[[reminderCount]]"></oj-bind-text>
+                          </span>
+                        </oj-bind-if>
+                      </a>
+                      <!-- <a href="#" style="text-decoration: none;">
+                        <i class="fa-solid fa-bell"></i> 
+                        <span class="oj-badge oj-badge-sm oj-badge-danger" style="margin-bottom: 20px; border-radius: 50%;">
+                          <oj-bind-text value="2"></oj-bind-text>
+                        </span>
+                      </a> -->
+                      <oj-menu-button id="userMenu" display="[[smScreen() ? 'icons' : 'all']]" 
+                        style="margin: 0 20px; color: #093748">
+                        <span style="color: #093748 !important">
+                          <oj-bind-text value="[[username]]"></oj-bind-text>
+                        </span>
+                        <span slot="endIcon" style="color: #093748 !important"
+                          :class="[[{'oj-icon demo-appheader-avatar': smScreen(), 'oj-component-icon oj-button-menu-dropdown-icon': !smScreen()}]]">
+                        </span>
+                        <oj-menu id="menu1" slot="menu" on-oj-action="[[logOut]]" style="display: none">
+                          <oj-option id="out" value="out">Sign Out</oj-option>
+                        </oj-menu>
+                      </oj-menu-button>
+                    </oj-toolbar>
+                  </div>
+                </div>
+              </div>
+              <oj-module
+                role="main"
+                class="oj-web-applayout-max-width oj-web-applayout-content"
+                config="[[moduleAdapter.koObservableConfig]]">
+              </oj-module>
+              <div slot="start" class="demo-drawer-start">
+                <div class="demo-drawer-header" style="background-color: #fff">
+                  <div
+                    class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-center oj-sm-align-items-center">
+                    <img src="css/images/uanlogo.png" style="width: 180px; margin: 20px"/>
+                    <oj-button id="nav-close" on-oj-action="[[startToggle]]">
+                      <i class="fa-solid fa-xmark" style="font-size: 20px"></i></oj-button>
+                  </div>
+                </div>
+                <oj-navigation-list drill-mode="collapsible" aria-label="Choose a navigation item" 
+                  selection="{{selectedItem}}" data="[[dataProvider]]" id="navlist">
+                  <template slot="itemTemplate" data-oj-as="item">
+                    <li :id="[[item.data.id]]" :class="[[{'oj-disabled' : item.data.disabled === 'true'}]]">
+                      <a :id="[[item.data.path]]" on-click= "[[goToPage]]">
+                        <span :class="[[item.data.icons]]"></span>
+                        <oj-bind-text value="[[item.data.name]]"></oj-bind-text>
+                      </a>
+                    </li>
+                  </template>
+                </oj-navigation-list>
+                <!-- <oj-navigation-list id="navList" data="[[navDataProvider]]" drill-mode="sliding"
+                  item.renderer="[[KnockoutTemplateUtils.getRenderer('navTemplate', true)]]" selection="{{selection.path}}">
+                </oj-navigation-list> -->
+              </div>
+            </oj-drawer-layout>
+          </oj-bind-if>
+        </header>
+        <oj-bind-if test="[[SignIn() === 'N' ]]">
+          <oj-module
+            role="main"
+            class="oj-web-applayout-max-width oj-web-applayout-content"
+            config="[[moduleAdapter.koObservableConfig]]"
+          >
+          </oj-module>
+        </oj-bind-if>
+        
+        <oj-drawer-popup edge="end" class="demo-drawer-end" opened="{{notifyOpened}}" 
+          on-opened-changed="[[notifyOpenedChangedHandler]]">
+          <div class="demo-drawer-header oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="padding: 10px;">
+            <h6>Reminders</h6>
+            <oj-button id="endButtonCloser" display="icons" chroming="borderless" on-oj-action="[[notifyToggle]]">
+              <span slot="startIcon" class="oj-ux-ico-close"></span>
+              Close
+            </oj-button>
+          </div>
+          <hr>
+          <div class="demo-padding demo-form-container">
+            <oj-list-view id="listview" aria-label="simple todo list" gridlines.item="visible" 
+              data="[[reminderDataProvider]]" class="demo-list">
+              <template slot="itemTemplate" data-oj-as="item">
+                <a :id="[[item.item.data.student_id]]" on-click= "[[viewProfile]]" target="_blank" style="text-decoration: none;">
+                  <oj-list-item-layout>
+                    <div>
+                      <span class="oj-typography-body-md oj-text-color-primary">
+                        <oj-bind-text value="[[item.item.data.note]]"></oj-bind-text>
+                      </span>
+                    </div>
+                    <div slot="secondary" class="demo-tweet">
+                      <span class="oj-typography-body-sm oj-text-color-secondary">
+                        Reminder Date:-<oj-bind-text value="[[item.item.data.reminder_date]]"></oj-bind-text><br>
+                      </span>
+                    </div>
+                    <span slot="tertiary" class="oj-typography-body-xs oj-text-color-secondary">
+                      Created Date:-<oj-bind-text value="[[item.item.data.created_date]]"></oj-bind-text>
+                    </span>
+                  </oj-list-item-layout>
+                </a>
+              </template>
+            </oj-list-view>
+          </div>
+        </oj-drawer-popup>
+        <footer role="contentinfo" style="background-color: #093748; height: 25px;"></footer>
+      </div>
+    </div>
+    <!-- This injects script tags for the main javascript files -->
+    <!-- injector:scripts -->
+    <!-- endinjector -->
+  </body>
+</html>

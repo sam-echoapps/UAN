@@ -1,0 +1,45 @@
+
+.oj-web-applayout-page{
+    height: 100vh;
+    position: relative;
+    background-image: url("../../css/images/bg-img.jpeg");
+    background-repeat: no-repeat;
+    background-position: center;  
+    background-size: cover;
+    /* background-color: #c61d20; */
+    background-color: #c61d2061;
+}
+
+.oj-web-applayout-page::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #06668a8f;
+}
+
+.login-div{    
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 90%;
+}
+
+.login-form{
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-form img{
+    width: 200px;
+    margin-bottom: 10px;
+}

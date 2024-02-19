@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+</head>
+<body>
+    <input type="text" id="searchInput" placeholder="Search...">
+    <table id="dataTable">
+        <thead>
+            <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>John</td>
+                <td>25</td>
+                <td>New York</td>
+            </tr>
+            <tr>
+                <td>Teddy</td>
+                <td>28</td>
+                <td>Canada</td>
+            </tr>
+            <tr>
+                <td>Don</td>
+                <td>25</td>
+                <td>New York</td>
+            </tr>
+        </tbody>
+    </table>
+
+<script type="">
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const dataTable = document.getElementById("dataTable");
+
+        searchInput.addEventListener("input", function () {
+            const searchText = searchInput.value.toLowerCase();
+
+            const rows = dataTable.querySelectorAll("tbody tr");
+            rows.forEach(row => {
+            const rowData = Array.from(row.cells).map(cell => cell.textContent.toLowerCase());
+            const match = rowData.some(cellData => cellData.includes(searchText));
+            row.style.display = match ? "" : "none";
+            });
+        });
+    });
+
+
+
+    const searchText = document.getElementById('filter').rawValue
+                    if(searchText!=undefined){
+                        const dataTable = document.getElementById("dataTable");
+                        const rows = dataTable.querySelectorAll("tbody tr");
+                        
+                        rows.forEach(row => {
+                            const rowData = Array.from(row.cells).map(cell => cell.textContent.toLowerCase());
+                            const match = rowData.some(cellData => cellData.includes(searchText));
+                            row.style.display = match ? "" : "none";
+                        });
+                    }
+</script>
+</body>
+</html>

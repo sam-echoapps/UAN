@@ -1,0 +1,162 @@
+<div class="oj-panel oj-flex oj-sm-justify-content-space-between">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        Staff Application Submission Report
+    </h6>
+</div>
+
+<div class="oj-panel" style="padding: 20px; margin: 20px 0px;">
+    <div class="oj-flex oj-sm-justify-content-flex-start oj-sm-align-items-center">
+        <div style="margin: 20px 0px;">
+            <oj-label for="from">From</oj-label>
+            <oj-input-date id="from" label-hint="Select From date" value="{{fromDate}}" date-picker="[[datePicker]]"
+                class="oj-form-control-max-width-sm" autocomplete="off" style="margin-top: 5px;"></oj-input-date>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div style="margin: 20px 0px;">
+            <oj-label for="to">To</oj-label>
+            <oj-input-date id="to" label-hint="Select To date" value="{{toDate}}" date-picker="[[datePicker]]"
+                class="oj-form-control-max-width-sm" autocomplete="off" style="margin-top: 5px;"></oj-input-date>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <oj-bind-if test="[[userRole() === 'admin' ]]">
+            <div style="margin: 20px 0px;">
+                <oj-label for="to">Office</oj-label>
+                <oj-select-many label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md" value="{{officeId}}"
+                options="[[officesDP]]" on-value-changed="[[officeChangedHandler]]" style="width: 220px;margin-top: 5px;"></oj-select-many>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </oj-bind-if>
+        <oj-bind-if test="[[userRole() === 'director' ]]">
+            <div style="margin: 20px 0px;">
+                <oj-label for="to">Office</oj-label>
+                <oj-select-many label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md" value="{{officeId}}"
+                    options="[[officesDP]]" on-value-changed="[[officeChangedHandler]]" style="width: 220px;margin-top: 5px;"></oj-select-many>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </oj-bind-if>
+        <div style="margin: 20px 0px;">
+            <oj-label for="from">Staff</oj-label>
+            <oj-select-many label-hint="Select Staff" label-edge="inside" class="oj-form-control-max-width-md" value="{{selectStaff}}"
+                options="[[staffsDP]]" style="width: 220px;margin-top: 5px;"></oj-select-many>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div style="margin: 20px 0px;">
+            <oj-radioset id="enabledRadioset" value="{{selectRadio}}">
+                <oj-option value="ASD">ASD</oj-option>
+                <oj-option value="CSD">CSD</oj-option>
+            </oj-radioset>
+        </div>  
+    </div>
+    <div class="oj-flex oj-sm-justify-content-center oj-sm-align-items-center">
+        <oj-button id="button1" on-oj-action="[[showData]]">
+            Show
+        </oj-button>&nbsp;&nbsp;
+        <oj-button id="button1" on-oj-action="[[downloadData]]" style="background-color: #04812f ">
+            Export <i class="fa-solid fa-download"></i>
+        </oj-button>
+    </div>
+</div>
+
+<div id="static-div">
+    <div class="oj-flex oj-sm-justify-content-space-around" style="margin-bottom: 20px;padding: 10px 10px 0px 10px; font-weight: 500;">
+        <p class="oj-flex oj-sm-align-items-center oj-sm-justify-content-center" style="padding: 4px; border-radius: 10px;background-color: #06668a; color: #fff; width: 250px;">
+            Total Applications: <oj-bind-text value="[[applicationCount]]"></oj-bind-text>
+        </p>
+        <p class="oj-flex oj-sm-align-items-center oj-sm-justify-content-center" style="padding: 4px; border-radius: 10px;background-color: #06668a; color: #fff; width: 250px;">
+            Total Applicants: <oj-bind-text value="[[applicantCount]]"></oj-bind-text>
+        </p>
+        <p class="oj-flex oj-sm-align-items-center oj-sm-justify-content-center" style="padding: 4px; border-radius: 10px;background-color: #06668a; color: #fff; width: 250px;">
+            <a on-click= "[[staffCountPopUp]]" target="_blank" style="color: #fff;">
+                Staff Count: <oj-bind-text value="[[applicationCount]]"></oj-bind-text>
+            </a>
+        </p>
+    </div>
+</div>
+
+<div class="oj-panel">
+    <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[dataProvider]]"
+        dnd='{"reorder": {"columns": "enabled"}}'
+        scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+        columns='[{"headerText": "Application Staff",  "field": "applicationStaff", "headerClassName": "oj-sm-only-hide", 
+                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "applicationStaff"},
+                {"headerText": "Student Id",  "field": "studentId", "resizable": "enabled", "id": "studentId"},
+                {"headerText": "Name",  "field": "name", "headerClassName": "oj-sm-only-hide", 
+                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "name"},
+                {"headerText": "Course Name",  "field": "courseName", "resizable": "enabled", "id": "courseName"},
+                {"headerText": "University",  "field": "university", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "university"},
+                {"headerText": "Date Sent",  "field": "dateSent", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "dateSent"},
+                {"headerText": "Course Start Date",  "field": "courseStartDate", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "courseStartDate"},
+                {"headerText": "Counsellor",  "field": "counsellor", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "counsellor"},
+                {"headerText": "Counsellor Office",  "field": "counsellorOffice", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "counsellorOffice"}
+            ]'
+        class="demo-table-container">
+        <template slot="rowTemplate" data-oj-as="row">
+            <tr>
+                <td><oj-bind-text value="[[row.data.applicationStaff]]"></oj-bind-text></td>
+                <td>
+                    <a :id="[[row.data.studentId]]" on-click= "[[viewProfile]]" target="_blank"><oj-bind-text value="[[row.data.studentId]]"></oj-bind-text></a>
+                </td>
+                <td><oj-bind-text value="[[row.data.name]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.courseName]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.university]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.dateSent]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.courseStartDate]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.counsellor]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.counsellorOffice]]"></oj-bind-text></td>
+            </tr>
+        </template>
+        <oj-menu
+            slot="contextMenu"
+            on-oj-menu-action="[[myActionFunction]]"
+            on-oj-before-open="[[myBeforeOpenFunction]]"
+            aria-label="Employee Edit">
+            <oj-option value="openNewTab">Open link in a new tab</oj-option>
+            <oj-option value="Sort Ascending" data-oj-command="oj-table-sortAsc"></oj-option>
+            <oj-option value="Sort Descending" data-oj-command="oj-table-sortDsc"></oj-option>
+        </oj-menu>
+    </oj-table>
+</div>
+
+<oj-popup id="progressBar" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
+
+
+<oj-dialog id="staffCount" style="width: 800px;">
+    <div slot="header">
+        <p id="dialogTitleId" class="oj-dialog-title">Staff Count</p>
+    </div>
+    <div slot="body">
+        <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[staffCountData]]"
+            dnd='{"reorder": {"columns": "enabled"}}'
+            scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+            columns='[{"headerText": "Staff",  "field": "staff", "headerClassName": "oj-sm-only-hide", 
+                        "className": "oj-sm-only-hide", "resizable": "enabled", "id": "staff"},
+                    {"headerText": "Count",  "field": "staffCount", "resizable": "enabled", "id": "staffCount"}
+                ]'
+            class="demo-table-container">
+            <template slot="rowTemplate" data-oj-as="row">
+                <tr>
+                    <td><oj-bind-text value="[[row.data.staff]]"></oj-bind-text></td>
+                    <td><oj-bind-text value="[[row.data.staffCount]]"></oj-bind-text></td>
+                </tr>
+            </template>
+        </oj-table>
+    </div>
+    <div slot="footer" class="oj-flex oj-sm-justify-content-center">
+        <oj-button display="icons" on-oj-action="[[closePopup]]" style="width: 80px;">
+            Okay
+        </oj-button> 
+    </div>
+</oj-dialog>
+

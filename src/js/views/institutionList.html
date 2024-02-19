@@ -1,0 +1,125 @@
+<link rel="stylesheet" href="../../css/dashboard.css">
+
+<div class="oj-panel oj-flex  oj-sm-align-items-center" style="margin: 10px;">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        Institution List
+    </h6>
+</div>
+
+<div class="oj-flex oj-sm-justify-content-space-between" style="margin-top:30px;">
+    <p class="oj-flex oj-sm-align-items-center" style="padding: 4px 10px; border-radius: 10px;background-color: #06668a; color: #fff; width: 150px;">
+        Total Records: <oj-bind-text value="[[institutionCount]]"></oj-bind-text>
+    </p>
+    <div class="oj-flex">
+        <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Search" label-edge="inside"
+            placeholder="Search...." on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}" clear-icon="always" style="width: 300px;">
+        </oj-input-text>
+        &nbsp;&nbsp;&nbsp;
+        <oj-button id="button1" on-oj-action="[[addInstitute]]">
+            <i class="fa-solid fa-landmark"></i>
+            Add New Institute
+        </oj-button>
+    </div>
+</div>
+
+<div>
+    <oj-table id="table" aria-label="Task Table" accessibility.row-header="name"
+        data="[[institutionDataProvider]]" columns-default.sortable="disabled" layout="fixed"
+        columns='[
+            {"headerText": "#", "id": "institutionId"},
+            {"headerText": "Institution", "id": "institutionName", "weight": 5},
+            {"headerText": "Institution Type", "id": "institutionType", "weight": 2},
+            {"headerText": "Territory", "id": "terittory"},
+            {"headerText": "Commission Rate New", "id": "commissionRate", "weight": 2},
+            {"headerText": "Bonus/Special Offer", "id": "bonus","weight": 2},
+            {"headerText": "Application Method", "id": "applicationMethod","weight": 2},
+            {"headerText": "Agent Portal Details", "id": "agentPortal","weight": 2},
+            {"headerText": "Notes", "id": "restrictionNotes","weight": 2}]'
+        class="demo-table-container">
+        <template slot="rowTemplate" data-oj-as="row">
+            <tr>
+                <td>
+                    <a :id="[[row.data.institutionId]]" on-click= "[[viewInstitution]]" target="_blank">
+                        <oj-bind-text value="[[row.data.institutionId]]"></oj-bind-text>
+                    </a>
+                </td>
+                <td><oj-bind-text value="[[row.data.institutionName]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.institutionType]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.terittory]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.commissionRate]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.bonus]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.applicationMethod]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.agentPortal]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.restrictionNotes]]"></oj-bind-text></td>
+            </tr>
+        </template>
+    </oj-table>
+</div>
+
+<oj-dialog id="addInstitute" style="width: 800px;">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">Add New Institute</p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[cancelAddInstitutePopup]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-validation-group id="usersApplication" class="form-container" role="group">
+                <oj-form-layout id="personal-information" direction="row" max-columns="2" style="padding: 10px 20px;">
+                    <oj-input-text id="institutionName" label-hint="Institution Name" required="true" value="{{institutionName}}"></oj-input-text>
+                    <oj-select-single id="select" label-hint="Institution Type" required="true" label-edge="inside" data="[[institutionTypeSet]]" value="{{institutionType}}">
+                    </oj-select-single>
+                    <div class="oj-flex">
+                        <oj-input-text id="email" label-hint="Email" value="{{email}}"></oj-input-text>
+                        <p class="oj-text-color-danger"><oj-bind-text value="[[emailError]]"></oj-bind-text></p>
+                    </div>
+                    <div class="oj-flex">
+                        <oj-input-text id="email" label-hint="Invoice Email" value="{{invoiceEmail}}"></oj-input-text>
+                        <p class="oj-text-color-danger"><oj-bind-text value="[[invoiceEmailError]]"></oj-bind-text></p>
+                    </div>
+                    <div class="oj-flex">
+                        <oj-input-text id="homePage" label-hint="Home Page" value="{{homePage}}"></oj-input-text>
+                        <p class="oj-text-color-danger"><oj-bind-text value="[[urlError]]"></oj-bind-text></p>
+                    </div>
+                    <oj-select-single id="select" label-hint="Country" label-edge="inside" required="true" data="[[countrySet]]" value="{{country}}">
+                    </oj-select-single>
+                    <oj-select-single id="select" label-hint="Territory" required="true" label-edge="inside" data="[[territorySet]]" value="{{territory}}">
+                    </oj-select-single>
+                    <oj-input-number id="commissionRate" value="{{commissionRate}}" min="0" max="100" step="10" 
+                        label-hint="Commission Rate" label-edge="inside"></oj-input-number>
+                    <oj-input-text id="bonus" label-hint="Bonus/Special Offer" value="{{bonus}}"></oj-input-text>
+                    <oj-input-date id="validFrom" label-hint="Valid From" value="{{validFrom}}"
+                        max="[[validUntil]]" autocomplete="off"></oj-input-date>
+                    <oj-input-date id="validUntil" label-hint="Valid Until" value="{{validUntil}}" 
+                        min="[[validFrom]]" autocomplete="off"></oj-input-date>
+                    <oj-input-text id="applicationMethod" label-hint="Application Method" value="{{applicationMethod}}"></oj-input-text>
+                    <oj-input-text id="commissionable" label-hint="Course name Commissionable" value="{{commissionable}}"></oj-input-text>
+                    <oj-input-text id="agentPortal" label-hint="Agent Portal Details" value="{{agentPortal}}"></oj-input-text>
+                </oj-form-layout>
+                <oj-form-layout id="personal-information" direction="row" max-columns="2" style="padding: 10px 20px;">
+                    <oj-select-many id="select1" value="{{courseType}}" label-edge="inside" label-hint="Course Type" options="[[courseTypeSet]]"
+                        class="oj-form-control-max-width-md">
+                    </oj-select-many>
+                    </oj-select-single>
+                    <oj-text-area id="restrictionNotes" label-hint="Restriction Notes" rows="6" value="{{restrictionNotes}}"></oj-text-area>
+                </oj-form-layout>
+            </oj-validation-group>
+            <div class=" oj-flex oj-sm-justify-content-center">
+                <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[submitInstitution]]" style="width: 100px;">
+                    Submit
+                </oj-button>
+            </div>
+        </div>
+    </div>
+</oj-dialog>
+
+<oj-popup id="progress" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>

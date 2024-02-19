@@ -1,0 +1,96 @@
+.dashboard{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.year-data{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+#year-data-set{
+    width: 100%;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+hr{
+    border-bottom: 1px dotted black;
+    width: 100%;
+}
+
+.year-data-set{
+    padding: 10px;
+    display: flex;
+    margin: 20px 10px;
+    width: 250px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    cursor: pointer;
+    background-color: #06668a;
+    color: #fff;
+    transition: transform 0.5s ease-in-out;
+}
+
+.year-data-set:hover {
+    transform: scale(1.1);
+}
+
+.year-data-set p{
+    font-size: 15px;
+}
+
+#tabbardemo{
+    margin-top: 20px !important;
+}
+
+#table{
+    width: 100%;
+    margin-top: 20px;
+}
+
+.tbl-top-btn{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.num{
+    border: 3px solid #fff;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    padding: 10px;
+    font-size: 20px !important;
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.oj-selected{
+    background-color: #06668a !important;
+}
+
+.oj-selected .oj-button-label .oj-complete .oj-button-text{
+    color: #fff !important;
+}
+
+.oj-component .oj-enabled .oj-button-text{
+    color: black !important;
+}
+
+oj-button .oj-button-button .oj-button-label .oj-button-text{
+    color: #fff !important;
+}
+
+ul .oj-selected{
+    color: #f0f0f0 !important;
+}
