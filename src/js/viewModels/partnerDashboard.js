@@ -31,10 +31,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     let cardId = event.currentTarget.id;
                     
                     if(cardId==1){
-                        self.router.go({path : 'students'});
+                        self.router.go({path : 'partnerStudents'});
                     }
                     else if(cardId==2){
-                        self.router.go({path : 'application'});
+                        self.router.go({path : 'partnerApplication'});
                     }
                     else{
                         self.router.go({path : 'finalchoiced'});

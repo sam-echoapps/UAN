@@ -1395,6 +1395,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.addLogCancel = ()=>{
                     let popup = document.getElementById("addLog");
                     popup.close();
+                    location.reload()
                 }
                 self.reminderDate = ko.observable(null);
 

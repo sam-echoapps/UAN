@@ -42,6 +42,7 @@
                     {"headerText": "First Name",  "field": "firstName", "resizable": "enabled", "id": "depName"},
                     {"headerText": "Last Name",  "field": "lastName", "headerClassName": "oj-sm-only-hide", 
                         "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                    {"headerText": "Status",  "field": "status", "resizable": "enabled", "id": "status"},
                     {"headerText": "Date Submitted",  "field": "dateSubmitted", "headerClassName": "oj-md-down-hide",
                         "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"}]'
                 class="demo-table-container">
@@ -54,6 +55,7 @@
                         </td>
                         <td><oj-bind-text value="[[row.data.firstName]]"></oj-bind-text></td>
                         <td><oj-bind-text value="[[row.data.lastName]]"></oj-bind-text></td>
+                        <td><oj-bind-text value="[[row.data.status]]"></oj-bind-text></td>
                         <td><oj-bind-text value="[[row.data.dateSubmitted]]"></oj-bind-text></td>
                     </tr>
                 </template>

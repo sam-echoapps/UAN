@@ -91,7 +91,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.viewProfile = (e)=>{
                     // window.location.href = `/?ojr=studentProfile&id=${e.currentTarget.id}`;
-                    window.open(`/?ojr=studentProfile&id=${e.currentTarget.id}`, "_blank");
+                    window.open(`/?ojr=partnerStudentProfile&id=${e.currentTarget.id}`, "_blank");
                 }
 
                 self.stIdRightClick = ko.observable();
@@ -99,7 +99,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     let menu = event.detail.selectedValue;
                     if(menu=="openNewTab"){
                         if(self.stIdRightClick()!=undefined){
-                            window.open(`/?ojr=studentProfile&id=${self.stIdRightClick()}`, "_blank");
+                            window.open(`/?ojr=partnerStudentProfile&id=${self.stIdRightClick()}`, "_blank");
                         }
                     }
                 };

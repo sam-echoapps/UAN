@@ -1369,7 +1369,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             office: self.office1(),
                             consultant: self.consultant(),
                             marketingSource: self.marketingSource(),
-                            partner: self.partner()
+                            partner: self.partner(),
+                            firstName: self.firstName(),
+                            lastName: self.lastName(),
+                            phone: self.mobileNumber(),
+                            email: self.email(),
+                            nationality: self.nationality()
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
@@ -1397,6 +1402,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.addLogCancel = ()=>{
                     let popup = document.getElementById("addLog");
                     popup.close();
+                    location.reload()
                 }
                 self.reminderDate = ko.observable(null);
 
