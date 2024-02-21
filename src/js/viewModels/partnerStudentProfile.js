@@ -1168,6 +1168,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 });
                 self.tutionFeeCurrency = ko.observable("");
                 self.depositCurrency = ko.observable("");
+                self.partnerName = ko.observable("");
 
                 self.years = ko.observable();
                 const currentYear = new Date().getFullYear();
@@ -1412,6 +1413,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 partnerId: sessionStorage.getItem("userPartnerId"),
                                 note: self.note(),
                                 reminderDate: self.reminderDate(),
+                                contactType: self.contactType(),
                                 leadSource: self.leadSource(),
                             }),
                             dataType: 'json',
@@ -1869,7 +1871,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                     self.offerFileUrl("");
                                     self.offerFile(data[0][17]);
                                 }
-                                
+                                self.partnerName(data[0][35] + " " + data[0][36]);
                                 let popup = document.getElementById("applicationEdit");
                                 popup.open();
                             }

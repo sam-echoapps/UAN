@@ -22,11 +22,24 @@
     </div>
 </div>
 
+
 <div class="oj-flex oj-sm-justify-content-space-between" style="margin: 40px 20px;">
     <div>
         <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Search" label-edge="inside"
             placeholder="Search.." on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}" 
             clear-icon="always" style="width: 300px;"></oj-input-text>
+    </div>
+    <div>
+        <p class="oj-flex oj-sm-align-items-center" id="activeCount" 
+            style="padding: 4px 10px; border-radius: 10px;background-color: #06668a; color: #fff;margin-top: 15px;">
+            Total Active Staff: <oj-bind-text value="[[activeStaffCount]]"></oj-bind-text>
+        </p>
+    </div>
+    <div>
+        <p class="oj-flex oj-sm-align-items-center" id="inactiveCount" 
+            style="padding: 4px 10px; border-radius: 10px;background-color: #06668a; color: #fff;margin-top: 15px;">
+            Total Inactive Staff: <oj-bind-text value="[[inactiveStaffCount]]"></oj-bind-text>
+        </p>
     </div>
     <oj-button id="addButton" on-oj-action="[[addUserPopUp]]">
         <i class="fa-solid fa-user-plus"></i>
@@ -40,6 +53,8 @@
             <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[usersDataProvider]]"
                 dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
                 columns='[
+                    {"headerText": "SL.No",  "field": "slno", "headerClassName": "oj-sm-only-hide",
+                       "className": "oj-sm-only-hide", "resizable": "enabled", "id": "slno"},
                     {"headerText": "Name",  "field": "name", "headerClassName": "oj-sm-only-hide",
                        "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
                     {"headerText": "Office",  "field": "office", "resizable": "enabled", "id": "depName"},
@@ -56,6 +71,9 @@
                 class="demo-table-container">
                 <template slot="rowTemplate" data-oj-as="row">
                     <tr>
+                        <td>
+                            <oj-bind-text value="[[row.data.slno]]"></oj-bind-text>
+                        </td>
                         <td>
                             <oj-bind-text value="[[row.data.name]]"></oj-bind-text>
                         </td>

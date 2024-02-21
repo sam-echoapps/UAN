@@ -2254,6 +2254,40 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         app.onAppSuccess();
                     }
                 }
+
+                self.partnerStatusUpdate = ()=>{
+                    let popup = document.getElementById("progressBar");
+                    popup.open();
+                    if(self.consultant()==""){
+                        self.consultant(null);
+                    }
+                    $.ajax({
+                        url: BaseURL+"/partnerStatusUpdate",
+                        type: 'POST',
+                        data: JSON.stringify({
+                            studentId: self.student(),
+                            status: self.status(),
+                            // subStatus: self.subStatus(),
+                            office: self.office1(),
+                            consultant: self.consultant(),
+                            marketingSource: self.marketingSource(),
+                            partner: self.partner(),
+                            firstName: self.firstName(),
+                            lastName: self.lastName(),
+                            phone: self.mobileNumber(),
+                            email: self.email(),
+                            nationality: self.nationality()
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            location.reload()
+                        }
+                    })
+                }
+
             }
         }
         return  StudentProfile;

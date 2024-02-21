@@ -37,7 +37,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.router.go({path : 'partnerApplication'});
                     }
                     else{
-                        self.router.go({path : 'finalchoiced'});
+                        self.router.go({path : 'partnerFinalchoiced'});
                     }
                 };
 
@@ -52,6 +52,26 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.finalchoicedCount = ko.observable();
                 self.unassignedLeadsCount = ko.observable();
                 self.assignedLeadsCount = ko.observable();
+
+                self.selectList = ko.observable("all");
+                self.list = [
+                    { value: 'all', label: 'All' },
+                    { value: 'unAssigned', label: 'Unassigned Leads' },
+                    { value: 'assigned', label: 'Assigned Leads' },
+                    { value: 'active', label: 'Active' },
+                    { value: 'inactive', label: 'Inactive' },
+                    { value: 'SPAM', label: 'SPAM' },
+                    { value: 'Offer Received', label: 'Offer Received' },
+                    { value: 'Deposit Paid', label: 'Deposit Paid' },
+                    { value: 'Visa Grant', label: 'Visa Grant' },
+                    { value: 'Not Interested', label: 'Not Interested' },
+                    { value: 'Rejected', label: 'Rejected' },
+                    { value: 'closed', label: 'Closed' }
+                ];
+
+                self.listDP = new ArrayDataProvider(self.list, {
+                    keyAttributes: 'value'
+                });
                 
                 self.getDashboardCount = ()=>{
                     $.ajax({
@@ -104,18 +124,20 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 }
 
                 self.studentData = ko.observableArray([]);
-                self.getStudentsData = ()=>{
+                self.getStudentsData = (status)=>{
                     $.ajax({
-                        url: BaseURL+"/getPartnerLeadStudents",
+                        url: BaseURL+"/getAllPartnerStudents",
                         type: 'POST',
                         data: JSON.stringify({
                             partnerId: self.partnerId(),
+                            status: status
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);
                         },
                         success: function (data) {
+                            self.studentData([]);
                             if(data[0]!="No data found"){
                                 data = JSON.parse(data);
                                 let len = data.length;
@@ -142,7 +164,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         }
                     })
                 }
-                self.getStudentsData()
+                self.getStudentsData("All")
                 self.studentDataProvider = new ArrayDataProvider(self.studentData, {
                     keyAttributes: 'id'
                 });
@@ -180,6 +202,13 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.getDashboardCount()
                     }
                 }
+
+
+                self.selectedData = (e)=>{
+                    let selectVal = e.detail.value;
+                    self.getStudentsData(selectVal)
+                }
+
             }
         }
         return  CounsellorDashboard;

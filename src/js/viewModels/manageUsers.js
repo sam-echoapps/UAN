@@ -31,6 +31,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
 
                 self.filter = ko.observable('')
 
+                self.activeStaffCount = ko.observable('0');
+                self.inactiveStaffCount = ko.observable('0');
+
                 self.handleValueChanged = ()=>{
                     self.filter(document.getElementById('filter').rawValue);
                 }
@@ -89,6 +92,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                                     var role = data[i][3].charAt(0).toUpperCase() + data[i][3].slice(1);
                                                 
                                     self.usersData.push({
+                                        slno: i+1,
                                         id: data[i][0],
                                         name: data[i][1],
                                         office: data[i][2],
@@ -576,6 +580,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                 self.closeButton = ()=>{
                     let msgBox = document.getElementById("msgBox")
                     msgBox.close()
+                    location.reload()
                 }
                 
                 self.confirmReassign = ()=>{
@@ -676,6 +681,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                             let popup = document.getElementById("deleteMsg");
                             popup.close();
                             self.getUsers("activeStaff")
+                            location.reload()
                         }
                     })
                 }
@@ -735,9 +741,26 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                     }
                     else {
                         app.onAppSuccess();
-                        self.getOfficess()
+                        self.getOfficess();
+                        self.getStaffCount();
                     }
                 }
+
+                self.getStaffCount = (office)=>{
+                    $.ajax({
+                        url: BaseURL+"/getStaffCount",
+                        type: 'GET',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                                console.log(data)
+                                self.activeStaffCount(data[0].active_count)
+                                self.inactiveStaffCount(data[0].inactive_count)
+                        }
+                    })
+                }
+
 
             }
         }

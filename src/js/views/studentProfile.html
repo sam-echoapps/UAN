@@ -82,14 +82,21 @@
                         <oj-select-single id="selectPartner" label-hint="Select Partner" label-edge="inside" 
                             data="[[partnersDp]]" value="{{partner}}"></oj-select-single>
                     </oj-form-layout>
+                    <oj-bind-if test="[[userRole() === 'admin' ]]">
                     <div class="oj-flex oj-sm-justify-content-center">
-                        <oj-button id="button1" on-oj-action="[[statusUpdate]]">Update</oj-button>
+                        <oj-button id="button1" on-oj-action="[[partnerStatusUpdate]]">Update</oj-button>
                     </div>
+                    </oj-bind-if>
+                    <oj-bind-if test="[[userRole() != 'admin' ]]">
+                        <div class="oj-flex oj-sm-justify-content-center">
+                            <oj-button id="button1" on-oj-action="[[statusUpdate]]">Update</oj-button>
+                        </div>
+                    </oj-bind-if>
                 </div>
             
 
             <div class="oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="width: 100%;">
-                <h6 style="font-weight: 500;font-size: 25px; margin-left: 20px;">Student Log</h6>
+                <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">Student Log</h6>
                 <div class="oj-flex oj-sm-flex-direction-column" style="margin-right: 20px;">
                     <oj-button on-oj-action="[[addLog]]">Add Log</oj-button>
                 </div>
@@ -160,7 +167,7 @@
         </div>
 
         <div id="application" style="display: none;">
-            <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">Add New Applications</h6>
+            <h6 style="font-weight: 500;font-size: 22px;color: #06668a;margin-left: 20px;">Add New Applications</h6>
             
             <div class="oj-panel">
                 <oj-validation-group id="applicationValidation" class="form-container" role="group">
@@ -272,7 +279,7 @@
             </div>
 
             <div class="oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="width: 100%;">
-                <h6 style="font-weight: 500;font-size: 22px;color: #06668a; margin-left: 20px;">ADD FINAL CHOICE </h6>
+                <h6 style="font-weight: 500;font-size: 22px;color: #06668a; margin-left: 20px;">Add Final Choice </h6>
             </div>
             <div class="oj-panel">
                 <div class="oj-flex oj-sm-justify-content-center" style="margin: 20px;">
@@ -436,8 +443,8 @@
             <oj-input-text id="coursenameEdit" label-hint="Course name" required="true" value="{{coursenameEdit}}"></oj-input-text>
             <oj-input-date value="{{courseEndDateEdit}}" label-hint="Course End Date" autocomplete="off"></oj-input-date>
             <oj-input-date value="{{applicationSentDateEdit}}" label-hint="Application Sent Date" autocomplete="off"></oj-input-date>
-            <!-- <oj-select-single id="selectPartner" label-hint="Select Partner" label-edge="inside" 
-                data="[[partnersDp]]" value="{{partnerEdit}}"></oj-select-single>      -->       
+             <oj-select-single id="Partner Name" label-hint="Select Partner" label-edge="inside" 
+                data="[[partnersDp]]" value="{{partnerEdit}}" readonly="true"></oj-select-single>             
             <oj-form-layout direction="row" columns="2">
                 <oj-select-single id="select" label-hint="Currency" label-edge="inside" class="oj-form-control-max-width-md"
                     data="[[currenciesSet]]" value="{{tutionFeeCurrencyEdit}}"></oj-select-single>

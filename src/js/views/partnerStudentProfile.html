@@ -73,7 +73,7 @@
             
 
             <div class="oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="width: 100%;">
-                <h6 style="font-weight: 500;font-size: 25px; margin-left: 20px;">Student Log</h6>
+                <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">Student Log</h6>
                 <div class="oj-flex oj-sm-flex-direction-column" style="margin-right: 20px;">
                     <oj-button on-oj-action="[[addLog]]">Add Log</oj-button>
                 </div>
@@ -144,7 +144,7 @@
         </div>
 
         <div id="application" style="display: none;">
-            <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">Add New Applications</h6>
+            <h6 style="font-weight: 500;font-size: 22px;color: #06668a;margin-left: 20px;">Add New Applications</h6>
             
             <div class="oj-panel">
                 <oj-validation-group id="applicationValidation" class="form-container" role="group">
@@ -255,7 +255,7 @@
             </div>
 
             <div class="oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="width: 100%;">
-                <h6 style="font-weight: 500;font-size: 22px;color: #06668a; margin-left: 20px;">ADD FINAL CHOICE </h6>
+                <h6 style="font-weight: 500;font-size: 22px;color: #06668a; margin-left: 20px;">Add Final Choice </h6>
             </div>
             <div class="oj-panel">
                 <div class="oj-flex oj-sm-justify-content-center" style="margin: 20px;">
@@ -358,6 +358,8 @@
     <div slot="body">
         <oj-validation-group id="formValidation" class="form-container" role="group">
             <oj-form-layout id="personal-information" direction="row" max-columns="2">
+                <oj-select-single id="select" label-hint="Counseling Type" label-edge="inside" required="true" class="oj-form-control-max-width-md" 
+                data="[[contactTypeData]]" value="{{contactType}}" style="width: 100%;"></oj-select-single>
                 <oj-input-text id="leadSource" label-hint="Lead Source" value="{{leadSource}}"></oj-input-text>
                 <oj-input-date label-hint="Reminder Date" value="{{reminderDate}}" autocomplete="off"></oj-input-date>                
                 <oj-text-area value="{{note}}" label-hint="Enter your Notes" required="true" rows="3"></oj-text-area>
@@ -382,6 +384,8 @@
     <div slot="body">
         <oj-validation-group id="formValidation" class="form-container" role="group">
             <oj-form-layout id="personal-information" direction="row" max-columns="2">
+                <oj-select-single id="select" label-hint="Counseling Type" label-edge="inside" required="true" class="oj-form-control-max-width-md" 
+                    data="[[contactTypeData]]" value="{{editContactType}}" style="width: 100%;"></oj-select-single>
                 <oj-input-text id="leadSource" label-hint="Lead Source" value="{{editLeadSource}}"></oj-input-text>                
                 <oj-text-area value="{{editNote}}" label-hint="Enter your Notes" required="true" rows="3"></oj-text-area>
                 <oj-input-date label-hint="Reminder Date" value="{{editReminderDate}}" autocomplete="off"></oj-input-date>
@@ -415,7 +419,7 @@
             <oj-input-text id="coursenameEdit" label-hint="Course name" required="true" value="{{coursenameEdit}}"></oj-input-text>
             <oj-input-date value="{{courseEndDateEdit}}" label-hint="Course End Date" autocomplete="off"></oj-input-date>
             <oj-input-date value="{{applicationSentDateEdit}}" label-hint="Application Sent Date" autocomplete="off"></oj-input-date>
-            <oj-input-text id="partner" label-hint="Partner" value="{{partnerEdit}}"></oj-input-text>
+            <oj-input-text id="partner" label-hint="Partner" value="{{partnerName}}" readonly="true"></oj-input-text>
             <oj-form-layout direction="row" columns="2">
                 <oj-select-single id="select" label-hint="Currency" label-edge="inside" class="oj-form-control-max-width-md"
                     data="[[currenciesSet]]" value="{{tutionFeeCurrencyEdit}}"></oj-select-single>

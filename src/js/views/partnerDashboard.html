@@ -18,19 +18,22 @@
             </oj-action-card>
             <oj-action-card id="3" on-oj-action="[[cardAction]]" class="year-data-set oj-sm-padding-2x demo-card-content">
                 <p class="num"><oj-bind-text value="[[finalchoicedCount]]"></oj-bind-text></p>
-                <p>Final choiced</p>
+                <p>Final choice</p>
             </oj-action-card>
         </div>
         <hr>
     </div>
     
     <h6 style="text-align: center;">Total Students</h6>
-    <div class="oj-flex tbl-top-btn">
+    <div class="oj-flex tbl-top-btn oj-sm-justify-content-space-between">
         <p class="oj-flex oj-sm-align-items-center" id="assignedLeadCount" 
             style="padding: 4px 10px; border-radius: 10px;background-color: #06668a; color: #fff;margin-top: 15px;">
             Total Students: <oj-bind-text value="[[assignedLeadsCount]]"></oj-bind-text>
         </p>
+        <oj-select-single id="select" label-hint="Select Status" label-edge="inside" class="oj-form-control-max-width-md"
+            data="[[listDP]]" on-value-changed="[[selectedData]]" value="{{selectList}}" style="width: 350px;"></oj-select-single>
     </div>
+
 
     <div id="sampleDemo" class="demo-padding demo-container">
         <div id="componentDemoContent">
