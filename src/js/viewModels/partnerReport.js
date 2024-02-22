@@ -7,6 +7,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
         class PartnerReport {
             constructor() {
                 var self = this;
+                let BaseURL = sessionStorage.getItem("BaseURL");
 
                 const currentDate = new Date();
                 const year = currentDate.getFullYear();
@@ -15,10 +16,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.applicationFromValue = ko.observable(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIsoDateString(new Date(year, 0, 1)));
                 self.applicationToValue = ko.observable(ojconverterutils_i18n_1.IntlConverterUtils.dateToLocalIsoDateString(new Date(year, month,day)));
                 self.selectApplicationRadio = ko.observable("ASD"); 
-                self.partner = ko.observable();
+                self.partner = ko.observable(["All"]);
 
                 self.countries = ko.observableArray()
                 self.countries.push(
+                    {value: 'All', label: 'All'},
                     {value: 'Afghanistan', label: 'Afghanistan'},
                     {value: 'Aland Islands', label: 'Aland Islands'} ,
                     {value: 'Albania', label: 'Albania'} ,
@@ -267,7 +269,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     keyAttributes: 'value'
                 });
                 self.country = ko.observable(["All"]);
-
+                self.partners = ko.observableArray([]);
+                self.applicationData = ko.observableArray();
+                self.applicationCountData = ko.observableArray();
+                self.applicationBlob = ko.observable();
+                self.applicationFileName = ko.observable();
 
                 self.connected = function () {
                     if (sessionStorage.getItem("userName") == null) {
@@ -275,8 +281,169 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     }
                     else {
                         app.onAppSuccess();
+                        self.getPartners(); 
                     }
                 }
+
+                self.getPartners = ()=>{
+                    return new Promise((resolve, reject) => {
+                        self.partners([])
+                        $.ajax({
+                            url: BaseURL+"/getPartners",
+                            type: 'GET',
+                            error: function (xhr, textStatus, errorThrown) {
+                                console.log(textStatus);
+                            },
+                            success: function (data) {
+                                if(data[0] != "No data found"){
+                                    data = JSON.parse(data);
+                                    self.partners([])
+                                    self.partners.push({value: `All`, label: `All`})
+                                    let len = data.length;
+                                    for(let i=0;i<len;i++){
+                                        self.partners.push({value: `${data[i][0]}`, label: `${data[i][1]}`})
+                                    }
+                                }
+                            }
+                        })
+                        setTimeout(() => { resolve(); }, 1000);
+                    });
+                }
+                
+                self.partnersList = new ArrayDataProvider(self.partners, {
+                    keyAttributes: 'value'
+                });
+
+                self.viewApplications = ()=>{
+                    self.showApplicationCountData()
+                    
+                    let fromDate = self.applicationFromValue()
+                    let toDate = self.applicationToValue();
+                    let partner = self.partner();
+                    partner = partner.join(",");
+                    let country = self.country();
+                    country = country.join(",");
+                    let radio = self.selectApplicationRadio();
+                    self.applicationData([]);
+                    let popup = document.getElementById("progress");
+                    popup.open();
+                    let dataUrl = "/getPartnerReportApplicationsASD"
+                    if(radio=="CSD"){
+                        dataUrl = "/getPartnerReportApplicationsCSD"   
+                    }
+                    $.ajax({
+                        url: BaseURL+dataUrl,
+                        type: 'POST',
+                        data: JSON.stringify({
+                            partnerId:partner,
+                            fromDate: fromDate,
+                            toDate: toDate,
+                            countryId: country,
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            var csvContent = '';
+                            var headers = ['Student Id', 'Course', 'Name', 'Office', 'Staff','Application Send Date', 'Course Start Date', 
+                                        'Status', 'Nationality',  'Mobile', 'Email', 'Lead Source', 'UTM Source'];
+                            csvContent += headers.join(',') + '\n';
+                            if(data[0]!='No data found'){
+                                data = JSON.parse(data);
+                                console.log(data)
+                                let len = data.length;
+
+                                for(let i=0;i<len;i++){
+                                    self.applicationData.push({
+                                        "studentId" : data[i][0],
+                                        "course" : data[i][1],
+                                        "name" : data[i][2]+" "+data[i][3],
+                                        "asd" : data[i][4],
+                                        "csd" : data[i][5],
+                                        "status" : data[i][6],
+                                        "nationality" : data[i][7],
+                                        "mobile" : data[i][8],
+                                        "email" : data[i][9],
+                                        "leadSource" : data[i][10],
+                                        "utmSource" : data[i][11],
+                                    });
+                                    var rowData = [data[i][0], data[i][1], data[i][2]+" "+data[i][3], data[i][4], data[i][5], data[i][6], data[i][7], 
+                                                data[i][8], data[i][9], data[i][10], data[i][11], data[i][12], data[i][13] ]; 
+                                    csvContent += rowData.join(',') + '\n';
+                                }
+                                var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                                var today = new Date();
+                                var fileName = 'Application_Report_' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.csv';
+                                self.applicationBlob(blob);
+                                self.applicationFileName(fileName);
+                            }
+                            else{
+                                var rowData = []; 
+                                csvContent += rowData.join(',') + '\n';
+                                var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                                var today = new Date();
+                                var fileName = 'Application_Report_' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.csv';
+                                self.applicationBlob(blob);
+                                self.applicationFileName(fileName);
+                            }
+                            let popup = document.getElementById("progress");
+                            popup.close();
+                        }
+                    })
+                }
+                self.applicationDataprovider = new ArrayDataProvider(self.applicationData, { keyAttributes: 'id' });
+
+                self.showApplicationCountData = ()=>{
+                    let fromDate = self.applicationFromValue()
+                    let toDate = self.applicationToValue();
+                    let partner = self.partner();
+                    partner = partner.join(",");
+                    let country = self.country();
+                    country = country.join(",");
+                    let radio = self.selectApplicationRadio();
+                    self.applicationData([]);
+                    let dataUrl = "/getPartnerReportApplicationCountASD"
+                    if(radio=="CSD"){
+                        dataUrl = "/getPartnerReportApplicationCountCSD"   
+                    }
+                    self.applicationCountData([])
+                    $.ajax({
+                        url: BaseURL+dataUrl,
+                        type: 'POST',
+                        data: JSON.stringify({
+                            partnerId:partner,
+                            fromDate: fromDate,
+                            toDate: toDate,
+                            countryId: country,
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            if(data[0]!='No data found'){
+                                data = JSON.parse(data);
+                                let len = data.length;
+                                for(let i=0;i<len;i++){
+                                    self.applicationCountData.push({
+                                        partnerName: data[i][7],
+                                        nationality: data[i][5],
+                                        totalApplications: data[i][0],
+                                        totalConditional: data[i][2],
+                                        totalUnconditional: data[i][1],
+                                        totalRejected: data[i][3],
+                                        totalPending: data[i][4]
+                                    });
+                                }
+                            }
+                        }
+                    })
+                }
+
+                self.applicationCountdataprovider = new ArrayDataProvider(self.applicationCountData, { keyAttributes: 'id' });
+
+
 
             }
         }

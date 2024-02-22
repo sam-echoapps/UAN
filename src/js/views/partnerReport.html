@@ -6,7 +6,7 @@
 
 <div class="oj-panel">
     <div class="oj-flex oj-sm-justify-content-space-around oj-align-items-center">
-        <oj-select-many id="select1" value="{{partner}}" label-edge="inside" label-hint="Partner"
+        <oj-select-many id="select1" value="{{partner}}" label-edge="inside" label-hint="Partner" options="[[partners]]"
         class="oj-form-control-max-width-md" style="width: 300px;">
         </oj-select-many> 
         <div class="oj-flex">
@@ -22,20 +22,21 @@
                 <oj-option value="CSD">CSD</oj-option>
             </oj-radioset>
         </div> 
-        <oj-select-many options="[[countrySet]]" label-hint="Country Of Application" label-edge="inside" class="oj-form-control-max-width-md" 
+        <oj-select-many options="[[countries]]" label-hint="Country Of Application" label-edge="inside" class="oj-form-control-max-width-md" 
         value="{{country}}" style="width: 300px;"></oj-select-many>
         <div class="oj-flex">
-            <oj-button id="button1" on-oj-action="">View All</oj-button>
+            <oj-button id="button1" on-oj-action="[[viewApplications]]">View All</oj-button>
             &nbsp;&nbsp;
             <oj-button id="button1" on-oj-action="">Export</oj-button>
         </div>
          <!-- <span class="oj-text-color-danger" id="instituteAppMessage" style="display: none;">Please select institution</span> -->
     </div> 
     <div class="oj-panel" style="margin-top: 20px;">
-        <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" 
+        <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[applicationCountdataprovider]]"
             columns-default.sortable="disabled" layout="fixed"
             columns='[
-                {"headerText": "Year", "id": "year", "sortable": "enabled", "minWidth":"8rem"},
+                {"headerText": "Partner Name", "id": "partnerName"}, 
+                {"headerText": "Nationality", "id": "nationality", "weight": 2},
                 {"headerText": "Total Applications", "id": "totalApplications"}, 
                 {"headerText": "Total Conditional", "id": "totalConditional", "weight": 2},
                 {"headerText": "Total Unconditional", "id": "totalUnconditional"},
@@ -44,7 +45,8 @@
             class="demo-table-container">
             <template slot="rowTemplate" data-oj-as="row">
                 <tr>
-                    <td><oj-bind-text value="[[row.data.year]]"></oj-bind-text></td>
+                    <td><oj-bind-text value="[[row.data.partnerName]]"></oj-bind-text></td>
+                    <td><oj-bind-text value="[[row.data.nationality]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.totalApplications]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.totalConditional]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.totalUnconditional]]"></oj-bind-text></td>
@@ -55,14 +57,12 @@
         </oj-table>
     </div>
     <div class="oj-panel" style="margin-top: 20px;">
-        <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" 
+        <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[applicationDataprovider]]"
             columns-default.sortable="disabled" layout="fixed"
             columns='[
                 {"headerText": "ID", "id": "year", "sortable": "enabled"},
                 {"headerText": "Course", "id": "totalApplications"}, 
                 {"headerText": "Name", "id": "totalUnconditional"},
-                {"headerText": "Office", "id": "totalPending"},
-                {"headerText": "Staff", "id": "totalRejected"}, 
                 {"headerText": "ASD", "id": "totalRejected"},  
                 {"headerText": "CSD", "id": "totalRejected"}, 
                 {"headerText": "Status", "id": "totalRejected"}, 
@@ -81,8 +81,6 @@
                     </td>
                     <td><oj-bind-text value="[[row.data.course]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.name]]"></oj-bind-text></td>
-                    <td><oj-bind-text value="[[row.data.office]]"></oj-bind-text></td>
-                    <td><oj-bind-text value="[[row.data.staff]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.asd]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.csd]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.status]]"></oj-bind-text></td>
@@ -95,3 +93,12 @@
         </oj-table>
     </div>
 </div>
+
+<oj-popup id="progress" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
