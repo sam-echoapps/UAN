@@ -27,7 +27,7 @@
         <div class="oj-flex">
             <oj-button id="button1" on-oj-action="[[viewApplications]]">View All</oj-button>
             &nbsp;&nbsp;
-            <oj-button id="button1" on-oj-action="">Export</oj-button>
+            <oj-button id="button1" on-oj-action="[[downloadApplicationData]]">Export</oj-button>
         </div>
          <!-- <span class="oj-text-color-danger" id="instituteAppMessage" style="display: none;">Please select institution</span> -->
     </div> 
@@ -36,22 +36,28 @@
             columns-default.sortable="disabled" layout="fixed"
             columns='[
                 {"headerText": "Partner Name", "id": "partnerName"}, 
-                {"headerText": "Nationality", "id": "nationality", "weight": 2},
+                {"headerText": "Total Applicants", "id": "totalApplicants"}, 
                 {"headerText": "Total Applications", "id": "totalApplications"}, 
+                {"headerText": "Total Final Choice", "id": "totalFinalChoice"}, 
                 {"headerText": "Total Conditional", "id": "totalConditional", "weight": 2},
                 {"headerText": "Total Unconditional", "id": "totalUnconditional"},
                 {"headerText": "Total Rejected", "id": "totalRejected"}, 
-                {"headerText": "Total Pending", "id": "totalPending"}]'
+                {"headerText": "Total Pending", "id": "totalPending"},
+                {"headerText": "Total Withrawn", "id": "totalWithdrawn"},
+                {"headerText": "Total CourseFull", "id": "totalCoursefull"}]'
             class="demo-table-container">
             <template slot="rowTemplate" data-oj-as="row">
                 <tr>
                     <td><oj-bind-text value="[[row.data.partnerName]]"></oj-bind-text></td>
-                    <td><oj-bind-text value="[[row.data.nationality]]"></oj-bind-text></td>
+                    <td><oj-bind-text value="[[row.data.totalApplicants]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.totalApplications]]"></oj-bind-text></td>
+                    <td><oj-bind-text value="[[row.data.totalFinalChoice]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.totalConditional]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.totalUnconditional]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.totalRejected]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.totalPending]]"></oj-bind-text></td>
+                    <td><oj-bind-text value="[[row.data.totalWithdrawn]]"></oj-bind-text></td>
+                    <td><oj-bind-text value="[[row.data.totalCoursefull]]"></oj-bind-text></td>
                 </tr>
             </template>
         </oj-table>
@@ -60,34 +66,40 @@
         <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[applicationDataprovider]]"
             columns-default.sortable="disabled" layout="fixed"
             columns='[
+                {"headerText": "Partner Name", "id": "partnerName"}, 
                 {"headerText": "ID", "id": "year", "sortable": "enabled"},
-                {"headerText": "Course", "id": "totalApplications"}, 
-                {"headerText": "Name", "id": "totalUnconditional"},
-                {"headerText": "ASD", "id": "totalRejected"},  
-                {"headerText": "CSD", "id": "totalRejected"}, 
-                {"headerText": "Status", "id": "totalRejected"}, 
-                {"headerText": "Nationality", "id": "totalRejected"}, 
-                {"headerText": "Mobile", "id": "totalRejected"}, 
+                {"headerText": "Course", "id": "course"}, 
+                {"headerText": "Signed By", "id": "signedBy"}, 
+                {"headerText": "Name", "id": "name"},
+                {"headerText": "ASD", "id": "asd"},  
+                {"headerText": "CSD", "id": "csd"}, 
+                {"headerText": "Offer", "id": "offer"}, 
+                {"headerText": "Nationality", "id": "nationality"}, 
+                {"headerText": "Mobile", "id": "mobile"}, 
                 {"headerText": "Email", "id": "totalRejected"},
-                {"headerText": "Lead source", "id": "totalRejected"}]'
+                {"headerText": "Lead source", "id": "lead"},
+                {"headerText": "COA", "id": "coa"}]'
                 
             class="demo-table-container">
             <template slot="rowTemplate" data-oj-as="row">
                 <tr>
+                    <td><oj-bind-text value="[[row.data.partnerName]]"></oj-bind-text></td>
                     <td>
                         <a :id="[[row.data.studentId]]" on-click= "[[viewProfile]]" target="_blank">
                             <oj-bind-text value="[[row.data.studentId]]"></oj-bind-text>
                         </a>
                     </td>
                     <td><oj-bind-text value="[[row.data.course]]"></oj-bind-text></td>
+                    <td><oj-bind-text value="[[row.data.signedBy]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.name]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.asd]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.csd]]"></oj-bind-text></td>
-                    <td><oj-bind-text value="[[row.data.status]]"></oj-bind-text></td>
+                    <td><oj-bind-text value="[[row.data.offer]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.nationality]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.mobile]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.email]]"></oj-bind-text></td>
                     <td><oj-bind-text value="[[row.data.leadSource]]"></oj-bind-text></td>
+                    <td><oj-bind-text value="[[row.data.coa]]"></oj-bind-text></td>
                 </tr>
             </template>
         </oj-table>
