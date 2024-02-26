@@ -610,6 +610,76 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.partnerName = ko.observable('');
                 self.btnAction = ko.observable('');
 
+                self.years = ko.observable();
+                const currentYear = new Date().getFullYear();
+                self.selectYear = ko.observable(currentYear.toString());
+
+                if(sessionStorage.getItem("selectYear")==null || self.selectYear()==currentYear){
+                    sessionStorage.setItem("selectYear", self.selectYear())
+                }
+
+                const years = [];
+                for (let year = currentYear+2; year >= 2022; year--) {
+                    years.push({ value: `${year}`, label: `${year}`})
+                }
+                self.years(years);
+                self.yearsDp = new ArrayDataProvider(self.years(), {
+                    keyAttributes: 'value'
+                });
+
+                self.yearChanged = ()=>{
+                    sessionStorage.setItem("selectYear", self.selectYear());
+                    self.getYearlyPartnerProfilePerformance();
+                }
+
+                self.studentsCount = ko.observable();
+                self.applicationCount = ko.observable();
+                self.finalchoicedCount = ko.observable();
+                self.performancePartnerName = ko.observable();
+
+                self.getYearlyPartnerProfilePerformance = ()=>{
+                    $.ajax({
+                        url: BaseURL+"/getYearlyPartnerProfilePerformance",
+                        type: 'POST',
+                        data: JSON.stringify({
+                            year: self.selectYear(),
+                            partnerId : self.partnerId(),
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                        if(data !="No data found"){
+                            data = JSON.parse(data);
+                            console.log(data)
+                            var studentCount = data[0][0]
+                            var applicationCount = data[0][4]
+                            var finalChoiceCount = data[0][5]
+                            self.performancePartnerName(data[0][2] + " " + data[0][3])
+                            if(studentCount=="No data found"){
+                                self.studentsCount(0)
+                            }
+                            else{
+                                self.studentsCount(studentCount)
+                            }
+                            if(applicationCount=="No data found"){
+                                self.applicationCount(0)
+                            }
+                            else{
+                                self.applicationCount(applicationCount)
+                            }
+                            if(finalChoiceCount=="No data found"){
+                                self.finalchoicedCount(0)
+                            }
+                            else{
+                                self.finalchoicedCount(finalChoiceCount)
+                            }
+                        }
+                    }
+                    })
+                }
+
                 self.getOffices = ()=>{
                     return new Promise((resolve, reject) => {
                         self.offices([])

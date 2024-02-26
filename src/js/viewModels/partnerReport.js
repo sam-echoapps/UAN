@@ -75,6 +75,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 });
 
                 self.viewApplications = ()=>{
+                    self.applicationData([]);
                     self.showApplicationCountData()
                     
                     let fromDate = self.applicationFromValue()
@@ -84,7 +85,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     let country = self.country();
                     country = country.join(",");
                     let radio = self.selectApplicationRadio();
-                    self.applicationData([]);
                     let popup = document.getElementById("progress");
                     popup.open();
                     let dataUrl = "/getPartnerReportApplicationsASD"
@@ -105,6 +105,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             console.log(textStatus);
                         },
                         success: function (data) {
+                            let popup = document.getElementById("progress");
+                            popup.close();
                             var csvContent = '';
                             var headers = ['Student Id', 'Course', 'Name','Application Send Date', 'Course Start Date', 
                                         'Offer', 'Nationality',  'Mobile', 'Email', 'Lead Source', 'UTM Source', 'Partner Name','Signed By','COA'];
@@ -150,8 +152,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.applicationBlob(blob);
                                 self.applicationFileName(fileName);
                             }
-                            let popup = document.getElementById("progress");
-                            popup.close();
                         }
                     })
                 }
@@ -165,7 +165,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     let country = self.country();
                     country = country.join(",");
                     let radio = self.selectApplicationRadio();
-                    self.applicationData([]);
                     let dataUrl = "/getPartnerReportApplicationCountASD"
                     if(radio=="CSD"){
                         dataUrl = "/getPartnerReportApplicationCountCSD"   
@@ -211,7 +210,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.applicationCountdataprovider = new ArrayDataProvider(self.applicationCountData, { keyAttributes: 'id' });
 
                 self.downloadApplicationData = ()=>{
-                    self.showApplicationCountData()
+                    //self.showApplicationCountData()
                         if(self.applicationBlob() != undefined && self.applicationFileName() != undefined){
                             if (window.navigator && window.navigator.msSaveOrOpenBlob) {
                                 window.navigator.msSaveOrOpenBlob(self.applicationBlob(), self.applicationFileName());
