@@ -79,6 +79,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "partnerStudents", detail: { label: "Students", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
+        { path: "guideManageInstitution", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     } else if (sessionStorage.getItem("userRole") == "manager") {
       var navData = [
@@ -119,6 +120,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "partnerStudents", detail: { label: "Students", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
+        { path: "guideManageInstitution", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     } else if (sessionStorage.getItem("userRole") == "partner") {
       var navData = [
@@ -136,6 +138,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "partnerStudents", detail: { label: "Students", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
+        { path: "guideManageInstitution", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     } else {
       var navData = [
@@ -167,6 +170,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "partnerStudents", detail: { label: "Students", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
+        { path: "guideManageInstitution", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     }
     

@@ -94,3 +94,22 @@
         </div>
     </div>
 </oj-bind-if>
+
+
+<oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
+    <div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
+        <h5>Institutions</h5>
+        <div class="contents oj-flex  oj-sm-justify-content-center" style="width: 100%;">
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManageInstitution" on-click= "[[goToPage]]">How to add institution?</a></li>
+                </ul>
+            </div>
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManageoffice%2FguideEditOffice%3Bindex%3D1" on-click= "[[goToPage]]">How to view and manage institute profile?</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>    
+</oj-bind-if>

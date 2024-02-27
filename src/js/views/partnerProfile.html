@@ -75,24 +75,42 @@
                     <oj-select-single id="select" label-hint="Select the year to see the data" label-edge="inside"
                 class="oj-form-control-max-width-md" data="[[yearsDp]]" value="{{selectYear}}" on-value-changed="[[yearChanged]]"></oj-select-single>
                 </br></br>
-                    <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" 
-                        columns-default.sortable="disabled" layout="fixed"
-                        columns='[
-                            {"headerText": "Partner Name", "id": "partnerName"}, 
-                            {"headerText": "Student", "id": "student"}, 
-                            {"headerText": "Applications", "id": "applications"}, 
-                            {"headerText": "FC", "id": "finalCheck"}]'
-                            
-                        class="demo-table-container">
-                        <template slot="rowTemplate" data-oj-as="row">
-                            <tr>
-                                <td><oj-bind-text value="[[row.data.partnerName]]"></oj-bind-text></td>
-                                <td><oj-bind-text value="[[row.data.student]]"></oj-bind-text></td>
-                                <td><oj-bind-text value="[[row.data.applications]]"></oj-bind-text></td>
-                                <td><oj-bind-text value="[[row.data.finalCheck]]"></oj-bind-text></td>
-                            </tr>
-                        </template>
-                    </oj-table>
+                <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[yearlyApplicationDataprovider]]"
+                columns-default.sortable="disabled" layout="fixed"
+                class="demo-table-container">
+                <template slot="rowTemplate" data-oj-as="row">
+                    <tr>
+                        <td><oj-bind-text value="{{currentYearRow}}"></oj-bind-text></td>
+                        <td><oj-bind-text value="{{studentsCount}}"></oj-bind-text></td>
+                        <td><oj-bind-text value="{{applicationCount}}"></oj-bind-text></td>
+                        <td><oj-bind-text value="{{finalchoicedCount}}"></oj-bind-text></td>
+                    </tr>
+                </template>
+            </oj-table>
+            <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[yearlyApplicationDataprovider]]"
+                columns-default.sortable="disabled" layout="fixed"
+                class="demo-table-container">
+                <template slot="rowTemplate" data-oj-as="row">
+                    <tr>
+                        <td><oj-bind-text value="{{previousYearRow}}"></oj-bind-text></td>
+                        <td><oj-bind-text value="{{previousStudentCount}}"></oj-bind-text></td>
+                        <td><oj-bind-text value="{{previousApplicationCount}}"></oj-bind-text></td>
+                        <td><oj-bind-text value="{{previousFinalChoiceCount}}"></oj-bind-text></td>
+                    </tr>
+                </template>
+            </oj-table>
+            <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[yearlyApplicationDataprovider]]"
+                columns-default.sortable="disabled" layout="fixed"
+                class="demo-table-container">
+                <template slot="rowTemplate" data-oj-as="row">
+                    <tr>
+                        <td><oj-bind-text value="{{percentageRow}}"></oj-bind-text></td>
+                        <td><oj-bind-text value="{{percentageStudentCount}}"></oj-bind-text></td>
+                        <td><oj-bind-text value="{{percentageApplicationCount}}"></oj-bind-text></td>
+                        <td><oj-bind-text value="{{percentageFinalChoiceCount}}"></oj-bind-text></td>
+                    </tr>
+                </template>
+            </oj-table>
                 </div>
             </div>
             <div slot="applications" id="blogs-tab-panel" role="tabpanel" aria-labelledby="blogs-tab">

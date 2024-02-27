@@ -627,8 +627,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     keyAttributes: 'value'
                 });
 
+                self.currentYearRow = ko.observable();
+                self.previousYearRow = ko.observable();
+                self.percentageRow = ko.observable();
+
                 self.yearChanged = ()=>{
-                    sessionStorage.setItem("selectYear", self.selectYear());
                     self.getYearlyPartnerProfilePerformance();
                 }
 
@@ -636,6 +639,13 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.applicationCount = ko.observable();
                 self.finalchoicedCount = ko.observable();
                 self.performancePartnerName = ko.observable();
+                self.yearlyApplicationData = ko.observableArray();
+                self.previousStudentCount = ko.observable();
+                self.previousApplicationCount = ko.observable();
+                self.previousFinalChoiceCount = ko.observable();
+                self.percentageStudentCount = ko.observable();
+                self.percentageApplicationCount = ko.observable();
+                self.percentageFinalChoiceCount = ko.observable();
 
                 self.getYearlyPartnerProfilePerformance = ()=>{
                     $.ajax({
@@ -650,13 +660,44 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             console.log(textStatus);
                         },
                         success: function (data) {
+                            console.log(data)
+
+                        self.yearlyApplicationData([])
                         if(data !="No data found"){
                             data = JSON.parse(data);
                             console.log(data)
-                            var studentCount = data[0][0]
-                            var applicationCount = data[0][4]
+                            var studentCount = data[0][4]
+                            var applicationCount = data[0][3]
                             var finalChoiceCount = data[0][5]
-                            self.performancePartnerName(data[0][2] + " " + data[0][3])
+                            var previousStudentCount = data[0][7]
+                            var previousApplicationCount = data[0][6]
+                            var previousFinalChoiceCount = data[0][8]
+                            var percentageStudentCount = data[0][10]
+                            var percentageApplicationCount = data[0][9]
+                            var percentageFinalChoiceCount = data[0][11]
+                            var previousYear = self.selectYear() - 1;
+                            self.performancePartnerName(data[0][1] + " " + data[0][2])
+                            self.currentYearRow("Current Year" + " " + self.selectYear())
+                            self.previousYearRow("Previous Year" + " " + previousYear)
+                            self.percentageRow("% INC/DEC")
+                            // Get a reference to the table component
+                            var table = document.getElementById('table');
+
+                            // Assuming you have a function to retrieve the dynamic header text for the first column
+                            var dynamicHeaderText = self.performancePartnerName()
+
+                            // Define the columns array with the dynamic header text for the first column
+                            var dynamicColumns = [
+                                {"headerText": dynamicHeaderText, "id": "partnerName"}, 
+                                {"headerText": "Student", "id": "student"}, 
+                                {"headerText": "Applications", "id": "applications"}, 
+                                {"headerText": "FC", "id": "finalCheck"}
+                            ];
+
+                            // Set the columns array to the table
+                            table.columns = dynamicColumns;
+                         
+                            
                             if(studentCount=="No data found"){
                                 self.studentsCount(0)
                             }
@@ -675,10 +716,62 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             else{
                                 self.finalchoicedCount(finalChoiceCount)
                             }
+
+                                     
+                            if(previousStudentCount=="No data found"){
+                                self.previousStudentCount(0)
+                            }
+                            else{
+                                self.previousStudentCount(previousStudentCount)
+                            }
+                            if(previousApplicationCount=="No data found"){
+                                self.previousApplicationCount(0)
+                            }
+                            else{
+                                self.previousApplicationCount(previousApplicationCount)
+                            }
+                            if(previousFinalChoiceCount=="No data found"){
+                                self.previousFinalChoiceCount(0)
+                            }
+                            else{
+                                self.previousFinalChoiceCount(previousFinalChoiceCount)
+                            }
+
+
+                            if(percentageStudentCount=="No data found" || percentageStudentCount== null){
+                                self.percentageStudentCount(0 + "%")
+                            }
+                            else{
+                                self.percentageStudentCount(percentageStudentCount+ "%")
+                            }
+                            if(percentageApplicationCount=="No data found" || percentageApplicationCount== null){
+                                self.percentageApplicationCount(0 + "%")
+                            }
+                            else{
+                                self.percentageApplicationCount(percentageApplicationCount + "%")
+                            }
+                            if(percentageFinalChoiceCount=="No data found" || percentageFinalChoiceCount== null){
+                                self.percentageFinalChoiceCount(0 + "%")
+                            }
+                            else{
+                                self.percentageFinalChoiceCount(percentageFinalChoiceCount+ "%")
+                            }
+                            self.yearlyApplicationData.push({
+                                "performancePartnerName" : data[0][1] + " " + data[0][2],
+                                "studentsCount" : data[0][4],
+                                "applicationCount" : data[0][3],
+                                "finalChoiceCount" : data[0][5],
+                                "previousStudentCount" : data[0][7],
+                                "previousApplicationCount" : data[0][6],
+                                "previousFinalChoiceCount" : data[0][8]
+                            });
                         }
                     }
                     })
                 }
+
+                self.yearlyApplicationDataprovider = new ArrayDataProvider(self.yearlyApplicationData, { keyAttributes: 'id' });
+
 
                 self.getOffices = ()=>{
                     return new Promise((resolve, reject) => {
@@ -877,8 +970,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         if(partnerId){
                             self.partnerId(partnerId);
                             sessionStorage.removeItem("partnerId")
-                            self.getOffices().then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getPartners()).then(()=>self.getPartnerContractFile()).then(()=>self.getPartnerNote()).then(()=>self.getPartnerInfo()).then(()=>self.getPartnerPassword()).catch(error => console.error(error))
-                        }else{
+                            self.getOffices().then(()=>self.getYearlyPartnerProfilePerformance()).then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getPartners()).then(()=>self.getPartnerContractFile()).then(()=>self.getPartnerNote()).then(()=>self.getPartnerInfo()).then(()=>self.getPartnerPassword()).catch(error => console.error(error))
+                        }else{ 
                             self.getOffices();
                             self.getBdmCounselors();
                             self.getPartners(); 
@@ -933,6 +1026,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.getPartnerNote(); 
                         self.getPartnerInfo(); 
                         self.getPartnerPassword();
+                        self.getYearlyPartnerProfilePerformance();
                     }
                 }
 
