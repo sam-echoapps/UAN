@@ -8,29 +8,31 @@
     </div>
 </div>
 
-<div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
-    <h5>Manage Students</h5>
-    <div class="contents oj-flex oj-sm-justify-content-center" style="width: 100%;">
-        <div class="content oj-flex oj-sm-flex-direction-column">
-            <ul>
-                <li><a id="guideManageStudents" on-click= "[[goToPage]]">How to add a student?</a></li>
-                <li><a id="guideManageStudents%2FguideEditStudent%3Bindex%3D1" on-click= "[[goToPage]]">How to edit a student’s profile?</a></li>
-                <li><a id="guideManageStudents%2FguideChangeStatus%3Bindex%3D2" on-click= "[[goToPage]]">How to change the status, staff or office of a student?</a></li>
-                <li><a id="guideManageStudents%2FguideSearchStudent%3Bindex%3D6" on-click= "[[goToPage]]">How to search for a student?</a></li>
-            </ul>
-        </div>
-        <div class="content oj-flex oj-sm-flex-direction-column">
-            <ul>
-                <li><a id="guideManageStudents%2FguideStudentLog%3Bindex%3D3" on-click= "[[goToPage]]">How to add a student log?</a></li>
-                <li><a id="guideManageStudents%2FguideAddApplication%3Bindex%3D4" on-click= "[[goToPage]]">How to add and edit an application under a student?</a></li>
-                <li><a id="guideManageStudents%2FguideFinalChoiceApplication%3Bindex%3D5" on-click= "[[goToPage]]">How to add a Final Choice application?</a></li>
-                <oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
-                    <li><a id="guideManageStudents%2FguideDeleteStudent%3Bindex%3D6" on-click= "[[goToPage]]">How to delete a student?</a></li>
-                </oj-bind-if>
-            </ul>
+<oj-bind-if test="[[role() != 'partner']]">
+    <div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
+        <h5>Manage Students</h5>
+        <div class="contents oj-flex oj-sm-justify-content-center" style="width: 100%;">
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManageStudents" on-click= "[[goToPage]]">How to add a student?</a></li>
+                    <li><a id="guideManageStudents%2FguideEditStudent%3Bindex%3D1" on-click= "[[goToPage]]">How to edit a student’s profile?</a></li>
+                    <li><a id="guideManageStudents%2FguideChangeStatus%3Bindex%3D2" on-click= "[[goToPage]]">How to change the status, staff or office of a student?</a></li>
+                    <li><a id="guideManageStudents%2FguideSearchStudent%3Bindex%3D6" on-click= "[[goToPage]]">How to search for a student?</a></li>
+                </ul>
+            </div>
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManageStudents%2FguideStudentLog%3Bindex%3D3" on-click= "[[goToPage]]">How to add a student log?</a></li>
+                    <li><a id="guideManageStudents%2FguideAddApplication%3Bindex%3D4" on-click= "[[goToPage]]">How to add and edit an application under a student?</a></li>
+                    <li><a id="guideManageStudents%2FguideFinalChoiceApplication%3Bindex%3D5" on-click= "[[goToPage]]">How to add a Final Choice application?</a></li>
+                    <oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
+                        <li><a id="guideManageStudents%2FguideDeleteStudent%3Bindex%3D6" on-click= "[[goToPage]]">How to delete a student?</a></li>
+                    </oj-bind-if>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
+</oj-bind-if>
 
 <oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
     <div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
@@ -107,7 +109,55 @@
             </div>
             <div class="content oj-flex oj-sm-flex-direction-column">
                 <ul>
-                    <li><a id="guideManageoffice%2FguideEditOffice%3Bindex%3D1" on-click= "[[goToPage]]">How to view and manage institute profile?</a></li>
+                    <li><a id="guideManageInstitution%2FguideInstitutionProfile%3Bindex%3D1" on-click= "[[goToPage]]">How to view and manage institute profile?</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>    
+</oj-bind-if>
+
+<oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
+    <div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
+        <h5>Manage Partner</h5>
+        <div class="contents oj-flex  oj-sm-justify-content-center" style="width: 100%;">
+
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManagePartner" on-click= "[[goToPage]]">How to create a partner?</a></li>
+                    <li><a id="guideManagePartner%2FguideManagePartnerStudent%3Bindex%3D2" on-click= "[[goToPage]]">How to assign a studnet to a partner?</a></li>
+                </ul>
+            </div>
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManagePartner%2FguideManagePartnerProfile%3Bindex%3D1" on-click= "[[goToPage]]">How to manage a partner profile?</a></li>
+                    <li><a id="guideManagePartner%2FguideManagePartnerReport%3Bindex%3D3" on-click= "[[goToPage]]">How to manage Partner report?</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>    
+</oj-bind-if>
+
+
+<oj-bind-if test="[[role() === 'admin' || role()=== 'director' || role()=== 'partner' ]]">
+    <div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
+        <oj-bind-if test="[[role() != 'partner']]">
+            <h5>Partner View</h5>
+        </oj-bind-if>
+        <div class="contents oj-flex  oj-sm-justify-content-center" style="width: 100%;">
+
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManagePartnerView" on-click= "[[goToPage]]">How to add a student in UAN CRM?</a></li>
+                    <li><a id="guideManagePartnerView%2FguideManagePartnerStudentEdit%3Bindex%3D2" on-click= "[[goToPage]]">How to edit a student profile?</a></li>
+                    <li><a id="guideManagePartnerView%2FguideManagePartnerStudentLog%3Bindex%3D4" on-click= "[[goToPage]]">How to add log in student profile?</a></li>
+                    <li><a id="guideManagePartnerView%2FguideManagePartnerStudentFinalChoice%3Bindex%3D6" on-click= "[[goToPage]]">How to add final choice for a student?</a></li>
+                </ul>
+            </div>
+            <div class="content oj-flex oj-sm-flex-direction-column">
+                <ul>
+                    <li><a id="guideManagePartnerView%2FguideManagePartnerStudentSearch%3Bindex%3D1" on-click= "[[goToPage]]">How to search for a student in UAN CRM?</a></li>
+                    <li><a id="guideManagePartnerView%2FguideManagePartnerStudentStatus%3Bindex%3D3" on-click= "[[goToPage]]">How to changes the status of student?</a></li>
+                    <li><a id="guideManagePartnerView%2FguideManagePartnerStudentApplication%3Bindex%3D5" on-click= "[[goToPage]]">How to create an application for student?</a></li>
                 </ul>
             </div>
         </div>

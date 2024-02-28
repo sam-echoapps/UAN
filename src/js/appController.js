@@ -80,6 +80,8 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "partnerApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "guideManageInstitution", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManagePartner", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManagePartnerView", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     } else if (sessionStorage.getItem("userRole") == "manager") {
       var navData = [
@@ -121,6 +123,8 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "partnerApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "guideManageInstitution", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManagePartner", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManagePartnerView", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     } else if (sessionStorage.getItem("userRole") == "partner") {
       var navData = [
@@ -139,6 +143,9 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "partnerApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "guideManageInstitution", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManagePartner", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManagePartnerView", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "help", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     } else {
       var navData = [
@@ -171,6 +178,8 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "partnerApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "partnerFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "guideManageInstitution", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManagePartner", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "guideManagePartnerView", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     }
     
@@ -249,6 +258,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
             {"name": "Student Manager Report","id": "partnerStudentManagerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerStudentManagerReport"},
           ]
         },
+        {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
       ]
     }
     else{

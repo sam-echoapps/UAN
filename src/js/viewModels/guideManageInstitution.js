@@ -25,8 +25,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'appController', "ojs/ojmodulerouter
             var records = { 
                 "childPath" : [
                     { "path" : "guideAddNewInstitution", "label" : "How to add a new institution?"},
-                    { "path" : "guideEditOffice", "label" : "How to edit the name of an office?"},
-                    { "path" : "guideActDeactOffice", "label" : "How to deactivate and activate an office?"},
+                    { "path" : "guideInstitutionProfile", "label" : "How to view and manage institute profile?"}
                 ]
             }
 
@@ -58,8 +57,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'appController', "ojs/ojmodulerouter
             self.router = self.args.parentRouter.createChildRouter([
                 { path: '', redirect: 'guideAddNewInstitution' },
                 { path: 'guideAddNewInstitution'},
-                { path: 'guideEditOffice' },
-                { path: 'guideActDeactOffice' },
+                { path: 'guideInstitutionProfile' }
             ]);
 
             self.router.currentState.subscribe((args) => {
