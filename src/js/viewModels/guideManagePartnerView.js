@@ -31,6 +31,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'appController', "ojs/ojmodulerouter
                     { "path" : "guideManagePartnerStudentLog", "label" : "How to add log in student profile?"},
                     { "path" : "guideManagePartnerStudentApplication", "label" : "How to create an application for student?"},
                     { "path" : "guideManagePartnerStudentFinalChoice", "label" : "How to add final choice for a student?"},
+                    { "path" : "guideManagePartnerStudentReport", "label" : "How to get student manage report?"},
                 ]
             }
 
@@ -68,6 +69,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'appController', "ojs/ojmodulerouter
                 { path: 'guideManagePartnerStudentLog' },
                 { path: 'guideManagePartnerStudentApplication' },
                 { path: 'guideManagePartnerStudentFinalChoice' },
+                { path: 'guideManagePartnerStudentReport' },
             ]);
 
             self.router.currentState.subscribe((args) => {

@@ -176,14 +176,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     let fromDate = self.fromDate()
                     let toDate = self.toDate();
                     let partner = self.partnerId();
-                    let status = self.inactive();
-                    if(status==undefined){
-                        status = "";
-                    }
-                    else{
-                        status = status[0];
-                    }
-                    if(status=="" || status==undefined){
+                    let status = self.selectList();
+                    status = status.join(",");
                         $.ajax({
                             url: BaseURL+"/getPartnerStaticCount",
                             type: 'POST',
@@ -191,6 +185,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 fromDate: fromDate,
                                 toDate: toDate,
                                 partnerId: partner,
+                                status: status,
                             }),
                             dataType: 'json',
                             error: function (xhr, textStatus, errorThrown) {
@@ -201,14 +196,13 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 if(data[0]!='No data found'){
                                     data = JSON.parse(data);
                                     self.enquiryCount(data[0][0]);
-                                    self.activeCount(data[0][3]);
-                                    self.inactiveCount(data[0][4]);
-                                    self.closedCount(data[0][5]);
-                                    self.casCount(data[0][6]);
+                                    self.activeCount(data[0][1]);
+                                    self.inactiveCount(data[0][2]);
+                                    self.closedCount(data[0][3]);
+                                    self.casCount(data[0][4]);
                                 }
                             }
                         })
-                    }
                 }
 
                 self.showData = ()=>{
