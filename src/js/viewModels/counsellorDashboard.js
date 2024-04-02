@@ -143,6 +143,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         firstName: data[i][4],
                                         lastName: data[i][5],
                                         office: data[i][3],
+                                        destination: data[i][8],
                                         dateSubmitted: date,
                                         status: data[i][7]
                                     })

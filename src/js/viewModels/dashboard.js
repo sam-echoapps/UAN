@@ -391,6 +391,7 @@ define(["knockout","jquery","appController", "ojs/ojarraydataprovider",
                                 firstName: studentData[i][3],
                                 lastName: studentData[i][4],
                                 office: studentData[i][2],
+                                destination: studentData[i][6],
                                 counselors: counselorList,
                                 dateSubmitted: date
                             })
@@ -428,6 +429,7 @@ define(["knockout","jquery","appController", "ojs/ojarraydataprovider",
                                         firstName: data[i][4],
                                         lastName: data[i][5],
                                         office: data[i][3],
+                                        destination: data[i][8],
                                         dateSubmitted: date,
                                         counsilor: data[i][7]
                                     })

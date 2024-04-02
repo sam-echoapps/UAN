@@ -68,6 +68,7 @@
                         {"headerText": "Last Name",  "field": "lastName", "headerClassName": "oj-sm-only-hide", 
                             "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
                         {"headerText": "Office",  "field": "office", "resizable": "enabled", "id": "manId"},
+                        {"headerText": "Destination",  "field": "destination", "resizable": "enabled", "id": "destination"},
                         {"headerText": "Date Submitted",  "field": "dateSubmitted", "headerClassName": "oj-md-down-hide",
                             "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
                         {"headerText": "Assign to Consultant",  "field": "counselors", "headerClassName": "oj-md-down-hide",
@@ -83,6 +84,7 @@
                             <td><oj-bind-text value="[[row.data.firstName]]"></oj-bind-text></td>
                             <td><oj-bind-text value="[[row.data.lastName]]"></oj-bind-text></td>
                             <td><oj-bind-text value="[[row.data.office]]"></oj-bind-text></td>
+                            <td><oj-bind-text value="[[row.data.destination]]"></oj-bind-text></td>
                             <td><oj-bind-text value="[[row.data.dateSubmitted]]"></oj-bind-text></td>
                             <td id="assignCounsilor">
                                 <oj-select-single :id="[[row.data.id]]" label-hint="Select Counsellor" label-edge="inside"
@@ -117,6 +119,7 @@
                         {"headerText": "Last Name",  "field": "lastName", "headerClassName": "oj-sm-only-hide", 
                             "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
                         {"headerText": "Office",  "field": "office", "resizable": "enabled", "id": "manId"},
+                        {"headerText": "Destination",  "field": "destination", "resizable": "enabled", "id": "destination"},
                         {"headerText": "Date Submitted",  "field": "dateSubmitted", "headerClassName": "oj-md-down-hide",
                             "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
                         {"headerText": "Consultant",  "field": "counsilor", "headerClassName": "oj-md-down-hide",
@@ -132,6 +135,7 @@
                             <td><oj-bind-text value="[[row.data.firstName]]"></oj-bind-text></td>
                             <td><oj-bind-text value="[[row.data.lastName]]"></oj-bind-text></td>
                             <td><oj-bind-text value="[[row.data.office]]"></oj-bind-text></td>
+                            <td><oj-bind-text value="[[row.data.destination]]"></oj-bind-text></td>
                             <td><oj-bind-text value="[[row.data.dateSubmitted]]"></oj-bind-text></td>
                             <td><oj-bind-text value="[[row.data.counsilor]]"></oj-bind-text></td>
                         </tr>
