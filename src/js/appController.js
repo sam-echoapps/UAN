@@ -95,7 +95,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "unAssigned", detail: { label: "UnAssigned", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "counsellorDashboard", detail: { label: "Counsellor Dashboard", iconClass: "fa-solid fa-gauge", }, },
         { path: "dashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
-        { path: "manageUsers", detail: { label: "Manage Staff", iconClass: "fa-solid fa-people-roof", }, },
+        { path: "manageManagerUsers", detail: { label: "Manage Staff", iconClass: "fa-solid fa-people-roof", }, },
         { path: "manageOffice", detail: { label: "Manage Office", iconClass: "fa-regular fa-building", }, },
         { path: "managerDashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
         { path: "partnerDashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
@@ -116,6 +116,12 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "guideManageoffice", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "guideManageStaff", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "guideManageReport", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "institutionProfile", detail: { label: "Institution Profile", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "institutionList", detail: { label: "Institution List", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "addPartner", detail: { label: "Partners", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "partnerProfile", detail: { label: "Partner Profile", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "partnerCommission", detail: { label: "Partner Commission", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "partnerReport", detail: { label: "Partner Report", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "searchPartnerStudent", detail: { label: "Search Student", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "partnerStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "partnerStudentProfile", detail: { label: "Student Profile", iconClass: "oj-ux-ico-bar-chart", }, },
@@ -207,8 +213,12 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
             {"name": "Staff Application Submission Report","id": "staffApplication","icons": "oj-ux-ico-bar-chart", "path":"staffApplication"},
           ]
         },
-        {"name": "Institution List","id": "institutionList","icons": "fa-solid fa-landmark", "path":"institutionList"},
-        {"name": "Institution Profile","id": "institutionProfile","icons": "fa-solid fa-landmark", "path":"institutionProfile"},
+        {"name": "Institution", "id": "institution", "icons": "fa-solid fa-landmark", 
+         "children": [
+          {"name": "Institution List","id": "institutionList","icons": "fa-solid fa-landmark", "path":"institutionList"},
+          {"name": "Institution Profile","id": "institutionProfile","icons": "fa-solid fa-landmark", "path":"institutionProfile"}, 
+        ]
+      },
         {"name": "Manage Staff","id": "manageUsers","icons": "fa-solid fa-people-roof", "path":"manageUsers"},
         {"name": "Manage Office","id": "manageOffice","icons": "fa-regular fa-building", "path":"manageOffice"},
         {"name": "Partner", "id": "partner", "icons": "fa-solid fa-handshake-angle", 
@@ -244,7 +254,21 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
             {"name": "Staff Application Submission Report","id": "staffApplication","icons": "oj-ux-ico-bar-chart", "path":"staffApplication"},
           ]
         },
-        {"name": "Manage Staff","id": "manageUsers","icons": "fa-solid fa-people-roof", "path":"manageUsers"},
+        {"name": "Institution", "id": "institution", "icons": "fa-solid fa-landmark", 
+        "children": [
+         {"name": "Institution List","id": "institutionList","icons": "fa-solid fa-landmark", "path":"institutionList"},
+         {"name": "Institution Profile","id": "institutionProfile","icons": "fa-solid fa-landmark", "path":"institutionProfile"}, 
+       ]
+     },
+        {"name": "Manage Staff","id": "manageManagerUsers","icons": "fa-solid fa-people-roof", "path":"manageManagerUsers"},
+        {"name": "Partner", "id": "partner", "icons": "fa-solid fa-handshake-angle", 
+          "children": [
+            {"name": "Partners","id": "addPartner","icons": "fa-solid fa-user-plus", "path":"addPartner"},
+            {"name": "Partner Profile","id": "partnerProfile","icons": "fa-solid fa-user", "path":"partnerProfile"},
+            // {"name": "Partner Commission","id": "partnerCommission","icons": "fa-solid fa-hand-holding-dollar", "path":"partnerCommission"},
+            {"name": "Partner Report","id": "partnerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerReport"}, 
+          ]
+        },
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
       ]
     }
@@ -332,6 +356,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
     self.reminderCount = ko.observable();
     $.ajax({
       url: "http://169.197.183.168:9000/getUserReminderNotes",
+      //url: "/getUserReminderNotes",
       type: "POST",
       data: JSON.stringify({
         userId: self.userId(),
@@ -422,6 +447,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         self.onepDeployList([]);
         $.ajax({
           url: "http://169.197.183.168:9000/onepdep",
+          //url: "/onepdep",
           type: "GET",
           dataType: "json",
           context: self,

@@ -98,7 +98,7 @@
 </oj-bind-if>
 
 
-<oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
+<oj-bind-if test="[[role() === 'admin' || role()=== 'director'|| role()=== 'manager' ]]">
     <div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
         <h5>Institutions</h5>
         <div class="contents oj-flex  oj-sm-justify-content-center" style="width: 100%;">
@@ -116,7 +116,7 @@
     </div>    
 </oj-bind-if>
 
-<oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
+<oj-bind-if test="[[role() === 'admin' || role()=== 'director' || role()=== 'manager' ]]">
     <div class="oj-panel oj-flex oj-sm-align-items-center oj-sm-justify-content-center oj-sm-flex-direction-column">
         <h5>Manage Partner</h5>
         <div class="contents oj-flex  oj-sm-justify-content-center" style="width: 100%;">
