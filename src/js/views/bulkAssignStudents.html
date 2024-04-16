@@ -1,7 +1,7 @@
 <div class="oj-panel oj-flex oj-sm-justify-content-space-between" style="margin: 10px;">
     <div class="oj-flex oj-sm-align-items-center">
         <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
-            Unassigned Students
+            Bulk Assign Students
         </h6>
         &nbsp;&nbsp;&nbsp;
         <p class="oj-flex oj-sm-align-items-center" style="margin-top: 24px; padding: 4px 10px; border-radius: 10px; background-color: #06668a; color: #fff;">
@@ -28,7 +28,7 @@
     <oj-select-single id="select" label-hint="Assign Counsilor" label-edge="inside" class="oj-form-control-max-width-md"
         data="[[counsilorsDp]]" value="{{counsilor}}" style="width: 350px;"></oj-select-single>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <oj-button id="button1" on-oj-action="[[reassignData]]" style="background-color: #04812f ">
+    <oj-button id="button1" on-oj-action="[[assignData]]" style="background-color: #04812f ">
         Submit
     </oj-button>
 </div>
@@ -104,7 +104,7 @@
         <oj-bind-text value="[[warnMsg]]"></oj-bind-text>
     </div>
     <div slot="footer">
-        <oj-button id="okdelButton" on-oj-action="[[confirmReassign]]">
+        <oj-button id="okdelButton" on-oj-action="[[confirmBulkAssign]]">
             Yes
         </oj-button>
         <oj-button id="okdelButton" on-oj-action="[[warnMsgPopupCloseButton]]">

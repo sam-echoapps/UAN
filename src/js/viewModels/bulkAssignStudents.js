@@ -256,7 +256,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.message = ko.observable();
                 self.warnMsg = ko.observable();
 
-                self.reassignData = ()=>{
+                self.assignData = ()=>{
                     let len = self.selectedIds().length;
                     let popUp = document.getElementById("msgBox")
                     if(self.office()== undefined || self.office()== ""){
@@ -273,10 +273,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     }
                     else{
                         if(self.userRole()=="manager"){
-                            self.warnMsg("Are you sure you want to change counselor of the selected students?");
+                            self.warnMsg("Are you sure you want to assign counselor for the selected students?");
                         }
                         else{
-                            self.warnMsg("Are you sure you want to change office and counselor of the selected students?");
+                            self.warnMsg("Are you sure you want to assign counselor for the selected students?");
                         }
                         
                         let warnMsg = document.getElementById("warnMsg")
@@ -291,13 +291,13 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     popUp.close();
                 }
 
-                self.confirmReassign = ()=>{
+                self.confirmBulkAssign = ()=>{
                     let progress = document.getElementById("popup1")
                     progress.open()
                     let studentIds = self.selectedIds();
                     studentIds = studentIds.join(",");
                     $.ajax({
-                        url: BaseURL+"/reAssignStudents",
+                        url: BaseURL+"/bulkAssignStudents",
                         type: 'POST',
                         data: JSON.stringify({
                             officeId: self.office(),
@@ -328,6 +328,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     self.getunassignedAllStudents()
                     let popUp = document.getElementById("resultMsg")
                     popUp.close();
+                    self.office('');
+                    self.counsilor('');
                 }
 
                 self.stIdRightClick = ko.observable();
