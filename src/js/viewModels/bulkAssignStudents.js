@@ -330,6 +330,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     popUp.close();
                     self.office('');
                     self.counsilor('');
+                    location.reload();
                 }
 
                 self.stIdRightClick = ko.observable();

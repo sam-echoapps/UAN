@@ -18,6 +18,9 @@
                     <li><a id="guideManageStudents%2FguideEditStudent%3Bindex%3D1" on-click= "[[goToPage]]">How to edit a student’s profile?</a></li>
                     <li><a id="guideManageStudents%2FguideChangeStatus%3Bindex%3D2" on-click= "[[goToPage]]">How to change the status, staff or office of a student?</a></li>
                     <li><a id="guideManageStudents%2FguideSearchStudent%3Bindex%3D6" on-click= "[[goToPage]]">How to search for a student?</a></li>
+                    <oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
+                        <li><a id="guideManageStudents%2FguideBulkAssignStudent%3Bindex%3D8" on-click= "[[goToPage]]">How to bulk assign unassigned leads to staff?</a></li>
+                    </oj-bind-if>
                 </ul>
             </div>
             <div class="content oj-flex oj-sm-flex-direction-column">
@@ -26,7 +29,10 @@
                     <li><a id="guideManageStudents%2FguideAddApplication%3Bindex%3D4" on-click= "[[goToPage]]">How to add and edit an application under a student?</a></li>
                     <li><a id="guideManageStudents%2FguideFinalChoiceApplication%3Bindex%3D5" on-click= "[[goToPage]]">How to add a Final Choice application?</a></li>
                     <oj-bind-if test="[[role() === 'admin' || role()=== 'director' ]]">
-                        <li><a id="guideManageStudents%2FguideDeleteStudent%3Bindex%3D6" on-click= "[[goToPage]]">How to delete a student?</a></li>
+                        <li><a id="guideManageStudents%2FguideDeleteStudent%3Bindex%3D7" on-click= "[[goToPage]]">How to delete a student?</a></li>
+                    </oj-bind-if>
+                    <oj-bind-if test="[[ role()=== 'manager' ]]">
+                        <li><a id="guideManageStudents%2FguideBulkAssignStudent%3Bindex%3D8" on-click= "[[goToPage]]">How to bulk assign unassigned leads to staff?</a></li>
                     </oj-bind-if>
                 </ul>
             </div>

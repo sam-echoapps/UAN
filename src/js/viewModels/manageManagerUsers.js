@@ -733,10 +733,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                     let addButton = document.getElementById("addButton");  
                     if(self.selectedTab()=="deactiveStaff"){
                         addButton.style.display = "none";
+                        activeCount.style.display = "none";
                     }
                     else{
                         if(addButton!=null){
                             addButton.style.display = "block";
+                            activeCount.style.display = "block";
                         }
                     }
                     self.getUsers(self.selectedTab())

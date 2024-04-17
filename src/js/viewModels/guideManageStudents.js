@@ -22,7 +22,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'appController', "ojs/ojmodulerouter
             self.role = ko.observable(sessionStorage.getItem("userRole"));
             var routerLength = args.parentRouter._routes.length;
             
-            if(self.role() === "counselor" || "manager"){
+            if(self.role() === "counselor" || self.role() === "manager"){
                 var records = { 
                     "childPath" : [
                         { "path" : "guideStudentAdd", "label" : "How to add a student?"},
@@ -32,6 +32,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'appController', "ojs/ojmodulerouter
                         { "path" : "guideAddApplication", "label" : "How to add and edit an application under a student?"},
                         { "path" : "guideFinalChoiceApplication", "label" : "How to add a Final Choice application?"},
                         { "path" : "guideSearchStudent", "label" : "How to search for a student?"},
+                        { "path" : "guideBulkAssignStudent", "label" : "How to bulk assign unassigned leads to staff?"},
                     ]
                 }
             }
@@ -46,6 +47,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'appController', "ojs/ojmodulerouter
                         { "path" : "guideFinalChoiceApplication", "label" : "How to add a Final Choice application?"},
                         { "path" : "guideSearchStudent", "label" : "How to search for a student?"},
                         { "path" : "guideDeleteStudent", "label" : "How to delete a student?"},
+                        { "path" : "guideBulkAssignStudent", "label" : "How to bulk assign unassigned leads to staff?"},
                     ]
                 }
             }
@@ -86,6 +88,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'appController', "ojs/ojmodulerouter
                 { path : "guideFinalChoiceApplication"},
                 { path : "guideSearchStudent"},
                 { path : "guideDeleteStudent"},
+                { path : "guideBulkAssignStudent"},
             ]);
 
             self.router.currentState.subscribe((args) => {
