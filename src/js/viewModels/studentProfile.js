@@ -1186,6 +1186,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     keyAttributes: 'value'
                 });
 
+                self.fileNames = ko.observableArray(new Array());
+
+
 
                 self.getStudent = (studentId)=>{
                     $.ajax({
@@ -1264,7 +1267,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.selectedStep2 = ko.observable('stp1');
                 self.stepArray2 = ko.observableArray([
                     { label: 'Personal Details', id: 'stp1' },
-                    { label: 'Applications', id: 'stp2' }
+                    { label: 'Document Upload', id: 'stp2' },
+                    { label: 'Applications', id: 'stp3' }
                 ]);
 
                 self.update2 = (event) => {
@@ -1273,14 +1277,26 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     if (selectedStep2.id == "stp1") {
                         let personalDiv = document.getElementById("personalInfo");
                         let applicationDiv = document.getElementById("application");
+                        let documentDiv = document.getElementById("documentUpload");
                         applicationDiv.style.display = "none"
                         personalDiv.style.display = "block"
+                        documentDiv.style.display = "none"
+                    }
+                    else if (selectedStep2.id == "stp2") {
+                        let personalDiv = document.getElementById("personalInfo");
+                        let applicationDiv = document.getElementById("application");
+                        let documentDiv = document.getElementById("documentUpload");
+                        documentDiv.style.display = "block"
+                        applicationDiv.style.display = "none"
+                        personalDiv.style.display = "none"
                     }
                     else{
                         let personalDiv = document.getElementById("personalInfo");
                         let applicationDiv = document.getElementById("application");
+                        let documentDiv = document.getElementById("documentUpload");
                         applicationDiv.style.display = "block"
                         personalDiv.style.display = "none"
+                        documentDiv.style.display = "none"
                     }
                 };
 
@@ -2252,6 +2268,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     }
                     else {
                         app.onAppSuccess();
+                        self.getDocumentUploadFile();
                     }
                 }
 
@@ -2284,6 +2301,172 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         },
                         success: function (data) {
                             location.reload()
+                        }
+                    })
+                }
+
+                self.selectListenerDocument = (event) => {
+                    const files = event.detail.files;
+                        Array.prototype.map.call(files, (file) => {
+                            self.fileNames.push({"file" : file.name});
+                            var formData = new FormData();
+                            formData.append("file", file);
+                            formData.append("studentId", self.student())
+                            $.ajax({
+                                url:   BaseURL + "/studentDocumentUpload",
+                                type: "POST",
+                                data:  formData,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    console.log(textStatus);
+                                },
+                                success: (data) => {
+                                    console.log(data);
+                                }
+                            });
+                        })
+                }; 
+
+                self.getDocumentUploadFile = ()=>{
+                    $.ajax({
+                        url: BaseURL+"/getStudentDocumentList",
+                        type: 'POST',
+                        data: JSON.stringify({
+                            studentId:self.student(),
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            console.log(data)
+                            let popup = document.getElementById("progress");
+                            popup.close();
+                            if(data[0] != "No data found"){
+                                data = JSON.parse(data);
+                                let len = data.length;
+                                self.fileNames([])
+                                for(let i=0;i<len;i++){
+                                    if(data[i][1]!=null){
+                                        var filesArray = data[i][1].split(',');
+                                        let l = filesArray.length;
+                                     /*    for(let j=0;j<l;j++){
+                                            self.fileNames.push({"no": j+1, "file" :filesArray[j]});
+                                        } */
+                                        // desc list
+                                        for (let j = l - 1; j >= 0; j--) {
+                                            self.fileNames.push({"no": l - j, "file": filesArray[j]});
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
+    
+                self.fileDataProvider = new ArrayDataProvider(self.fileNames, {
+                    keyAttributes: 'id'
+                });
+
+                self.removeFileDocument = (e)=>{
+                    var fileNamesOfObjects = self.fileNames().map(pair => pair.file);
+                    var index = fileNamesOfObjects.indexOf(e.target.id);
+                    if (index !== -1) {
+                        fileNamesOfObjects.splice(index, 1);
+                    }
+                    self.fileNames(fileNamesOfObjects.map((value, index) => ({"no":index+1, "file": value })));
+                }
+
+                self.previewClickDocument = (e)=>{
+                    let popup = document.getElementById("progress");
+                    popup.open();
+                    $.ajax({
+                        url: BaseURL+"/getStudentDocument",
+                        type: 'POST',
+                        data: JSON.stringify({
+                            fileName : e.target.id
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            let popup = document.getElementById("progress");
+                            popup.close();
+                            var fileType = data[1]
+                            var base64Code = data[0][0];
+                            console.log(data);
+                            if(fileType=="pdf"){
+                                var byteCharacters = atob(base64Code);
+                                var byteNumbers = new Array(byteCharacters.length);
+                                for (var i = 0; i < byteCharacters.length; i++) {
+                                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                                }
+                                var byteArray = new Uint8Array(byteNumbers);
+                                var blob = new Blob([byteArray], { type: 'application/pdf' });
+    
+                                var blobUrl = URL.createObjectURL(blob);
+                                window.open(blobUrl, '_blank');
+                            }
+                            else if(fileType=="image"){
+                                var newWindow = window.open();
+                                newWindow.document.write('<html><head><title>Image Viewer</title></head><body>');
+                                newWindow.document.write('<img src="data:image/png;base64,' + base64Code + '" alt="Base64 Image">');
+                                newWindow.document.write('</body></html>');
+                            }
+                            else if(fileType=="xl"){
+                                var excelDataUri = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + base64Code;
+                                var downloadLink = document.createElement('a');
+                                downloadLink.href = excelDataUri;
+                                downloadLink.download = self.offerFile();
+                                document.body.appendChild(downloadLink);
+                                downloadLink.click();
+                            }
+                            else if(fileType=="csv"){
+                                var csvDataUri = 'data:text/csv;base64,' + base64Code;
+                                var downloadLink = document.createElement('a');
+                                downloadLink.href = csvDataUri;
+                                downloadLink.download = self.offerFile();
+                                document.body.appendChild(downloadLink);
+                                downloadLink.click();
+                                document.body.removeChild(downloadLink);
+                            }
+                            else{
+                                self.offerFileMessage("File not found")
+                                setTimeout(()=>{
+                                    self.offerFileMessage("")
+                                },3000)
+                            }
+                        }
+                    })
+                }
+    
+                self.updateStudentDocument = ()=>{
+                    let popup = document.getElementById("progress");
+                    popup.open();
+                    var fileNamesOfObjects = self.fileNames().map(pair => pair.file);
+                    let contractFiles = fileNamesOfObjects
+                    if(contractFiles.length!=0){
+                        contractFiles = contractFiles.join(",");
+                    }
+                    else{
+                        contractFiles = null;
+                    }
+                    $.ajax({
+                        url: BaseURL+"/updateStudentDocument",
+                        type: 'POST',
+                        data: JSON.stringify({
+                            studentId:self.student(),
+                            contractFiles : contractFiles,
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            self.getDocumentUploadFile()
                         }
                     })
                 }

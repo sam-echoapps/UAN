@@ -163,7 +163,57 @@
                     </div>
                 </div>
             </div>
+            <br>
+            <oj-bind-if test="[[userRole() === 'admin' ]]">
+                <div class="oj-flex oj-sm-justify-content-center" style="margin-bottom: 30px;">
+                    <oj-button id="button1" on-oj-action="[[deletePerson]]" style="background-color: #d9534f;">Delete Student</oj-button>
+                </div>
+            </oj-bind-if>
+            <oj-bind-if test="[[userRole() === 'director' ]]">
+                <div class="oj-flex oj-sm-justify-content-center" style="margin-bottom: 30px;">
+                    <oj-button id="button1" on-oj-action="[[deletePerson]]" style="background-color: #d9534f;">Delete Student</oj-button>
+                </div>
+            </oj-bind-if>
+        </div>
 
+
+        <div id="documentUpload" style="display: none;">
+            <h6 style="font-weight: 500;font-size: 22px;color: #06668a;margin-left: 20px;">Document Upload</h6>
+            <div class="oj-panel">
+                <div class="oj-flex oj-sm-justify-content-center">
+                    <oj-file-picker selection-mode="multiple" on-oj-select="[[selectListenerDocument]]"></oj-file-picker>
+                </div>
+                <div>
+                    <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[fileDataProvider]]"
+                        columns-default.sortable="disabled"
+                        columns='[
+                                {"headerText": "#", "id": "name"},
+                                {"headerText": "File Name", "id": "fileName", "weight": 2}, 
+                                {"headerText": "Action", "id": "action"}]'
+                        class="demo-table-container">
+                        <template slot="rowTemplate" data-oj-as="row">
+                            <tr style="font-size: 17px !important;">
+                                <td><oj-bind-text value="[[row.data.no]]"></oj-bind-text></td>
+                                <td>
+                                    <a :id="[[row.data.file]]" on-click= "[[previewClickDocument]]" target="_blank">
+                                        <oj-bind-text value="[[row.data.file]]"></oj-bind-text>
+                                    </a>
+                                </td>
+                                <td>
+                                    <oj-button :id="[[row.data.file]]" on-oj-action="[[removeFileDocument]]" display="icons" chroming="borderless">
+                                        <span slot="startIcon" class="oj-ux-ico-delete-circle"></span>
+                                    </oj-button>
+                                </td>
+                            </tr>
+                        </template>
+                    </oj-table>
+                </div>
+                <div class="oj-flex oj-sm-justify-content-center" style="margin-top: 30px;">
+                    <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[updateStudentDocument]]" style="width: 100px;">
+                        Update
+                    </oj-button>
+                </div>
+            </div>
         </div>
 
         <div id="application" style="display: none;">
@@ -357,16 +407,7 @@
         </div>
     </div>
 </div>
-<oj-bind-if test="[[userRole() === 'admin' ]]">
-    <div class="oj-flex oj-sm-justify-content-center" style="margin-bottom: 30px;">
-        <oj-button id="button1" on-oj-action="[[deletePerson]]" style="background-color: #d9534f;">Delete Student</oj-button>
-    </div>
-</oj-bind-if>
-<oj-bind-if test="[[userRole() === 'director' ]]">
-    <div class="oj-flex oj-sm-justify-content-center" style="margin-bottom: 30px;">
-        <oj-button id="button1" on-oj-action="[[deletePerson]]" style="background-color: #d9534f;">Delete Student</oj-button>
-    </div>
-</oj-bind-if>
+
 <br>
 
 <oj-dialog id="addLog" style="width: 1000px;">
@@ -577,3 +618,12 @@
         </oj-button>
     </div>
 </oj-dialog>
+
+<oj-popup id="progress" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
