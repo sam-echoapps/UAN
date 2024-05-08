@@ -446,6 +446,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 var fileName = 'data_' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.csv';
                                 self.blob(blob);
                                 self.fileName(fileName);
+                                self.totalApplicationCnt(0)
                             }
                         }
                     })
@@ -475,7 +476,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             fromDate: fromDate,
                             toDate: toDate,
                             officeId: self.officeId(),
-                            courseType: courseType
+                            courseType: courseType,
+                            institutionId : institution
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
