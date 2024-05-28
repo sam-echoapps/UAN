@@ -152,6 +152,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         console.log(textStatus);
                                     },
                                     success: (data) => {
+                                        console.log
                                         let popup = document.getElementById("popup1");
                                         popup.close();
                                         self.successMessage(data[0]);

@@ -1,0 +1,210 @@
+<div class="oj-panel oj-flex oj-sm-justify-content-space-between">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        Final Choice Report
+    </h6>
+</div>
+
+<div class="oj-panel" style="padding: 20px; margin: 20px 0px;">
+    <div class="oj-flex oj-sm-justify-content-flex-start oj-sm-align-items-center">
+        <div style="margin: 20px 0px;">
+            <oj-label for="from">From</oj-label>
+            <oj-input-date id="from" label-hint="Select From date" value="{{fromDate}}" date-picker="[[datePicker]]"
+                class="oj-form-control-max-width-sm" autocomplete="off" style="margin-top: 5px;"></oj-input-date>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div style="margin: 20px 0px;">
+            <oj-label for="to">To</oj-label>
+            <oj-input-date id="to" label-hint="Select To date" value="{{toDate}}" date-picker="[[datePicker]]"
+                class="oj-form-control-max-width-sm" autocomplete="off" style="margin-top: 5px;"></oj-input-date>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <oj-bind-if test="[[userRole() === 'admin' ]]">
+            <div style="margin: 20px 0px;">
+                <oj-label for="to">Office</oj-label>
+                <oj-select-many label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md" value="{{officeId}}"
+                options="[[officesDP]]" on-value-changed="[[officeChangedHandler]]" style="width: 220px;margin-top: 5px;"></oj-select-many>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </oj-bind-if>
+        <oj-bind-if test="[[userRole() === 'director' ]]">
+            <div style="margin: 20px 0px;">
+                <oj-label for="to">Office</oj-label>
+                <oj-select-many label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md" value="{{officeId}}"
+                    options="[[officesDP]]" on-value-changed="[[officeChangedHandler]]" style="width: 220px;margin-top: 5px;"></oj-select-many>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </oj-bind-if>
+        <div style="margin: 20px 0px;">
+            <oj-label for="from">Staff</oj-label>
+           <!--  <oj-select-many label-hint="Select Staff" label-edge="inside" class="oj-form-control-max-width-md" value="{{selectStaff}}"
+                options="[[staffsDP]]" style="width: 220px;margin-top: 5px;"></oj-select-many> -->
+                <oj-input-text id="staff" label-hint="Staff" disabled="true" value="{{selectStaffName}}"></oj-input-text>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div style="margin: 20px 0px;">
+            <oj-label for="to">Course Type</oj-label>
+            <oj-select-many label-hint="Select Course Type" label-edge="inside" class="oj-form-control-max-width-md" value="{{selectCourseType}}"
+                options="[[courseTypeDP]]" style="width: 220px;margin-top: 5px;"></oj-select-many>
+        </div>   
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div style="margin: 20px 0px;">
+            <oj-label for="to">Country</oj-label>
+            <oj-select-many options="[[countrySet]]" label-hint="Select Institute Country" label-edge="inside" class="oj-form-control-max-width-md" 
+                on-value-changed="[[countryChangeHandler]]" value="{{country}}" style="width: 300px;"></oj-select-many>
+        </div>   
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div style="margin: 20px 0px;">
+            <oj-label for="to">Institution</oj-label>
+            <oj-select-many options="[[institutionSet]]" label-hint="Select Institution" label-edge="inside" class="oj-form-control-max-width-md" 
+                value="{{institution}}" style="width: 300px;"></oj-select-many>
+        </div>   
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div style="margin: 20px 0px;">
+            <oj-radioset id="enabledRadioset" value="{{selectRadio}}">
+                <oj-option value="ASD">ASD</oj-option>
+                <oj-option value="CSD">CSD</oj-option>
+            </oj-radioset>
+        </div>  
+    </div>
+    <div class="oj-flex oj-sm-justify-content-center oj-sm-align-items-center">
+        <oj-button id="button1" on-oj-action="[[showData]]">
+            Show
+        </oj-button>&nbsp;&nbsp;
+        <oj-button id="button1" on-oj-action="[[downloadData]]" style="background-color: #04812f ">
+            Export <i class="fa-solid fa-download"></i>
+        </oj-button>
+    </div>
+</div>
+<p class="oj-flex oj-sm-align-items-center" style="padding: 4px 10px; border-radius: 10px;background-color: #06668a; color: #fff; width: 250px;">
+    Number of Records Found: <oj-bind-text value="[[recordsCount]]"></oj-bind-text>
+</p>
+<div class="oj-panel" id="course-start-date-div" style="display: none;">
+    <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[csdDataProvider]]"
+        dnd='{"reorder": {"columns": "enabled"}}'
+        scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+        columns='[{"headerText": "Student Id",  "field": "studentId", "headerClassName": "oj-sm-only-hide", 
+                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                {"headerText": "First Name",  "field": "firstName", "resizable": "enabled", "id": "depName"},
+                {"headerText": "Last Name",  "field": "lastName", "headerClassName": "oj-sm-only-hide", 
+                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                {"headerText": "University",  "field": "university", "resizable": "enabled", "id": "manId"},
+                {"headerText": "Course Type",  "field": "courseType", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Course Start Date",  "field": "courseStartDate", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Counsellor",  "field": "counsellor", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Deposit Amount",  "field": "depositAmount", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Deposit Paid Date",  "field": "depositPaidDate", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "CAS Issued",  "field": "casIssued", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Visa Applied Date",  "field": "visaAppliedDate", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Visa Decision",  "field": "visaDecision", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Visa Decision Date",  "field": "visaDecisionDate", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"}
+            ]'
+        class="demo-table-container">
+        <template slot="rowTemplate" data-oj-as="row">
+            <tr>
+                <td>
+                    <a :id="[[row.data.studentId]]" on-click= "[[viewProfile]]" target="_blank"><oj-bind-text value="[[row.data.studentId]]"></oj-bind-text></a>
+                </td>
+                <td><oj-bind-text value="[[row.data.firstName]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.lastName]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.university]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.courseType]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.courseStartDate]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.counsellor]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.depositAmount]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.depositPaidDate]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.casIssued]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.visaAppliedDate]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.visaDecision]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.visaDecisionDate]]"></oj-bind-text></td>
+            </tr>
+        </template>
+        <oj-menu
+            slot="contextMenu"
+            on-oj-menu-action="[[myActionFunction]]"
+            on-oj-before-open="[[myBeforeOpenFunction]]"
+            aria-label="Employee Edit">
+            <oj-option value="openNewTab">Open link in a new tab</oj-option>
+            <oj-option value="Sort Ascending" data-oj-command="oj-table-sortAsc"></oj-option>
+            <oj-option value="Sort Descending" data-oj-command="oj-table-sortDsc"></oj-option>
+        </oj-menu>
+    </oj-table>
+</div>
+
+<div class="oj-panel" id="app-send-date-div" style="display: none;">
+    <oj-table id="table1" aria-label="Departments Table" accessibility.row-header="depName" data="[[asdDataProvider]]"
+        dnd='{"reorder": {"columns": "enabled"}}'
+        scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+        columns='[{"headerText": "Student Id", "field": "studentId", "headerClassName": "oj-sm-only-hide", 
+                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                {"headerText": "First Name",  "field": "firstName", "resizable": "enabled", "id": "depName"},
+                {"headerText": "Last Name",  "field": "lastName", "headerClassName": "oj-sm-only-hide", 
+                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                {"headerText": "University",  "field": "university", "resizable": "enabled", "id": "manId"},
+                {"headerText": "Course Type",  "field": "courseType", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Application Send Date",  "field": "applicationSentDate", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Counsellor",  "field": "counsellor", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Deposit Amount",  "field": "depositAmount", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Deposit Paid Date",  "field": "depositPaidDate", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "CAS Issued",  "field": "casIssued", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Visa Applied Date",  "field": "visaAppliedDate", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Visa Decision",  "field": "visaDecision", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Visa Decision Date",  "field": "visaDecisionDate", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"}
+            ]'
+        class="demo-table-container">
+        <template slot="rowTemplate" data-oj-as="row">
+            <tr>
+                <td>
+                    <a :id="[[row.data.studentId]]" on-click= "[[viewProfile]]" target="_blank"><oj-bind-text value="[[row.data.studentId]]"></oj-bind-text></a>
+                </td>
+                <td><oj-bind-text value="[[row.data.firstName]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.lastName]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.university]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.courseType]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.applicationSentDate]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.counsellor]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.depositAmount]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.depositPaidDate]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.casIssued]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.visaAppliedDate]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.visaDecision]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.visaDecisionDate]]"></oj-bind-text></td>
+            </tr>
+        </template>
+        <oj-menu
+            slot="contextMenu"
+            on-oj-menu-action="[[myActionFunction]]"
+            on-oj-before-open="[[myBeforeOpenFunction]]"
+            aria-label="Employee Edit">
+            <oj-option value="openNewTab">Open link in a new tab</oj-option>
+            <oj-option value="Sort Ascending" data-oj-command="oj-table-sortAsc"></oj-option>
+            <oj-option value="Sort Descending" data-oj-command="oj-table-sortDsc"></oj-option>
+        </oj-menu>
+    </oj-table>
+</div>
+
+<oj-popup id="progressBar" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
