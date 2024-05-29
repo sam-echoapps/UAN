@@ -257,7 +257,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                                         },
                                         success: function (data) {
                                             console.log(data)
-                                            //location.reload()
+                                            location.reload()
                                         }
                                     })
                                 }

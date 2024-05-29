@@ -177,7 +177,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "counsellorStudentLogReport", detail: { label: "Student Log Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "applicationReport", detail: { label: "Application Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "counsellorFinalChoiceReport", detail: { label: "Final Choice Report", iconClass: "fa-solid fa-people-roof", }, },
-        { path: "missedReminder", detail: { label: "Missed Reminder Report", iconClass: "fa-solid fa-people-roof", }, },
+        { path: "counsellorMissedReminder", detail: { label: "Missed Reminder Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "freeCounseling", detail: { label: "Free Counseling", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "help", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "guideManageStudents", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
@@ -317,7 +317,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         "children": [
           {"name": "Application Report","id": "applicationReport","icons": "oj-ux-ico-bar-chart", "path":"applicationReport"},
           {"name": "Final Choice Report","id": "counsellorFinalChoiceReport","icons": "oj-ux-ico-bar-chart", "path":"counsellorFinalChoiceReport"},
-          {"name": "Missed Reminder Report","id": "missedReminders","icons": "oj-ux-ico-bar-chart", "path":"missedReminder"},
+          {"name": "Missed Reminder Report","id": "counsellorMissedReminder","icons": "oj-ux-ico-bar-chart", "path":"counsellorMissedReminder"},
         ]
       },
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
