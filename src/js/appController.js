@@ -83,6 +83,8 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "guideManagePartner", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "guideManagePartnerView", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "bulkAssignStudents", detail: { label: "Bulk assign Students", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "addFranchise", detail: { label: "Franchise", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "franchiseProfile", detail: { label: "Franchise", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     } else if (sessionStorage.getItem("userRole") == "manager") {
       var navData = [
@@ -175,7 +177,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "searchStudent", detail: { label: "Search Student", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "counsellorStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "counsellorStudentLogReport", detail: { label: "Student Log Report", iconClass: "fa-solid fa-people-roof", }, },
-        { path: "applicationReport", detail: { label: "Application Report", iconClass: "fa-solid fa-people-roof", }, },
+        { path: "counsellorApplicationReport", detail: { label: "Application Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "counsellorFinalChoiceReport", detail: { label: "Final Choice Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "counsellorMissedReminder", detail: { label: "Missed Reminder Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "freeCounseling", detail: { label: "Free Counseling", iconClass: "fa-solid fa-magnifying-glass", },},
@@ -237,6 +239,13 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
             {"name": "Partner Report","id": "partnerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerReport"}, 
           ]
         },
+        {"name": "Franchise", "id": "franchise", "icons": "fa-solid fa-handshake-angle", 
+          "children": [
+            {"name": "Franchise","id": "addFranchise","icons": "fa-solid fa-user-plus", "path":"addFranchise"},
+            {"name": "Franchise Profile","id": "franchiseProfile","icons": "fa-solid fa-user", "path":"franchiseProfile"},
+         /*     {"name": "Partner Report","id": "partnerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerReport"},  */
+          ]
+        },
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
       ]
     }
@@ -278,13 +287,6 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
             {"name": "Partner Report","id": "partnerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerReport"}, 
           ]
         },
-        {"name": "Reports", "id": "application", "icons": "oj-ux-ico-bar-chart", 
-          "children": [
-            {"name": "Application Report","id": "applicationReport","icons": "oj-ux-ico-bar-chart", "path":"applicationReport"},
-            {"name": "Final Choice Report","id": "finalChoiceReport","icons": "oj-ux-ico-bar-chart", "path":"finalChoiceReport"},
-            {"name": "Missed Reminder Report","id": "missedReminders","icons": "oj-ux-ico-bar-chart", "path":"missedReminder"},
-          ]
-        },
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
       ]
     }
@@ -315,7 +317,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         },
         {"name": "Reports", "id": "application", "icons": "oj-ux-ico-bar-chart", 
         "children": [
-          {"name": "Application Report","id": "applicationReport","icons": "oj-ux-ico-bar-chart", "path":"applicationReport"},
+          {"name": "Application Report","id": "counsellorApplicationReport","icons": "oj-ux-ico-bar-chart", "path":"counsellorApplicationReport"},
           {"name": "Final Choice Report","id": "counsellorFinalChoiceReport","icons": "oj-ux-ico-bar-chart", "path":"counsellorFinalChoiceReport"},
           {"name": "Missed Reminder Report","id": "counsellorMissedReminder","icons": "oj-ux-ico-bar-chart", "path":"counsellorMissedReminder"},
         ]

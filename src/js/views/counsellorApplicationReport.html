@@ -1,0 +1,182 @@
+<div class="oj-panel oj-flex oj-sm-justify-content-space-between">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        All Application Report
+    </h6>
+    <oj-select-single id="select" label-hint="Select Year" label-edge="inside" class="oj-form-control-max-width-md"
+        on-oj-value-action="[[yearChangedHandler]]" data="[[yearsDp]]" value="{{selectYear}}"></oj-select-single>
+</div>
+
+<div class="oj-panel" style="margin-top: 10px;">
+    <h6 style="font-weight: 500;font-size: 25px;">
+        All Applications summary
+    </h6>
+
+    <oj-table id="table" aria-label="Task Table" accessibility.row-header="name"
+        columns-default.sortable="disabled" layout="fixed" data="[[dataprovider]]"
+        columns='[  
+                {"headerText": "", "id": "name", "weight": 2},        
+                {"headerText": "FO", "id": "foundation"},        
+                {"headerText": "UG", "id": "ug"},
+                {"headerText": "PG", "id": "pg"},
+                {"headerText": "Pre mast", "id": "preMast"},
+                {"headerText": "Pre sess", "id": "preSess"},
+                {"headerText": "Phd", "id": "phd"},
+                {"headerText": "SS", "id": "summerSchool"},
+                {"headerText": "PHFO", "id": "pathwaysfollowon"},
+                {"headerText": "Y2", "id": "year2followon"},
+                {"headerText": "Y3", "id": "year3followon"},
+                {"headerText": "Total Application", "id": "totalApplication"}]'
+        style="width: 100%;">
+        <template slot="rowTemplate" data-oj-as="row">
+            <tr>
+                <td><p><oj-bind-text value="[[row.data.Year]]"></oj-bind-text></p></td>
+                <td><oj-bind-text value="[[row.data.foundation]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.ug]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.pg]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.preMast]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.preSess]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.phd]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.ss]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.phfo]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.y2]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.y3]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.totalApplication]]"></oj-bind-text></td>
+            </tr>
+        </template>
+    </oj-table>
+</div>
+
+<div class="oj-panel oj-flex oj-sm-justify-content-space-between oj-flex oj-sm-align-items-center" style="margin: 20px 0px;">
+    
+    <p class="oj-flex oj-sm-align-items-center" style="margin-top: 15px;">
+        Total Applications : <oj-bind-text value="[[totalApplicationCnt]]"></oj-bind-text> 
+    </p>
+    
+    <p class="oj-flex oj-sm-align-items-center" style="margin-top: 15px;">
+        Applicants : <oj-bind-text value="[[applicantCount]]"></oj-bind-text>
+    </p>
+
+    <p class="oj-flex oj-sm-align-items-center" style="margin-top: 15px;">
+        Conditional : <oj-bind-text value="[[conditionApplicationCnt]]"></oj-bind-text>
+    </p>
+    
+    <p class="oj-flex oj-sm-align-items-center" style="margin-top: 15px;">
+        Unconditional : <oj-bind-text value="[[unconditionApplicationCnt]]"></oj-bind-text> 
+    </p>
+</div>
+
+
+<div class="oj-flex oj-sm-justify-content-center oj-flex oj-sm-align-items-center" style="margin: 20px 0px;">
+    <div class="oj-flex oj-sm-align-items-center">
+        <oj-input-date id="from" label-hint="Select From date" value="{{fromDate}}" date-picker="[[datePicker]]"
+            class="oj-form-control-max-width-sm" autocomplete="off" style="margin-top: 5px;"></oj-input-date>
+    </div>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <div class="oj-flex oj-sm-align-items-center">
+        <oj-input-date id="to" label-hint="Select To date" value="{{toDate}}" date-picker="[[datePicker]]"
+            class="oj-form-control-max-width-sm" autocomplete="off" style="margin-top: 5px;"></oj-input-date>
+    </div>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <oj-select-many options="[[courseTypeSet]]" label-hint="Select Course" label-edge="inside" class="oj-form-control-max-width-md" 
+        value="{{course}}" style="width: 300px;"></oj-select-many>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <oj-select-many options="[[countrySet]]" label-hint="Select Institute Country" label-edge="inside" class="oj-form-control-max-width-md" 
+    on-value-changed="[[countryChangeHandler]]" value="{{country}}" style="width: 300px;"></oj-select-many>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <oj-select-many options="[[institutionSet]]" label-hint="Select Institution" label-edge="inside" class="oj-form-control-max-width-md" 
+    value="{{institution}}" style="width: 300px;"></oj-select-many>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <div style="margin: 20px 0px;">
+        <oj-radioset id="enabledRadioset" value="{{selectRadio}}">
+            <oj-option value="ASD">ASD</oj-option>
+            <oj-option value="CSD">CSD</oj-option>
+        </oj-radioset>
+    </div>  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <div class="oj-flex oj-sm-align-items-center">
+        <oj-button id="button1" on-oj-action="[[showData]]">
+            Show
+        </oj-button>
+    </div>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <oj-button id="button1" on-oj-action="[[downloadExcel]]" style="background-color: #04812f ">
+        Export <i class="fa-solid fa-download"></i>
+    </oj-button>
+</div>
+
+<div class="oj-panel" style="margin-bottom: 50px;">
+    <div class="oj-flex oj-sm-justify-content-flex-end">
+        <div>
+            <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Search" label-edge="inside"
+                placeholder="Search.." on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}" 
+                clear-icon="always" style="width: 300px;margin: 30px;"></oj-input-text>
+            &nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+    <oj-table
+            id="table1" aria-label="Departments Table" accessibility.row-header="depName" data="[[applicationDataProvider]]"
+            dnd='{"reorder": {"columns": "enabled"}}'
+            scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+            columns='[{"headerText": "Student Id",  "field": "studentId", "headerClassName": "oj-sm-only-hide",
+                       "className": "oj-sm-only-hide", "resizable": "enabled", "id": "studentId"},
+                    {"headerText": "App Id",  "field": "applicationId", "resizable": "enabled", "id": "appId"},
+                    {"headerText": "University Name",  "field": "university", "headerClassName": "oj-sm-only-hide", 
+                        "className": "oj-sm-only-hide", "resizable": "enabled", "id": "university"},
+                    {"headerText": "First Name",  "field": "firstName", "resizable": "enabled", "id": "firstName"},
+                    {"headerText": "Mobile Number",  "field": "mobile", "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "mobile"},
+                    {"headerText": "Nationality",  "field": "nationality", "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "nationality"},
+                    {"headerText": "Ref",  "field": "ref", "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "ref"},
+                    {"headerText": "Programme",  "field": "startDate", "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "startDate"},
+                    {"headerText": "CSD",  "field": "ref", "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "ref", "title":"Course Start Date"},
+                    {"headerText": "ASD",  "field": "dateReceived", "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "dateReceived"},
+                    {"headerText": "Offer Status",  "field": "offerStatus", "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "offerStatus"},
+                    {"headerText": "Tution Fee",  "field": "tutionFee", "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "tutionFee"}]'
+        class="demo-table-container">
+
+        <template slot="rowTemplate" data-oj-as="row">
+            <tr>
+                <td>
+                    <a :id="[[row.data.studentId]]" on-click= "[[viewProfile]]" target="_blank"><oj-bind-text value="[[row.data.studentId]]"></oj-bind-text></a>
+                </td>
+                <td><oj-bind-text value="[[row.data.applicationId]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.university]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.firstName]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.mobile]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.nationality]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.ref]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.programme]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.startDate]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.dateReceived]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.offerStatus]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.tutionFee]]"></oj-bind-text></td>
+            </tr>
+        </template>
+        <oj-menu
+            slot="contextMenu"
+            on-oj-menu-action="[[myActionFunction]]"
+            on-oj-before-open="[[myBeforeOpenFunction]]"
+            aria-label="Employee Edit">
+            <oj-option value="openNewTab">Open link in a new tab</oj-option>
+            <oj-option value="Sort Ascending" data-oj-command="oj-table-sortAsc"></oj-option>
+            <oj-option value="Sort Descending" data-oj-command="oj-table-sortDsc"></oj-option>
+        </oj-menu>
+    </oj-table>
+
+</div>
+
+<oj-popup id="progressBar" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>

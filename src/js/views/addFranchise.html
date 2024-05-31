@@ -1,0 +1,118 @@
+<link rel="stylesheet" href="../../css/dashboard.css">
+
+<div class="oj-panel oj-flex  oj-sm-align-items-center" style="margin: 10px;">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        Franchise List
+    </h6>
+</div>
+
+<div class="oj-flex oj-sm-justify-content-space-between" style="margin-top:30px;">
+    <p class="oj-flex oj-sm-align-items-center" style="padding: 4px 10px; border-radius: 10px;background-color: #06668a; color: #fff; width: 150px;">
+        Total Records: <oj-bind-text value="[[franchisesCount]]"></oj-bind-text>
+    </p>
+    <div class="oj-flex">
+        <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Search" label-edge="inside"
+            placeholder="Search...." on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}" clear-icon="always" style="width: 300px;">
+        </oj-input-text>
+        &nbsp;&nbsp;&nbsp;
+        <oj-button id="button1" on-oj-action="[[addFranchise]]">
+            <i class="fa-solid fa-handshake-angle"></i>
+            Add New Franchise
+        </oj-button>
+    </div>
+</div>
+
+<div>
+    <oj-table id="table" aria-label="Task Table" accessibility.row-header="name"
+        data="[[franchiseDataProvider]]" columns-default.sortable="disabled" layout="fixed"
+        columns='[
+            {"headerText": "#", "id": "franchiseId"},
+            {"headerText": "Company Name", "id": "companyName", "weight": 5},
+            {"headerText": "Director Name", "id": "directorName"},
+            {"headerText": "Director Email", "id": "directorEmail", "weight": 2},
+            {"headerText": "Country", "id": "country","weight": 2},
+            {"headerText": "Processing Office", "id": "processingOffice","weight": 2},
+            {"headerText": "Assigned Consultant", "id": "assignedConsultant","weight": 2},
+            {"headerText": "BDM", "id": "bdm","weight": 2},
+            {"headerText": "Contract Done By", "id": "contractDoneBy","weight": 2}]'
+        class="demo-table-container">
+        <template slot="rowTemplate" data-oj-as="row">
+            <tr>
+                <td>
+                    <a :id="[[row.data.franchiseId]]" on-click= "[[viewPartner]]" target="_blank">
+                        <oj-bind-text value="[[row.data.franchiseId]]"></oj-bind-text>
+                    </a>
+                </td>
+                <td><oj-bind-text value="[[row.data.companyName]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.directorName]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.directorEmail]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.country]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.processingOffice]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.assignedConsultant]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.bdm]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.contractDoneBy]]"></oj-bind-text></td>
+            </tr>
+        </template>
+    </oj-table>
+</div>
+
+<oj-dialog id="addFranchise" style="width: 800px;">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">Add New Franchise</p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[cancelAddFranchisePopup]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-validation-group id="formValidation" class="form-container" role="group">
+                <oj-form-layout id="personal-information" class="form" direction="row" max-columns="2" style="width: 100%;">
+                    <oj-input-text id="companyName" label-hint="Company Name" required="true" value="{{companyName}}"></oj-input-text>
+                    <oj-input-text id="companyWebsite" label-hint="Company Website" value="{{companyWebsite}}"></oj-input-text>
+                    <oj-input-text id="directorFirstName" label-hint="Director's First Name" required="true" value="{{directorFirstName}}"></oj-input-text>
+                    <oj-input-text id="directorLastName" label-hint="Director's Last Name" required="true" value="{{directorLastName}}"></oj-input-text>
+                    
+                    <div>
+                        <oj-input-text id="directorEmail" label-hint="Director's Email" required="true" value="{{directorEmail}}" on-value-changed="[[emailPatternValidator]]"></oj-input-text>
+                        <div class="oj-text-color-danger"><oj-bind-text value='[[directorEmailError]]'></oj-bind-text></div></br>
+                    </div>
+                    <div class="oj-flex">
+                        <div class="oj-flex-item oj-sm-5 oj-sm-padding-2x-end oj-md-padding-3x-end">
+                            <oj-select-single id="nearestOffice" label-hint="Country Code" label-edge="inside"
+                                data="[[countryCodes]]" value="{{countryCode}}"></oj-select-single>
+                        </div>
+                        <div class="oj-flex-item oj-sm-7 oj-sm-padding-2x-start oj-md-padding-3x-start">
+                            <oj-input-text id="directorContactNumber" label-hint="Director's Contact Number" value="{{directorContactNumber}}" on-value-changed="[[phoneValidator]]"></oj-input-text>
+                        </div>
+                        <div class="oj-text-color-danger"><oj-bind-text value='[[directorContactNumberError]]'></oj-bind-text></div></br>
+                    </div>
+                    <oj-input-text id="postalAddress" label-hint="Postal Address" value="{{postalAddress}}"></oj-input-text>
+                    <oj-input-text id="city" label-hint="City" value="{{city}}"></oj-input-text>
+                    <oj-select-single required id="country" label-hint="Country" label-edge="inside"
+                        data="[[countrySet]]" value="{{country}}"></oj-select-single>
+                    <oj-select-single required id="bdm" label-hint="BDM" label-edge="inside"
+                        data="[[bdmCounselorList]]" value="{{bdm}}"></oj-select-single>
+                    <oj-select-single required id="processingOffice" label-hint="Processing Office" label-edge="inside"
+                        data="[[officesList]]" value="{{processingOffice}}" on-oj-value-action="[[officeChangeHandler]]"></oj-select-single>
+                    <oj-select-single required id="consultantAssigned" label-hint="Consultant Assigned" label-edge="inside"
+                        data="[[counselorList]]" value="{{consultantAssigned}}"></oj-select-single>
+                    <oj-select-single required id="contractDone" label-hint="Contract Done By" label-edge="inside"
+                        data="[[bdmCounselorList]]" value="{{contractDone}}"></oj-select-single>
+                </oj-form-layout>
+            </oj-validation-group>
+            <div class=" oj-flex oj-sm-justify-content-center">
+                <oj-button id="save" chroming="outlined" on-oj-action="[[formSubmit]]">Submit</oj-button>
+            </div>
+        </div>
+    </div>
+</oj-dialog>
+
+<oj-popup id="progress" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
