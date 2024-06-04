@@ -2293,13 +2293,15 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             lastName: self.lastName(),
                             phone: self.mobileNumber(),
                             email: self.email(),
-                            nationality: self.nationality()
+                            nationality: self.nationality(),
+                            userId: sessionStorage.getItem("userId")
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);
                         },
                         success: function (data) {
+                            console.log(data)
                             location.reload()
                         }
                     })

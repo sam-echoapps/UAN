@@ -260,6 +260,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             officeId: self.office(),
                             counsilorId: self.counsilor(),
                             studentId: studentIds,
+                            userId: sessionStorage.getItem("userId")
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {

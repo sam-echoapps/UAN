@@ -4,7 +4,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
     "ojs/ojvalidationgroup", "ojs/ojcheckboxset"], 
     function (oj,ko,$, app, ArrayDataProvider, ojconverterutils_i18n_1) {
 
-        class PartnerProfile {
+        class FranchiseProfile {
             constructor(args) {
                 var self = this;
                 self.router = args.parentRouter;
@@ -19,12 +19,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     // { name: 'Final Choice', id: 'finalChoice'},
                     // { name: 'Contract Files', id: 'contractFiles'},
                     // { name: 'Add Logs', id: 'logs'},
-                    // { name: 'Credential', id: 'credential'},
                     { name: 'Applications', id: ''},
                     { name: 'Final Choice', id: ''},
                     { name: 'Contract Files', id: ''},
                     { name: 'Add Logs', id: ''},
-                    { name: 'Credential', id: ''},
+                    { name: 'Credential', id: 'credential'},
                 ];
                 self.tabDataProvider = new ArrayDataProvider(tabData, { keyAttributes: 'id' });
                 self.selectedItem = ko.observable("details");
@@ -612,6 +611,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.partnerNote = ko.observable()
                 self.partnerNoteData = ko.observableArray();
                 self.partnerEmail = ko.observable('');
+                self.franchiseEmail = ko.observable('');
                 self.password = ko.observable('');
                 self.partnerName = ko.observable('');
                 self.btnAction = ko.observable('');
@@ -1733,12 +1733,13 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         data = JSON.parse(data);
                         console.log(data)
                         self.partnerName(data[0][3] + " " + data[0][4]);
-                        self.partnerEmail(data[0][5]);
+                        self.franchiseEmail(data[0][5]);
                     }
                 })
             }
 
             self.generatePassword = (length) =>{
+                alert("jhj")
                 const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]\;?><,./-=1234567890';
                 let password = '';
                 
@@ -1831,7 +1832,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         }, 5000);
                     }else{
                         const credentialFormValid = self._checkValidationGroup("credentialValidation"); 
-                        if(credentialFormValid && self.partnerEmail() != ''){
+                        if(credentialFormValid && self.franchiseEmail() != ''){
                                 let popup = document.getElementById("progress");
                                 popup.open();
                                     $.ajax({
@@ -1839,7 +1840,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         type: 'POST',
                                         data: JSON.stringify({
                                             name : self.partnerName(),
-                                            email : self.partnerEmail(),
+                                            email : self.franchiseEmail(),
                                             password : self.password(),
                                         }),
                                         dataType: 'json',
@@ -1868,6 +1869,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);
+                            self.generatePassword(8);
                         },
                         success: function (data) {
                         if(data[0]!='No data found'){
@@ -1886,6 +1888,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
             }
         }
-        return  PartnerProfile;
+        return  FranchiseProfile;
     }
 );
