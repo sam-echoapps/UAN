@@ -1323,6 +1323,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             studyAbroadDestination: self.studyAbroadDestination(),
                             year: self.yearIntake(),
                             hearAbout: self.hearAbout(),
+                            updated_by: sessionStorage.getItem("userName")
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
@@ -1390,7 +1391,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             lastName: self.lastName(),
                             phone: self.mobileNumber(),
                             email: self.email(),
-                            nationality: self.nationality()
+                            nationality: self.nationality(),
+                            updated_by: sessionStorage.getItem("userName")
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
@@ -2294,7 +2296,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             phone: self.mobileNumber(),
                             email: self.email(),
                             nationality: self.nationality(),
-                            userId: sessionStorage.getItem("userId")
+                            userId: sessionStorage.getItem("userId"),
+                            updated_by: sessionStorage.getItem("userName")
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
