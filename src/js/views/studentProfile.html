@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="../../css/studentLogTab.css">
+
 <div style="margin: 30px;">
     <div class="oj-panel oj-flex  oj-sm-align-items-center oj-sm-justify-content-space-between" style="margin: 10px;">
         <p style="font-weight: 500; margin-top: 10px;">
@@ -101,6 +103,22 @@
                     <oj-button on-oj-action="[[addLog]]">Add Log</oj-button>
                 </div>
             </div>
+
+     <div id="tabbardemo" class="oj-flex oj-sm-justify-content-center">
+        <div class="demo-tabbarcontainer">
+              <oj-buttonset-one id="setMultipleButtons" value="{{selectedTab}}" aria-label="Choose only one format">
+                <oj-bind-for-each data="[[tabData]]">
+                    <template>
+                        <oj-option value="[[$current.data.id]]">
+                        <span>
+                            <oj-bind-text value="[[$current.data.label]]"></oj-bind-text>
+                        </span>
+                        </oj-option>
+                    </template>
+                </oj-bind-for-each>
+            </oj-buttonset-one>
+        </div>
+     </div></br>
 
             <div class="oj-panel">
                 <div id="notesDiv" class="demo-padding demo-container">

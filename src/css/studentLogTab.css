@@ -1,0 +1,19 @@
+.oj-selected .oj-button-label{
+    background-color: #06668a !important;
+}
+
+.oj-selected .oj-button-label .oj-complete .oj-button-text{
+    color: #fff !important;
+}
+
+.oj-component .oj-enabled .oj-button-text{
+    color: black !important;
+}
+
+oj-button .oj-button-button .oj-button-label .oj-button-text{
+    color: #fff !important;
+}
+
+ul .oj-selected{
+    color: #f0f0f0 !important;
+}

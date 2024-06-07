@@ -52,6 +52,14 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.institutionName = ko.observable('');
 
                 self.institutionList = ko.observableArray()
+
+                this.tabData = [
+                    { id: "log", label: "Log" },
+                    { id: "activity", label: "Activity Log" },
+                    { id: "all", label: "All Log" },
+                ]; 
+                self.selectedTab = ko.observable('log');  
+
                 self.getInstitution = ()=>{
                     $.ajax({
                         url: BaseURL+"/getInstitution",
@@ -70,7 +78,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         }
                     })
                 }
-                self.getInstitution()
+                //self.getInstitution()
                 self.institutionSet = new ArrayDataProvider(self.institutionList, {
                     keyAttributes: 'value'
                 });
@@ -1454,15 +1462,23 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     }
                 }
 
+               
                 self.studentsNoteData = ko.observableArray([]);
                 self.studentsNoteDataprovider = new ArrayDataProvider(self.studentsNoteData, {
                     keyAttributes: 'id'
                 });
 
-                self.getNotes = ()=>{
+                self.getNotes = (tab)=>{
+                    alert(tab)
                     self.studentsNoteData([]);
+                    let dataUrl;
+                    if(tab=="all"){
+                        dataUrl = "/getStudentNotes"
+                    }else{
+                        dataUrl = ""
+                    }
                     $.ajax({
-                        url: BaseURL+"/getStudentNotes",
+                        url: BaseURL+dataUrl,
                         type: 'POST',
                         data: JSON.stringify({
                             studentId: self.student()
@@ -1510,7 +1526,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         }
                     })
                 }
-                self.getNotes();
+                self.getNotes('log');
+
+                self.selectedTabAction = ko.computed(() => {  
+                    self.getNotes(self.selectedTab())
+                });
+
 
                 self.editContactType = ko.observable('')
                 self.editLeadSource = ko.observable('')
