@@ -1469,13 +1469,14 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 });
 
                 self.getNotes = (tab)=>{
-                    alert(tab)
                     self.studentsNoteData([]);
                     let dataUrl;
                     if(tab=="all"){
                         dataUrl = "/getStudentNotes"
-                    }else{
-                        dataUrl = ""
+                    }else if(tab=="log"){
+                        dataUrl = dataUrl = "/getStudentLogNotes"
+                    }else if(tab=="activity"){
+                        dataUrl = dataUrl = "/getStudentActivityLogNotes"
                     }
                     $.ajax({
                         url: BaseURL+dataUrl,
@@ -1488,6 +1489,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             console.log(textStatus);
                         },
                         success: function (data) {
+                            self.studentsNoteData([]);
                             if(data[0]!="No data found"){
                                 data = JSON.parse(data);
                                 var len = data.length;
@@ -1593,7 +1595,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             success: function (data) {
                                 let popup = document.getElementById("progressBar");
                                 popup.close();
-                                self.getNotes()
+                                self.getNotes(self.selectedTab())
                                 self.editLogCancel()
                             }
                         })
@@ -1615,7 +1617,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         },
                         success: function (data) {
                             console.log(data);
-                            self.getNotes();
+                            self.getNotes(self.selectedTab());
                             let popup = document.getElementById("progressBar");
                             popup.close();
                         }
