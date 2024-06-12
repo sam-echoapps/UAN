@@ -1181,12 +1181,16 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.years = ko.observable();
                 const currentYear = new Date().getFullYear();
                 const years = [];
+                if (currentYear === 2024) {
+                    var currentYearValue = "Sep/Oct/Nov " + currentYear;
+                    years.push({ value: `${currentYearValue}`, label: `${currentYearValue}` });
+                }
                 for (let year = currentYear+1; year < currentYear+5; year++) {
                     var monthValue1 = "Jan/Feb/Mar "+year;
                     var monthValue2 = "Apr/May/June "+year;
                     var monthValue3 = "Sep/Oct/Nov "+year;
                     years.push({ value: `${monthValue1}`, label: `${monthValue1}`})
-                    years.push({ value: `${monthValue2}`, label: `${monthValue3}`})
+                    years.push({ value: `${monthValue2}`, label: `${monthValue2}`})
                     years.push({ value: `${monthValue3}`, label: `${monthValue3}`})
                 }
                 self.years(years);

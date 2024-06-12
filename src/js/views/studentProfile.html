@@ -123,61 +123,95 @@
             <div class="oj-panel">
                 <div id="notesDiv" class="demo-padding demo-container">
                     <div id="componentDemoContent" style="width: 1px; min-width: 100%;">
-                        <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[studentsNoteDataprovider]]"
-                            dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
-                            columns='[
-                                {"headerText": "Staff Name",  "field": "staffName", "headerClassName": "oj-sm-only-hide",
-                                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
-                                {"headerText": "Note",  "field": "note", "resizable": "enabled", "id": "depName"},
-                                {"headerText": "Contact Type",  "field": "contact_type", "headerClassName": "oj-sm-only-hide",
-                                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
-                                {"headerText": "Lead Source",  "field": "lead_source", "resizable": "enabled", "id": "manId"},
-                                {"headerText": "Date Added",  "field": "date", "headerClassName": "oj-md-down-hide",
-                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
-                                {"headerText": "Action",  "field": "status", "headerClassName": "oj-md-down-hide",
-                                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "status", "sortable": "disabled"}]'
-                            class="demo-table-container">
-                            <template slot="rowTemplate" data-oj-as="row">
-                                <tr>
-                                    <td>
-                                        <oj-bind-text value="[[row.data.staffName]]"></oj-bind-text>
-                                    </td>
-                                    <td>
-                                        <oj-bind-text value="[[row.data.note]]"></oj-bind-text>
-                                    </td>
-                                    <td>
-                                        <oj-bind-text value="[[row.data.contact_type]]"></oj-bind-text>
-                                    </td>
-                                    <td>
-                                        <oj-bind-text value="[[row.data.lead_source]]"></oj-bind-text>
-                                    </td>
-                                    <td>
-                                        <oj-bind-text value="[[row.data.date]]"></oj-bind-text>
-                                    </td>
-                                    <td>
-                                        <oj-bind-if test="[[row.data.complete24 === true ]]">
-                                            <oj-button title="Edit"  on-oj-action="[[editLog]]"
-                                                :id="[[row.data.noteId]]" style="background-color: transparent;">
-                                                <i class="fa-solid fa-pen-to-square" style="color: #06668a;font-size: 20px;"></i>
-                                            </oj-button>
-                                        </oj-bind-if>
-                                        <oj-bind-if test="[[row.data.reminderDate !== null ]]">
-                                            <oj-bind-if test="[[row.data.status === 0 ]]">
-                                                <oj-button title="Task done" id="button1" style="background-color: transparent;">
-                                                    <i class="fa-regular fa-circle-check" style="color: #5cb85c;font-size: 20px;"></i>
-                                                </oj-button>
-                                            </oj-bind-if>
-                                            <oj-bind-if test="[[row.data.status === 1 ]]">
-                                                <oj-button title="Click to mark as done" on-oj-action="[[logStatusChange]]" 
+                        <oj-bind-if test="[[selectedTab() != 'activity' ]]">
+                            <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[studentsNoteDataprovider]]"
+                                dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+                                columns='[
+                                    {"headerText": "Staff Name",  "field": "staffName", "headerClassName": "oj-sm-only-hide",
+                                        "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                                    {"headerText": "Note",  "field": "note", "resizable": "enabled", "id": "depName"},
+                                    {"headerText": "Contact Type",  "field": "contact_type", "headerClassName": "oj-sm-only-hide",
+                                        "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                                    {"headerText": "Lead Source",  "field": "lead_source", "resizable": "enabled", "id": "manId"},
+                                    {"headerText": "Date Added",  "field": "date", "headerClassName": "oj-md-down-hide",
+                                        "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                                    {"headerText": "Action",  "field": "status", "headerClassName": "oj-md-down-hide",
+                                        "className": "oj-md-down-hide", "resizable": "enabled", "id": "status", "sortable": "disabled"}]'
+                                class="demo-table-container">
+                                <template slot="rowTemplate" data-oj-as="row">
+                                    <tr>
+                                        <td>
+                                            <oj-bind-text value="[[row.data.staffName]]"></oj-bind-text>
+                                        </td>
+                                        <td>
+                                            <oj-bind-text value="[[row.data.note]]"></oj-bind-text>
+                                        </td>
+                                        <td>
+                                            <oj-bind-text value="[[row.data.contact_type]]"></oj-bind-text>
+                                        </td>
+                                        <td>
+                                            <oj-bind-text value="[[row.data.lead_source]]"></oj-bind-text>
+                                        </td>
+                                        <td>
+                                            <oj-bind-text value="[[row.data.date]]"></oj-bind-text>
+                                        </td>
+                                        <td>
+                                            <oj-bind-if test="[[row.data.complete24 === true ]]">
+                                                <oj-button title="Edit"  on-oj-action="[[editLog]]"
                                                     :id="[[row.data.noteId]]" style="background-color: transparent;">
-                                                    <i class="fa-regular fa-circle-check" style="color: #d9534f;font-size: 20px;"></i>
+                                                    <i class="fa-solid fa-pen-to-square" style="color: #06668a;font-size: 20px;"></i>
                                                 </oj-button>
                                             </oj-bind-if>
-                                        </oj-bind-if>
-                                    </td>
-                                </tr>
-                            </template>
-                        </oj-table>
+                                            <oj-bind-if test="[[row.data.reminderDate !== null ]]">
+                                                <oj-bind-if test="[[row.data.status === 0 ]]">
+                                                    <oj-button title="Task done" id="button1" style="background-color: transparent;">
+                                                        <i class="fa-regular fa-circle-check" style="color: #5cb85c;font-size: 20px;"></i>
+                                                    </oj-button>
+                                                </oj-bind-if>
+                                                <oj-bind-if test="[[row.data.status === 1 ]]">
+                                                    <oj-button title="Click to mark as done" on-oj-action="[[logStatusChange]]" 
+                                                        :id="[[row.data.noteId]]" style="background-color: transparent;">
+                                                        <i class="fa-regular fa-circle-check" style="color: #d9534f;font-size: 20px;"></i>
+                                                    </oj-button>
+                                                </oj-bind-if>
+                                            </oj-bind-if>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </oj-table>
+                        </oj-bind-if>
+
+                        <oj-bind-if test="[[selectedTab() == 'activity' ]]">
+                            <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[studentsNoteDataprovider]]"
+                                dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+                                columns='[
+                                    {"headerText": "Staff Name",  "field": "staffName", "headerClassName": "oj-sm-only-hide",
+                                        "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                                    {"headerText": "Note",  "field": "note", "resizable": "enabled", "id": "depName"},
+                                    {"headerText": "Contact Type",  "field": "contact_type", "headerClassName": "oj-sm-only-hide",
+                                        "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                                    {"headerText": "Date Added",  "field": "date", "headerClassName": "oj-md-down-hide",
+                                        "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"}]'
+                                class="demo-table-container">
+                                <template slot="rowTemplate" data-oj-as="row">
+                                    <tr>
+                                        <td>
+                                            <oj-bind-text value="[[row.data.staffName]]"></oj-bind-text>
+                                        </td>
+                                        <td>
+                                            <oj-bind-text value="[[row.data.note]]"></oj-bind-text>
+                                        </td>
+                                        <td>
+                                            <oj-bind-text value="[[row.data.contact_type]]"></oj-bind-text>
+                                        </td>
+                                        <td>
+                                            <oj-bind-text value="[[row.data.date]]"></oj-bind-text>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </oj-table>
+                        </oj-bind-if>
+
                     </div>
                 </div>
             </div>
