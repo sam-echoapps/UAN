@@ -976,7 +976,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         if(franchiseId){
                             self.franchiseId(franchiseId);
                             sessionStorage.removeItem("franchiseId")
-                            self.getOffices().then(()=>self.getYearlyPartnerProfilePerformance()).then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getFranchises()).then(()=>self.getPartnerContractFile()).then(()=>self.getPartnerNote()).then(()=>self.getFranchiseInfo()).then(()=>self.getPartnerPassword()).catch(error => console.error(error))
+                            self.getOffices().then(()=>self.getYearlyPartnerProfilePerformance()).then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getFranchises()).then(()=>self.getPartnerContractFile()).then(()=>self.getPartnerNote()).then(()=>self.getFranchiseInfo()).then(()=>self.getFranchisePassword()).catch(error => console.error(error))
                         }else{ 
                             self.getOffices();
                             self.getBdmCounselors();
@@ -1031,7 +1031,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.getPartnerContractFile(); 
                         self.getPartnerNote(); 
                         self.getFranchiseInfo(); 
-                        self.getPartnerPassword();
+                        self.getFranchisePassword();
                         self.getYearlyPartnerProfilePerformance();
                     }
                 }
@@ -1739,7 +1739,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
             }
 
             self.generatePassword = (length) =>{
-                alert("jhj")
                 const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]\;?><,./-=1234567890';
                 let password = '';
                 
@@ -1752,14 +1751,14 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
             }
 
             self.addUser = ()=>{
-                if(self.partnerId()==undefined){
-                    document.getElementById("partnerCredentialMessage").style.display = "block";
+                if(self.franchiseId()==undefined){
+                    document.getElementById("franchiseCredentialMessage").style.display = "block";
                     setTimeout(()=>{
-                        document.getElementById("partnerCredentialMessage").style.display = "none";
+                        document.getElementById("franchiseCredentialMessage").style.display = "none";
                     }, 5000);
                 }else{
                     const credentialFormValid = self._checkValidationGroup("credentialValidation"); 
-                    if(credentialFormValid && self.partnerEmail() != ''){
+                    if(credentialFormValid && self.franchiseEmail() != ''){
                             let popup = document.getElementById("progress");
                             popup.open();
                             $.ajax({
@@ -1768,10 +1767,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 data: JSON.stringify({
                                     name : self.partnerName(),
                                     office : self.processingOffice(),
-                                    role : 'partner',
-                                    email : self.partnerEmail(),
+                                    role : 'franchise',
+                                    email : self.franchiseEmail(),
                                     password : self.password(),
-                                    partnerId:self.partnerId(),
+                                    partnerId: 0,
+                                    franchiseId:self.franchiseId(),
                                 }),
                                 dataType: 'json',
                                 timeout: sessionStorage.getItem("timeInetrval"),
@@ -1783,30 +1783,30 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                     console.log(data)
                                     let popup = document.getElementById("progress");
                                     popup.close();
-                                    self.getPartnerPassword();
+                                    self.getFranchisePassword();
                                 }
                             })
                         }
                     }
                 }
 
-                self.updatePartnerCredential = ()=>{
-                    if(self.partnerId()==undefined){
-                        document.getElementById("partnerCredentialMessage").style.display = "block";
+                self.updateFranchiseCredential = ()=>{
+                    if(self.franchiseId()==undefined){
+                        document.getElementById("franchiseCredentialMessage").style.display = "block";
                         setTimeout(()=>{
-                            document.getElementById("partnerCredentialMessage").style.display = "none";
+                            document.getElementById("franchiseCredentialMessage").style.display = "none";
                         }, 5000);
                     }else{
                         const credentialFormValid = self._checkValidationGroup("credentialValidation"); 
-                        if(credentialFormValid && self.partnerEmail() != ''){
+                        if(credentialFormValid && self.franchiseEmail() != ''){
                                 let popup = document.getElementById("progress");
                                 popup.open();
                                     $.ajax({
-                                        url: BaseURL+"/updatePartnerCredential",
+                                        url: BaseURL+"/updateFranchiseCredential",
                                         type: 'POST',
                                         data: JSON.stringify({
                                             password : self.password(),
-                                            partnerId:self.partnerId(),
+                                            franchiseId:self.franchiseId(),
                                         }),
                                         dataType: 'json',
                                         timeout: sessionStorage.getItem("timeInetrval"),
@@ -1825,10 +1825,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 }
 
                 self.sendCredential = ()=>{
-                    if(self.partnerId()==undefined){
-                        document.getElementById("partnerCredentialMessage").style.display = "block";
+                    if(self.franchiseId()==undefined){
+                        document.getElementById("franchiseCredentialMessage").style.display = "block";
                         setTimeout(()=>{
-                            document.getElementById("partnerCredentialMessage").style.display = "none";
+                            document.getElementById("franchiseCredentialMessage").style.display = "none";
                         }, 5000);
                     }else{
                         const credentialFormValid = self._checkValidationGroup("credentialValidation"); 
@@ -1836,7 +1836,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 let popup = document.getElementById("progress");
                                 popup.open();
                                     $.ajax({
-                                        url: BaseURL+"/sendPartnerCredential",
+                                        url: BaseURL+"/sendFranchiseCredential",
                                         type: 'POST',
                                         data: JSON.stringify({
                                             name : self.partnerName(),
@@ -1859,17 +1859,18 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             }
                 }
 
-                self.getPartnerPassword = ()=>{
+                self.getFranchisePassword = ()=>{
                     $.ajax({
-                        url: BaseURL+"/getPartnerPassword",
+                        url: BaseURL+"/getFranchisePassword",
                         type: 'POST',
                         data: JSON.stringify({
-                            partnerId:self.partnerId(),
+                            franchiseId:self.franchiseId(),
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);
                             self.generatePassword(8);
+                            self.btnAction('save');
                         },
                         success: function (data) {
                         if(data[0]!='No data found'){

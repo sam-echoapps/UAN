@@ -247,7 +247,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                                             role : self.selectRole(),
                                             email : self.email(),
                                             password : self.password(),
-                                            partnerId: 0
+                                            partnerId: 0,
+                                            franchiseId: 0
                                         }),
                                         dataType: 'json',
                                         timeout: sessionStorage.getItem("timeInetrval"),

@@ -1765,6 +1765,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                     email : self.partnerEmail(),
                                     password : self.password(),
                                     partnerId:self.partnerId(),
+                                    franchiseId:0
                                 }),
                                 dataType: 'json',
                                 timeout: sessionStorage.getItem("timeInetrval"),
