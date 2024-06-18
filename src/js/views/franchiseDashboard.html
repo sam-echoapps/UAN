@@ -1,0 +1,88 @@
+<link rel="stylesheet" href="../../css/counsellorDashboard.css">
+<div class="oj-panel">
+    <div class="oj-flex dashboard">
+        <div class="year-data oj-flex">
+            Select the year to see the data &nbsp;
+            <oj-select-single id="select" label-hint="Select Year" label-edge="inside"
+                class="oj-form-control-max-width-md" data="[[yearsDp]]" value="{{selectYear}}" on-value-changed="[[yearChanged]]"></oj-select-single>
+        </div>
+        
+        <div class="oj-flex" id="year-data-set">
+            <oj-action-card id="1" on-oj-action="[[cardAction]]" class="year-data-set oj-sm-padding-2x demo-card-content">
+                <p class="num"><oj-bind-text value="[[studentsCount]]"></oj-bind-text></p>
+                <p>Students</p>
+            </oj-action-card>
+            <oj-action-card id="2" on-oj-action="[[cardAction]]" class="year-data-set oj-sm-padding-2x demo-card-content">
+                <p class="num"><oj-bind-text value="[[applicationCount]]"></oj-bind-text></p></p>
+                <p>Applications</p>
+            </oj-action-card>
+            <oj-action-card id="3" on-oj-action="[[cardAction]]" class="year-data-set oj-sm-padding-2x demo-card-content">
+                <p class="num"><oj-bind-text value="[[finalchoicedCount]]"></oj-bind-text></p>
+                <p>Final choice</p>
+            </oj-action-card>
+        </div>
+        <hr>
+    </div>
+    
+    <h6 style="text-align: center;">Total Students</h6>
+    <div class="oj-flex tbl-top-btn oj-sm-justify-content-space-between">
+        <p class="oj-flex oj-sm-align-items-center" id="assignedLeadCount" 
+            style="padding: 4px 10px; border-radius: 10px;background-color: #06668a; color: #fff;margin-top: 15px;">
+            Total Students: <oj-bind-text value="[[assignedLeadsCount]]"></oj-bind-text>
+        </p>
+        <oj-select-single id="select" label-hint="Select Status" label-edge="inside" class="oj-form-control-max-width-md"
+            data="[[listDP]]" on-value-changed="[[selectedData]]" value="{{selectList}}" style="width: 350px;"></oj-select-single>
+    </div>
+
+
+    <div id="sampleDemo" class="demo-padding demo-container">
+        <div id="componentDemoContent">
+            <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[studentDataProvider]]"
+                dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+                columns='[
+                    {"headerText": "Student Id",  "field": "id", "headerClassName": "oj-sm-only-hide",
+                        "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                    {"headerText": "First Name",  "field": "firstName", "resizable": "enabled", "id": "depName"},
+                    {"headerText": "Last Name",  "field": "lastName", "headerClassName": "oj-sm-only-hide", 
+                        "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                    {"headerText": "Status",  "field": "status", "resizable": "enabled", "id": "status"},
+                    {"headerText": "Date Submitted",  "field": "dateSubmitted", "headerClassName": "oj-md-down-hide",
+                        "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"}]'
+                class="demo-table-container">
+                <template slot="rowTemplate" data-oj-as="row">
+                    <tr>
+                        <td>
+                            <a :id="[[row.data.id]]" on-click= "[[viewProfile]]" target="_blank">
+                                <oj-bind-text value="[[row.data.id]]"></oj-bind-text>
+                            </a>
+                        </td>
+                        <td><oj-bind-text value="[[row.data.firstName]]"></oj-bind-text></td>
+                        <td><oj-bind-text value="[[row.data.lastName]]"></oj-bind-text></td>
+                        <td><oj-bind-text value="[[row.data.status]]"></oj-bind-text></td>
+                        <td><oj-bind-text value="[[row.data.dateSubmitted]]"></oj-bind-text></td>
+                    </tr>
+                </template>
+                <oj-menu
+                    slot="contextMenu"
+                    on-oj-menu-action="[[myActionFunction]]"
+                    on-oj-before-open="[[myBeforeOpenFunction]]"
+                    aria-label="Employee Edit">
+                    <oj-option value="openNewTab">Open link in a new tab</oj-option>
+                    <oj-option value="Sort Ascending" data-oj-command="oj-table-sortAsc"></oj-option>
+                    <oj-option value="Sort Descending" data-oj-command="oj-table-sortDsc"></oj-option>
+                </oj-menu>
+            </oj-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<oj-popup id="progressBar" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>

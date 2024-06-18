@@ -157,6 +157,27 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "guideManagePartnerView", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "help", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
+    }else if (sessionStorage.getItem("userRole") == "franchise") {
+      var navData = [
+        { path: "", redirect: "signin" },
+        { path: "signin", detail: { label: "Signin", iconClass: "oj-ux-ico-bar-chart" }, },
+        { path: "franchiseDashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
+        // { path: "managerDashboard", detail: { label: "Manager Dashboard", iconClass: "fa-solid fa-gauge", }, },
+        // { path: "counsellorDashboard", detail: { label: "Counsellor Dashboard", iconClass: "fa-solid fa-gauge", }, },
+        // { path: "dashboard", detail: { label: "Dashboard", iconClass: "fa-solid fa-gauge" }, },
+        // { path: "addStudent", detail: { label: "Add Student", iconClass: "fa-solid fa-people-roof", }, },
+        // { path: "searchPartnerStudent", detail: { label: "Search Student", iconClass: "fa-solid fa-magnifying-glass", },},
+        // { path: "studentProfile", detail: { label: "Student Profile", iconClass: "oj-ux-ico-bar-chart", }, },
+        // { path: "partnerStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
+        // { path: "partnerStudentProfile", detail: { label: "Student Profile", iconClass: "oj-ux-ico-bar-chart", }, },
+        // { path: "partnerStudents", detail: { label: "Students", iconClass: "oj-ux-ico-bar-chart", }, },
+        // { path: "partnerApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
+        // { path: "partnerFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
+        // { path: "guideManageInstitution", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        // { path: "guideManagePartner", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        // { path: "guideManagePartnerView", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: "help", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+      ];
     } else {
       var navData = [
         { path: "", redirect: "signin" },
@@ -303,6 +324,19 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
       ]
     }
+    else if (sessionStorage.getItem("userRole") == "franchise") {
+      self.navMenu = [
+        {"name": "Dashboard","id": "home","icons": "fa-solid fa-gauge", "path":"franchiseDashboard"},
+        // {"name": "Student", "id": "student", "icons": "oj-ux-ico-education", 
+        //   "children": [
+        //     {"name": "Add Student","id": "addStudent","icons": "fa-solid fa-user-plus", "path":"addStudent"},
+        //     {"name": "Search Student","id": "searchPartnerStudent","icons": "fa-solid  fa-magnifying-glass", "path":"searchPartnerStudent"},
+        //     {"name": "Student Manager Report","id": "partnerStudentManagerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerStudentManagerReport"},
+        //   ]
+        // },
+        {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
+      ]
+    }
     else{
       self.navMenu = [
         {"name": "Dashboard","id": "home","icons": "fa-solid fa-gauge", "path":"counsellorDashboard"},
@@ -350,7 +384,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         keyAttributes: "path",
       });
     }
-    else{
+    else {
       this.navDataProvider = new ArrayDataProvider(navData.slice(11), {
         keyAttributes: "path",
       });
@@ -512,6 +546,8 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         router.go({ path: "managerDashboard" });
       }else if (sessionStorage.getItem("userRole") == "partner") {
         router.go({ path: "partnerDashboard" });
+      }else if (sessionStorage.getItem("userRole") == "franchise") {
+        router.go({ path: "franchiseDashboard" });
       } else {
         router.go({ path: "counsellorDashboard" });
       }

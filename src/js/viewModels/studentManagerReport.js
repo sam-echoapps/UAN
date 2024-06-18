@@ -262,7 +262,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 csvContent += headers.join(',') + '\n';
 
                                 for(var i=0;i<len;i++){
-                                    var date = data[0][5];
+                                    var date = data[i][5];
                                     date = new Date(date);
                                     var year = date.getFullYear();
                                     var month = ('0' + (date.getMonth() + 1)).slice(-2);
