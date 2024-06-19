@@ -54,8 +54,13 @@
             <oj-bind-if test="[[userRole() === 'partner' ]]">
                 <oj-button id="save" chroming="outlined" on-oj-action="[[partnerFormSubmit]]">Submit</oj-button>
             </oj-bind-if>
+            <oj-bind-if test="[[userRole() === 'franchise' ]]">
+                <oj-button id="save" chroming="outlined" on-oj-action="[[franchiseFormSubmit]]">Submit</oj-button>
+            </oj-bind-if>
             <oj-bind-if test="[[userRole() != 'partner' ]]">
-                <oj-button id="save" chroming="outlined" on-oj-action="[[formSubmit]]">Submit</oj-button>
+                <oj-bind-if test="[[userRole() != 'franchise' ]]">
+                    <oj-button id="save" chroming="outlined" on-oj-action="[[formSubmit]]">Submit</oj-button>
+                </oj-bind-if>
             </oj-bind-if>
         </div>
     </oj-validation-group>

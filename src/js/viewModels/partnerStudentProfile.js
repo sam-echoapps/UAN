@@ -1306,6 +1306,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             studyAbroadDestination: self.studyAbroadDestination(),
                             year: self.yearIntake(),
                             hearAbout: self.hearAbout(),
+                            updated_by: sessionStorage.getItem("userName")
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
@@ -1368,7 +1369,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             office: self.office1(),
                             consultant: self.consultant(),
                             marketingSource: self.marketingSource(),
-                            partner: self.partner()
+                            partner: self.partner(),
+                            updated_by: sessionStorage.getItem("userName")
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {

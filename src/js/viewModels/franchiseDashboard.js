@@ -44,8 +44,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.userOfficeId = ko.observable();
                 self.userRole = ko.observable(sessionStorage.getItem("userRole"));
                 self.userId = ko.observable();
-                self.partnerId = ko.observable();
-                self.partnerId(sessionStorage.getItem("userPartnerId"))
+                self.franchiseId = ko.observable();
+                self.franchiseId(sessionStorage.getItem("userFranchiseId"))
 
                 self.studentsCount = ko.observable();
                 self.applicationCount = ko.observable();
@@ -75,11 +75,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 
                 self.getDashboardCount = ()=>{
                     $.ajax({
-                        url: BaseURL+"/getCountOfPartnerDashboard",
+                        url: BaseURL+"/getCountOfFranchiseDashboard",
                         type: 'POST',
                         data: JSON.stringify({
                             year: self.selectYear(),
-                            partnerId: self.partnerId(),
+                            franchiseId: self.franchiseId(),
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
@@ -126,10 +126,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.studentData = ko.observableArray([]);
                 self.getStudentsData = (status)=>{
                     $.ajax({
-                        url: BaseURL+"/getAllPartnerStudents",
+                        url: BaseURL+"/getAllFranchiseStudents",
                         type: 'POST',
                         data: JSON.stringify({
-                            partnerId: self.partnerId(),
+                            franchiseId: self.franchiseId(),
                             status: status
                         }),
                         dataType: 'json',

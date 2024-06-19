@@ -517,6 +517,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 });
 
                 self.partner = ko.observable();
+                self.franchise = ko.observable();
 
 
                 self.offices = ko.observableArray([]);
@@ -697,6 +698,50 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                     email : self.email(),
                                     office : self.office(),
                                     partner : self.partner(),
+                                    nationality : self.nationality(),
+                                    dob : self.dob(),
+                                    leadSource : self.marketingSource(),
+                                    studyAbroadDestination: self.studyAbroadDestination()
+                                }),
+                                dataType: 'json',
+                                timeout: sessionStorage.getItem("timeInetrval"),
+                                context: self,
+                                error: function (xhr, textStatus, errorThrown) {
+                                    console.log(textStatus);
+                                },
+                                success: function (data) {
+                                    let popup = document.getElementById("popup1");
+                                    popup.close();
+                                    let popup1 = document.getElementById("popup2");
+                                    popup1.open();
+                                }
+                            })
+                        }
+                    }
+                }
+
+                self.franchiseFormSubmit = ()=>{
+                    const formValid = self._checkValidationGroup("formValidation"); 
+                    if (formValid) {
+                        if(self.emailError()=='' && self.phoneError()==''){
+                            let popup = document.getElementById("popup1");
+                            popup.open();
+                            
+                            if(self.userRole()=="franchise"){
+                                self.office(sessionStorage.getItem("userOfficeId"));
+                                self.franchise(sessionStorage.getItem("userFranchiseId"));
+                            }
+                            $.ajax({
+                                url: BaseURL+"/addFranchiseStudent",
+                                type: 'POST',
+                                data: JSON.stringify({
+                                    firstName : self.firstName(),
+                                    lastName : self.lastName(),
+                                    countryCode : self.countryCode(),
+                                    phone : self.phone(),
+                                    email : self.email(),
+                                    office : self.office(),
+                                    franchise : self.franchise(),
                                     nationality : self.nationality(),
                                     dob : self.dob(),
                                     leadSource : self.marketingSource(),
