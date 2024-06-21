@@ -31,13 +31,13 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     let cardId = event.currentTarget.id;
                     
                     if(cardId==1){
-                        self.router.go({path : 'partnerStudents'});
+                        self.router.go({path : 'franchiseStudents'});
                     }
                     else if(cardId==2){
-                        self.router.go({path : 'partnerApplication'});
+                        self.router.go({path : 'franchiseApplication'});
                     }
                     else{
-                        self.router.go({path : 'partnerFinalchoiced'});
+                        self.router.go({path : 'franchiseFinalchoiced'});
                     }
                 };
 
@@ -170,7 +170,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 });
                 self.viewProfile = (e)=>{
                     // window.location.href = `/?ojr=studentProfile&id=${e.currentTarget.id}`;
-                    window.open(`/?ojr=partnerStudentProfile&id=${e.currentTarget.id}`, "_blank");
+                    window.open(`/?ojr=franchiseStudentProfile&id=${e.currentTarget.id}`, "_blank");
                 }
 
                 self.stIdRightClick = ko.observable();
@@ -178,7 +178,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     let menu = event.detail.selectedValue;
                     if(menu=="openNewTab"){
                         if(self.stIdRightClick()!=undefined){
-                            window.open(`/?ojr=partnerStudentProfile&id=${self.stIdRightClick()}`, "_blank");
+                            window.open(`/?ojr=franchiseStudentProfile&id=${self.stIdRightClick()}`, "_blank");
                         }
                     }
                 };

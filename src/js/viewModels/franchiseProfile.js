@@ -15,11 +15,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 const tabData = [
                     { name: 'Details', id: 'details'},
-                    // { name: 'Applications', id: 'applications'},
+                    { name: 'Applications', id: 'applications'},
                     // { name: 'Final Choice', id: 'finalChoice'},
                     // { name: 'Contract Files', id: 'contractFiles'},
                     // { name: 'Add Logs', id: 'logs'},
-                    { name: 'Applications', id: ''},
+                    //{ name: 'Applications', id: ''},
                     { name: 'Final Choice', id: ''},
                     { name: 'Contract Files', id: ''},
                     { name: 'Add Logs', id: ''},
@@ -638,7 +638,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.percentageRow = ko.observable();
 
                 self.yearChanged = ()=>{
-                    self.getYearlyPartnerProfilePerformance();
+                    self.getYearlyFranchiseProfilePerformance();
                 }
 
                 self.studentsCount = ko.observable();
@@ -653,13 +653,13 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.percentageApplicationCount = ko.observable();
                 self.percentageFinalChoiceCount = ko.observable();
 
-                self.getYearlyPartnerProfilePerformance = ()=>{
+                self.getYearlyFranchiseProfilePerformance = ()=>{
                     $.ajax({
-                        url: BaseURL+"/getYearlyPartnerProfilePerformance",
+                        url: BaseURL+"/getYearlyFranchiseProfilePerformance",
                         type: 'POST',
                         data: JSON.stringify({
                             year: self.selectYear(),
-                            partnerId : self.partnerId(),
+                            franchiseId : self.franchiseId(),
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
@@ -976,7 +976,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         if(franchiseId){
                             self.franchiseId(franchiseId);
                             sessionStorage.removeItem("franchiseId")
-                            self.getOffices().then(()=>self.getYearlyPartnerProfilePerformance()).then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getFranchises()).then(()=>self.getPartnerContractFile()).then(()=>self.getPartnerNote()).then(()=>self.getFranchiseInfo()).then(()=>self.getFranchisePassword()).catch(error => console.error(error))
+                            self.getOffices().then(()=>self.getYearlyFranchiseProfilePerformance()).then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getFranchises()).then(()=>self.getPartnerContractFile()).then(()=>self.getPartnerNote()).then(()=>self.getFranchiseInfo()).then(()=>self.getFranchisePassword()).catch(error => console.error(error))
                         }else{ 
                             self.getOffices();
                             self.getBdmCounselors();
@@ -1032,16 +1032,16 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.getPartnerNote(); 
                         self.getFranchiseInfo(); 
                         self.getFranchisePassword();
-                        self.getYearlyPartnerProfilePerformance();
+                        self.getYearlyFranchiseProfilePerformance();
                     }
                 }
 
                 self.viewApplications = ()=>{
                         self.showApplicationYearData()
-                        if(self.partnerId()==undefined){
-                            document.getElementById("partnerSelectMessage").style.display = "block";
+                        if(self.franchiseId()==undefined){
+                            document.getElementById("franchiseRequireMessage").style.display = "block";
                             setTimeout(()=>{
-                                document.getElementById("partnerSelectMessage").style.display = "none";
+                                document.getElementById("franchiseRequireMessage").style.display = "none";
                             }, 5000);
                         }else{
                         self.applicationOffice(['All'])
@@ -1053,15 +1053,15 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.applicationData([]);
                         let popup = document.getElementById("progress");
                         popup.open();
-                        let dataUrl = "/getApplicationsPartnerASDReport"
+                        let dataUrl = "/getApplicationsFranchiseASDReport"
                         if(radio=="CSD"){
-                            dataUrl = "/getApplicationsPartnerCSDReport"   
+                            dataUrl = "/getApplicationsFranchiseCSDReport"   
                         }
                         $.ajax({
                             url: BaseURL+dataUrl,
                             type: 'POST',
                             data: JSON.stringify({
-                                partnerId:self.partnerId(),
+                                franchiseId:self.franchiseId(),
                                 fromDate: fromDate,
                                 toDate: toDate,
                                 officeId: office,
@@ -1076,7 +1076,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                             'Status', 'Nationality',  'Mobile', 'Email', 'Lead Source', 'UTM Source'];
                                 csvContent += headers.join(',') + '\n';
                                 if(data[0]!='No data found'){
+                                    console.log(data)
                                     data = JSON.parse(data);
+                                    console.log(data)
                                     let len = data.length;
 
                                     for(let i=0;i<len;i++){
@@ -1106,6 +1108,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                     self.applicationFileName(fileName);
                                 }
                                 else{
+                                    alert('a')
                                     var rowData = []; 
                                     csvContent += rowData.join(',') + '\n';
                                     var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1131,16 +1134,16 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     office = office.join(",");
                     let radio = self.selectApplicationRadio();
                     self.applicationData([]);
-                    let dataUrl = "/getApplicationsPartnerYearCountASDReport"
+                    let dataUrl = "/getApplicationsFranchiseYearCountASDReport"
                     if(radio=="CSD"){
-                        dataUrl = "/getApplicationsPartnerYearCountCSDReport"   
+                        dataUrl = "/getApplicationsFranchiseYearCountCSDReport"   
                     }
                     self.applicationYearData([])
                     $.ajax({
                         url: BaseURL+dataUrl,
                         type: 'POST',
                         data: JSON.stringify({
-                            partnerId:self.partnerId(),
+                            franchiseId:self.franchiseId(),
                             fromDate: fromDate,
                             toDate: toDate,
                             officeId: office,
@@ -1388,10 +1391,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.downloadApplicationData = ()=>{
                         self.showApplicationYearData()
-                        if(self.partnerId()==undefined){
-                            document.getElementById("partnerSelectMessage").style.display = "block";
+                        if(self.franchiseId()==undefined){
+                            document.getElementById("franchiseRequireMessage").style.display = "block";
                             setTimeout(()=>{
-                                document.getElementById("partnerSelectMessage").style.display = "none";
+                                document.getElementById("franchiseRequireMessage").style.display = "none";
                             }, 5000);
                         }else{
                             if(self.applicationBlob() != undefined && self.applicationFileName() != undefined){

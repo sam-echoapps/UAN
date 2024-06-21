@@ -1,0 +1,111 @@
+<div class="oj-panel oj-flex oj-sm-justify-content-space-between" style="margin: 10px;">
+    <div class="oj-flex oj-sm-align-items-center">
+        <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+            Student List
+        </h6>
+        &nbsp;&nbsp;&nbsp;
+        <p class="oj-flex oj-sm-align-items-center" style="margin-top: 24px; padding: 4px 10px; border-radius: 10px; background-color: #06668a; color: #fff;">
+            Total Students: <oj-bind-text value="[[studentsCnt]]"></oj-bind-text>
+        </p>
+    </div>
+    
+    <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Search" label-edge="inside"
+        placeholder="Search.." on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}" 
+        clear-icon="always" style="width: 300px;"></oj-input-text>
+</div>
+<div class="oj-flex oj-sm-justify-content-space-between">
+    <oj-bind-if test="[[userRole() === 'admin' ]]">
+        <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
+            data="[[officesDP]]" on-oj-value-action="[[officeAction]]" value="{{officeId}}" style="width: 350px;"></oj-select-single>
+        </div>    
+    </oj-bind-if>
+    <oj-bind-if test="[[userRole() === 'director' ]]">
+        <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
+            data="[[officesDP]]" on-oj-value-action="[[officeAction]]" value="{{officeId}}" style="width: 350px;"></oj-select-single>
+        </div>    
+    </oj-bind-if>
+    <oj-bind-if test="[[userRole() != 'director' ]]">
+        <div></div>
+    </oj-bind-if>
+    <div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <oj-select-single id="select" label-hint="Select Status" label-edge="inside" class="oj-form-control-max-width-md"
+            data="[[listDP]]" on-value-changed="[[selectedData]]" value="{{selectList}}" style="width: 350px;"></oj-select-single>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <oj-button id="button1" on-oj-action="[[downloadData]]" style="background-color: #04812f ">
+            Export <i class="fa-solid fa-download"></i>
+        </oj-button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>    
+</div>
+<div class="oj-panel" style="margin: 10px;padding: 20px;">
+    <div style="margin-top: 20px;">
+        <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[studentDataProvider]]"
+            dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+            columns='[
+                {"headerText": "Student Id",  "field": "id", "headerClassName": "oj-sm-only-hide",
+                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
+                {"headerText": "First Name",  "field": "firstName", "resizable": "enabled", "id": "depName"},
+                {"headerText": "Last Name",  "field": "lastNa`me", "headerClassName": "oj-sm-only-hide",
+                    "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
+                {"headerText": "Email",  "field": "email", "resizable": "enabled", "id": "manId"},
+                {"headerText": "Phone", "field": "phone", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Campaign Source", "field": "source", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Last Note", "field": "note", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Note Date", "field": "noteDate", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Status", "field": "status", "headerClassName": "oj-md-down-hide",
+                "className": "oj-md-down-hide", "resizable": "enabled", "id": "status"}]'
+            class="demo-table-container">
+            <template slot="rowTemplate" data-oj-as="row">
+                <tr>
+                    <td>
+                        <a :id="[[row.data.id]]" on-click= "[[viewProfile]]" target="_blank">
+                            <oj-bind-text value="[[row.data.id]]"></oj-bind-text>
+                        </a>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.firstName]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.lastName]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.email]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.phone]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.source]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.note]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.noteDate]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.status]]"></oj-bind-text>
+                    </td>
+                </tr>
+            </template>            
+            <oj-menu
+                slot="contextMenu"
+                on-oj-menu-action="[[myActionFunction]]"
+                on-oj-before-open="[[myBeforeOpenFunction]]"
+                aria-label="Employee Edit">
+                <oj-option value="openNewTab">Open link in a new tab</oj-option>
+                <oj-option value="Sort Ascending" data-oj-command="oj-table-sortAsc"></oj-option>
+                <oj-option value="Sort Descending" data-oj-command="oj-table-sortDsc"></oj-option>
+            </oj-menu>
+        </oj-table>
+    </div>
+</div>

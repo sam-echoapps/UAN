@@ -112,7 +112,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.courseName = ko.observable('');
                 self.courseEndDate = ko.observable(null);
                 self.applicationSentDate = ko.observable('');
-                self.partner = ko.observable('');
+                self.franchise = ko.observable('');
                 self.tutionFee = ko.observable(0);
                 self.loginUrl = ko.observable('');
                 self.userName = ko.observable('');
@@ -1229,7 +1229,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.utmMedium(data[0][22]);
                                 self.utmCampaign(data[0][23]);
                                 self.hearAbout(data[0][24]);
-                                self.franchise(data[0][25]);
+                                self.franchise(data[0][29]);
                                 if(data[0][1]==null){
                                     self.getCounselors(data[0][2], "");
                                     self.franchises(data[0][2]);
@@ -1353,14 +1353,14 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     keyAttributes: 'value'
                 });
 
-                self.statusUpdate = ()=>{
+                self.franchiseStatusUpdate = ()=>{
                     let popup = document.getElementById("progressBar");
                     popup.open();
                     if(self.consultant()==""){
                         self.consultant(null);
                     }
                     $.ajax({
-                        url: BaseURL+"/statusUpdate",
+                        url: BaseURL+"/franchiseStatusUpdate",
                         type: 'POST',
                         data: JSON.stringify({
                             studentId: self.student(),
@@ -1369,7 +1369,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             office: self.office1(),
                             consultant: self.consultant(),
                             marketingSource: self.marketingSource(),
-                            //franchise: self.partner(),
+                            franchise: self.franchise(),
                             updated_by: sessionStorage.getItem("userName")
                         }),
                         dataType: 'json',
@@ -1408,11 +1408,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         let popup = document.getElementById("progressBar");
                         popup.open();
                         $.ajax({
-                            url: BaseURL+"/addPartnerStudentNotes",
+                            url: BaseURL+"/addFranchiseStudentNotes",
                             type: 'POST',
                             data: JSON.stringify({
                                 studentId: self.student(),
-                                partnerId: sessionStorage.getItem("userPartnerId"),
+                                franchiseId: sessionStorage.getItem("userFranchiseId"),
                                 note: self.note(),
                                 reminderDate: self.reminderDate(),
                                 contactType: self.contactType(),
@@ -1440,7 +1440,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.getNotes = ()=>{
                     self.studentsNoteData([]);
                     $.ajax({
-                        url: BaseURL+"/getPartnerStudentNotes",
+                        url: BaseURL+"/getFranchiseStudentNotes",
                         type: 'POST',
                         data: JSON.stringify({
                             studentId: self.student()
@@ -1604,7 +1604,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 courseEndDate: self.courseEndDate(),
                                 courseName: self.courseName(),
                                 dateOfApplicationSent: self.applicationSentDate(),
-                                partner: self.partner(),
+                                partner: 'NULL',
                                 tutionFeeCurrency : self.tutionFeeCurrency(),
                                 tutionFee: self.tutionFee(),
                                 loginUrl: self.loginUrl(),
@@ -1613,6 +1613,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 applicationMethod: self.applicationMethod(),
                                 counsellingType: self.counsellingType(),
                                 ielts: self.ielts()[0],
+                                franchise: self.franchise(),
                             }),
                             dataType: 'json',
                             error: function (xhr, textStatus, errorThrown) {
@@ -1628,7 +1629,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.courseName('');
                                 self.courseEndDate('');
                                 self.applicationSentDate('');
-                                self.partner('');
                                 self.tutionFeeCurrency('');
                                 self.tutionFee(0);
                                 self.loginUrl('');

@@ -1662,6 +1662,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 applicationMethod: self.applicationMethod(),
                                 counsellingType: self.counsellingType(),
                                 ielts: self.ielts()[0],
+                                franchise: 'NULL',
                             }),
                             dataType: 'json',
                             error: function (xhr, textStatus, errorThrown) {
