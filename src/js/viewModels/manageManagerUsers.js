@@ -604,6 +604,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                             officeId: self.officeId(),
                             counsilorId: self.counsilor(),
                             studentId: studentIds,
+                            userId: sessionStorage.getItem("userId")
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
@@ -628,9 +629,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                 }
 
                 self.resultPopupCloseButton = ()=>{
-                    self.getUsers("activeStaff")
-                    let resultMsg = document.getElementById("resultMsg")
-                    resultMsg.close()
+                    location.reload()
+                    // self.getUsers("activeStaff")
+                    // let resultMsg = document.getElementById("resultMsg")
+                    // resultMsg.close()
                 }
 
                 self.closeStudents = ()=>{

@@ -623,9 +623,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                 }
 
                 self.resultPopupCloseButton = ()=>{
-                    self.getUsers("activeStaff")
-                    let resultMsg = document.getElementById("resultMsg")
-                    resultMsg.close()
+                    location.reload()
+                    // self.getUsers("activeStaff")
+                    // let resultMsg = document.getElementById("resultMsg")
+                    // resultMsg.close()
                 }
 
                 self.closeStudents = ()=>{

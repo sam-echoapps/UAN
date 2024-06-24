@@ -16,11 +16,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 const tabData = [
                     { name: 'Details', id: 'details'},
                     { name: 'Applications', id: 'applications'},
-                    // { name: 'Final Choice', id: 'finalChoice'},
+                    { name: 'Final Choice', id: 'finalChoice'},
                     // { name: 'Contract Files', id: 'contractFiles'},
                     // { name: 'Add Logs', id: 'logs'},
                     //{ name: 'Applications', id: ''},
-                    { name: 'Final Choice', id: ''},
+                    //{ name: 'Final Choice', id: ''},
                     { name: 'Contract Files', id: ''},
                     { name: 'Add Logs', id: ''},
                     { name: 'Credential', id: 'credential'},
@@ -1175,10 +1175,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.applicationYeardataprovider = new ArrayDataProvider(self.applicationYearData, { keyAttributes: 'id' });
 
                 self.viewFinalChoices = ()=>{
-                    if(self.partnerId()==undefined){
-                        document.getElementById("parnerFinalMessage").style.display = "block";
+                    if(self.franchiseId()==undefined){
+                        document.getElementById("franchiseRequireMessage").style.display = "block";
                         setTimeout(()=>{
-                            document.getElementById("parnerFinalMessage").style.display = "none";
+                            document.getElementById("franchiseRequireMessage").style.display = "none";
                         }, 5000);
                     }else{
                     self.getCourseTypeFinalChoiceCount()
@@ -1190,16 +1190,16 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         let radio = self.selectFinalChoiceRadio();
                         let popup = document.getElementById("progress");
                         popup.open();
-                        let dataUrl = "/getFinalChoicesPartnerASDReport"
+                        let dataUrl = "/getFinalChoicesFranchiseASDReport"
                         if(radio=="CSD"){
-                            dataUrl = "/getFinalChoicessPartnerCSDReport"   
+                            dataUrl = "/getFinalChoicessFranchiseCSDReport"   
                         }
                         self.finalChoiceData([])
                         $.ajax({
                             url: BaseURL+dataUrl,
                             type: 'POST',
                             data: JSON.stringify({
-                                partnerId:self.partnerId(),
+                                franchiseId:self.franchiseId(),
                                 fromDate: fromDate,
                                 toDate: toDate,
                                 officeId: office,
@@ -1414,10 +1414,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 }
 
                 self.exportFinalChoices = ()=>{
-                    if(self.partnerId()==undefined){
-                        document.getElementById("parnerFinalMessage").style.display = "block";
+                    if(self.franchiseId()==undefined){
+                        document.getElementById("franchiseRequireMessage").style.display = "block";
                         setTimeout(()=>{
-                            document.getElementById("parnerFinalMessage").style.display = "none";
+                            document.getElementById("franchiseRequireMessage").style.display = "none";
                         }, 5000);
                     }else{
                     if(self.finalChoiceBlob() != undefined && self.finalChoiceFileName() != undefined){
