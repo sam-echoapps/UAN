@@ -92,6 +92,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "franchiseApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
+        { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     } else if (sessionStorage.getItem("userRole") == "manager") {
       var navData = [
@@ -149,6 +150,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "franchiseApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
+        { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     } else if (sessionStorage.getItem("userRole") == "partner") {
       var navData = [
@@ -176,6 +178,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "franchiseApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
+        { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     }else if (sessionStorage.getItem("userRole") == "franchise") {
       var navData = [
@@ -192,6 +195,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "franchiseApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
+        { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
         // { path: "studentProfile", detail: { label: "Student Profile", iconClass: "oj-ux-ico-bar-chart", }, },
         // { path: "partnerStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
         // { path: "partnerStudentProfile", detail: { label: "Student Profile", iconClass: "oj-ux-ico-bar-chart", }, },
@@ -248,6 +252,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseStudentManagerReport", detail: { label: "Student Manager Report", iconClass: "fa-solid fa-people-roof", }, },
         { path: "franchiseApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
+        { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
       ];
     }
     
@@ -296,7 +301,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
           "children": [
             {"name": "Franchise","id": "addFranchise","icons": "fa-solid fa-user-plus", "path":"addFranchise"},
             {"name": "Franchise Profile","id": "franchiseProfile","icons": "fa-solid fa-user", "path":"franchiseProfile"},
-         /*     {"name": "Partner Report","id": "partnerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerReport"},  */
+            {"name": "Franchise Report","id": "franchiseReport","icons": "oj-ux-ico-bar-chart", "path":"franchiseReport"},  
           ]
         },
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},

@@ -231,7 +231,7 @@
                                 &nbsp;&nbsp;
                                 <oj-button id="button1" on-oj-action="[[exportFinalChoices]]">Export</oj-button>
                             </div>
-                            <span class="oj-text-color-danger" id="parnerFinalMessage" style="display: none;">Please select partner</span>  
+                            <span class="oj-text-color-danger" id="franchiseFinalMessage" style="display: none;">Please select franchise</span>  
                        </div>
                         <div class="oj-panel oj-flex oj-sm-justify-content-space-between oj-flex oj-sm-align-items-center" style="margin: 20px 0px;">
                             <p class="oj-flex oj-sm-align-items-center" style="margin-top: 15px;">
@@ -328,7 +328,7 @@
                 <div class="demo-tab-content">
                     <div class="oj-flex oj-sm-justify-content-center">
                         <oj-file-picker selection-mode="multiple" on-oj-select="[[selectListener]]"></oj-file-picker>
-                        <p class="oj-text-color-danger" id="file-error" style="display: none;;margin-left:10px;margin-top:40px;">Please select partner</p>
+                        <p class="oj-text-color-danger" id="file-error" style="display: none;;margin-left:10px;margin-top:40px;">Please select franchise</p>
                     </div>
                     <div>
                         <oj-table id="table" aria-label="Task Table" accessibility.row-header="name" data="[[fileDataProvider]]"
@@ -366,17 +366,17 @@
                 <div class="demo-tab-content">
                     <div class="oj-panel">
                         <div class="oj-flex oj-sm-justify-content-space-between oj-sm-align-items-center" style="width: 100%;">
-                            <h6 style="font-weight: 500;font-size: 25px; margin-left: 20px;">Partner Log</h6>
+                            <h6 style="font-weight: 500;font-size: 25px; margin-left: 20px;">Franchise Log</h6>
                             <div class="oj-flex oj-sm-flex-direction-column" style="margin-right: 20px;">
-                                <oj-button on-oj-action="[[addPartnerLog]]">Add Log</oj-button>
-                                <p class="oj-text-color-danger" id="partnerLogMessage" style="display: none;">Please select partner</p>
+                                <oj-button on-oj-action="[[addFranchiseLog]]">Add Log</oj-button>
+                                <p class="oj-text-color-danger" id="franchiseLogMessage" style="display: none;">Please select franchise</p>
                             </div>
                         </div>
 
                         <div class="oj-panel">
                             <div id="notesDiv" class="demo-padding demo-container">
                                 <div id="componentDemoContent" style="width: 1px; min-width: 100%;">
-                                    <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[partnerNoteDataProvider]]"
+                                    <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[franchiseNoteDataProvider]]"
                                         columns='[
                                             {"headerText": "Staff Name",  "field": "staffName", "headerClassName": "oj-sm-only-hide",
                                                 "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
@@ -418,7 +418,7 @@
                         <oj-validation-group id="credentialValidation" class="form-container" role="group">
                             <oj-form-layout id="credential-information" direction="row" max-columns="2" style="margin-left:18%;margin-top:20px;">
                                     <oj-input-text id="franchiseEmail" label-hint="Email" value="{{franchiseEmail}}" required="true" readonly="true"></oj-input-text>
-                                    <oj-input-password id="password" label-hint="Password" required="true"  value="{{password}}"  mask-icon="visible"></oj-input-password>
+                                    <oj-input-password id="password" label-hint="Password" required="true"  value="{{password}}"  autocomplete="new-password" mask-icon="visible"></oj-input-password>
                             </oj-form-layout>
                         </oj-validation-group>
                         <div class=" oj-flex oj-sm-justify-content-center">
@@ -499,7 +499,7 @@
     <div slot="body">
         <oj-validation-group id="logFormValidation" class="form-container" role="group">
             <oj-form-layout id="log-information" direction="row">
-                <oj-text-area value="{{partnerNote}}" label-hint="Enter your Notes" required="true" rows="5"></oj-text-area>
+                <oj-text-area value="{{franchiseNote}}" label-hint="Enter your Notes" required="true" rows="5"></oj-text-area>
             </oj-form-layout>
         </oj-validation-group>
         <div class="oj-flex oj-sm-justify-content-center">

@@ -10,19 +10,14 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.router = args.parentRouter;
                 let BaseURL = sessionStorage.getItem("BaseURL");
 
-                self.partnerId = ko.observable();
                 self.franchiseId = ko.observable();
 
                 const tabData = [
                     { name: 'Details', id: 'details'},
                     { name: 'Applications', id: 'applications'},
                     { name: 'Final Choice', id: 'finalChoice'},
-                    // { name: 'Contract Files', id: 'contractFiles'},
-                    // { name: 'Add Logs', id: 'logs'},
-                    //{ name: 'Applications', id: ''},
-                    //{ name: 'Final Choice', id: ''},
-                    { name: 'Contract Files', id: ''},
-                    { name: 'Add Logs', id: ''},
+                    { name: 'Contract Files', id: 'contractFiles'},
+                    { name: 'Add Logs', id: 'logs'},
                     { name: 'Credential', id: 'credential'},
                 ];
                 self.tabDataProvider = new ArrayDataProvider(tabData, { keyAttributes: 'id' });
@@ -589,7 +584,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.finalChoicePresessionCount = ko.observable();
                 self.finalChoiceOtherCount = ko.observable();
                 
-                self.partner = ko.observable();
                 self.franchises = ko.observableArray([]);
                 self.officesAll = ko.observableArray([]);
                 self.applicationData = ko.observableArray();
@@ -608,12 +602,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.commissionRate = ko.observable();
                 self.fileNames = ko.observableArray(new Array());
 
-                self.partnerNote = ko.observable()
-                self.partnerNoteData = ko.observableArray();
-                self.partnerEmail = ko.observable('');
+                self.franchiseNote = ko.observable()
+                self.franchiseNoteData = ko.observableArray();
                 self.franchiseEmail = ko.observable('');
                 self.password = ko.observable('');
-                self.partnerName = ko.observable('');
+                self.franchiseName = ko.observable('');
                 self.btnAction = ko.observable('');
 
                 self.years = ko.observable();
@@ -644,7 +637,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.studentsCount = ko.observable();
                 self.applicationCount = ko.observable();
                 self.finalchoicedCount = ko.observable();
-                self.performancePartnerName = ko.observable();
+                self.performanceFranchiseName = ko.observable();
                 self.yearlyApplicationData = ko.observableArray();
                 self.previousStudentCount = ko.observable();
                 self.previousApplicationCount = ko.observable();
@@ -652,6 +645,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.percentageStudentCount = ko.observable();
                 self.percentageApplicationCount = ko.observable();
                 self.percentageFinalChoiceCount = ko.observable();
+                self.offerFileMessage = ko.observable();
 
                 self.getYearlyFranchiseProfilePerformance = ()=>{
                     $.ajax({
@@ -682,7 +676,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             var percentageApplicationCount = data[0][9]
                             var percentageFinalChoiceCount = data[0][11]
                             var previousYear = self.selectYear() - 1;
-                            self.performancePartnerName(data[0][1] + " " + data[0][2])
+                            self.performanceFranchiseName(data[0][1] + " " + data[0][2])
                             self.currentYearRow("Current Year" + " " + self.selectYear())
                             self.previousYearRow("Previous Year" + " " + previousYear)
                             self.percentageRow("% INC/DEC")
@@ -690,11 +684,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             var table = document.getElementById('table');
 
                             // Assuming you have a function to retrieve the dynamic header text for the first column
-                            var dynamicHeaderText = self.performancePartnerName()
+                            var dynamicHeaderText = self.performanceFranchiseName()
 
                             // Define the columns array with the dynamic header text for the first column
                             var dynamicColumns = [
-                                {"headerText": dynamicHeaderText, "id": "partnerName"}, 
+                                {"headerText": dynamicHeaderText, "id": "franchiseName"}, 
                                 {"headerText": "Student", "id": "student"}, 
                                 {"headerText": "Applications", "id": "applications"}, 
                                 {"headerText": "FC", "id": "finalCheck"}
@@ -763,7 +757,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.percentageFinalChoiceCount(percentageFinalChoiceCount+ "%")
                             }
                             self.yearlyApplicationData.push({
-                                "performancePartnerName" : data[0][1] + " " + data[0][2],
+                                "performanceFranchiseName" : data[0][1] + " " + data[0][2],
                                 "studentsCount" : data[0][4],
                                 "applicationCount" : data[0][3],
                                 "finalChoiceCount" : data[0][5],
@@ -869,7 +863,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     keyAttributes: 'value'
                 });
 
-                self.partnerAfterUpdate = ()=>{
+                self.franchiseAfterUpdate = ()=>{
                     $.ajax({
                         url: BaseURL+"/getFranchiseWithId",
                         type: 'POST',
@@ -918,10 +912,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             let popup = document.getElementById("progress");
                             popup.open();
                             $.ajax({
-                                url: BaseURL+"/updatePartner",
+                                url: BaseURL+"/updateFranchise",
                                 type: 'POST',
                                 data: JSON.stringify({
-                                    partnerId: self.partnerId(),
+                                    franchiseId: self.franchiseId(),
                                     companyName: self.companyName(),
                                     companyWebsite: self.companyWebsite(),
                                     directorFirstName: self.directorFirstName(),
@@ -947,7 +941,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 success: function (data) {
                                     let popup = document.getElementById("progress");
                                     popup.close();
-                                    self.partnerAfterUpdate()
+                                    self.franchiseAfterUpdate()
                                 }
                             })
                         }
@@ -976,7 +970,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         if(franchiseId){
                             self.franchiseId(franchiseId);
                             sessionStorage.removeItem("franchiseId")
-                            self.getOffices().then(()=>self.getYearlyFranchiseProfilePerformance()).then(()=>self.getBdmCounselors()).then(()=>self.partnerAfterUpdate()).then(()=>self.getFranchises()).then(()=>self.getPartnerContractFile()).then(()=>self.getPartnerNote()).then(()=>self.getFranchiseInfo()).then(()=>self.getFranchisePassword()).catch(error => console.error(error))
+                            self.getOffices().then(()=>self.getYearlyFranchiseProfilePerformance()).then(()=>self.getBdmCounselors()).then(()=>self.franchiseAfterUpdate()).then(()=>self.getFranchises()).then(()=>self.getFranchiseContractFile()).then(()=>self.getFranchiseNote()).then(()=>self.getFranchiseInfo()).then(()=>self.getFranchisePassword()).catch(error => console.error(error))
                         }else{ 
                             self.getOffices();
                             self.getBdmCounselors();
@@ -1027,9 +1021,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         }, 5000);
                     }else{
                         self.applicationData([]);
-                        self.partnerAfterUpdate();
-                        self.getPartnerContractFile(); 
-                        self.getPartnerNote(); 
+                        self.franchiseAfterUpdate();
+                        self.getFranchiseContractFile(); 
+                        self.getFranchiseNote(); 
                         self.getFranchiseInfo(); 
                         self.getFranchisePassword();
                         self.getYearlyFranchiseProfilePerformance();
@@ -1176,9 +1170,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.viewFinalChoices = ()=>{
                     if(self.franchiseId()==undefined){
-                        document.getElementById("franchiseRequireMessage").style.display = "block";
+                        document.getElementById("franchiseFinalMessage").style.display = "block";
                         setTimeout(()=>{
-                            document.getElementById("franchiseRequireMessage").style.display = "none";
+                            document.getElementById("franchiseFinalMessage").style.display = "none";
                         }, 5000);
                     }else{
                     self.getCourseTypeFinalChoiceCount()
@@ -1281,15 +1275,15 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     let office = self.finalChoiceOffice();
                     office = office.join(",");
                     let radio = self.selectFinalChoiceRadio();
-                    let dataUrl = "/getFinalChoicesPartnerCourseTypeASDCount"
+                    let dataUrl = "/getFinalChoicesFranchiseCourseTypeASDCount"
                     if(radio=="CSD"){
-                        dataUrl = "/getFinalChoicesPartnerCourseTypeCSDCount"   
+                        dataUrl = "/getFinalChoicesFranchiseCourseTypeCSDCount"   
                     }
                     $.ajax({
                         url: BaseURL+dataUrl,
                         type: 'POST',
                         data: JSON.stringify({
-                            partnerId:self.partnerId(),
+                            franchiseId:self.franchiseId(),
                             fromDate: fromDate,
                             toDate: toDate,
                             officeId: office,
@@ -1438,7 +1432,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
             self.selectListener = (event) => {
                 const files = event.detail.files;
-                if(self.partnerId()=="" || self.partnerId()==undefined){
+                if(self.franchiseId()=="" || self.franchiseId()==undefined){
                     document.getElementById("file-error").style.display = "block"
                     setTimeout(()=>{
                         document.getElementById("file-error").style.display = "none"
@@ -1449,9 +1443,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.fileNames.push({"file" : file.name});
                         var formData = new FormData();
                         formData.append("file", file);
-                        formData.append("partnerId", self.partnerId())
+                        formData.append("franchiseId", self.franchiseId())
                         $.ajax({
-                            url:   BaseURL + "/partnerContractFileUpload",
+                            url:   BaseURL + "/franchiseContractFileUpload",
                             type: "POST",
                             data:  formData,
                             cache: false,
@@ -1481,7 +1475,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 let popup = document.getElementById("progress");
                 popup.open();
                 $.ajax({
-                    url: BaseURL+"/getPartnerContractFile",
+                    url: BaseURL+"/getFranchiseContractFile",
                     type: 'POST',
                     data: JSON.stringify({
                         fileName : e.target.id
@@ -1553,10 +1547,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     contractFiles = null;
                 }
                 $.ajax({
-                    url: BaseURL+"/updatePartnerContractFiles",
+                    url: BaseURL+"/updateFranchiseContractFiles",
                     type: 'POST',
                     data: JSON.stringify({
-                        partnerId:self.partnerId(),
+                        franchiseId:self.franchiseId(),
                         contractFiles : contractFiles,
                     }),
                     dataType: 'json',
@@ -1564,17 +1558,17 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         console.log(textStatus);
                     },
                     success: function (data) {
-                        self.getPartnerContractFile()
+                        self.getFranchiseContractFile()
                     }
                 })
             }
             
-            self.getPartnerContractFile = ()=>{
+            self.getFranchiseContractFile = ()=>{
                 $.ajax({
-                    url: BaseURL+"/getPartnerContractFileList",
+                    url: BaseURL+"/getFranchiseContractFileList",
                     type: 'POST',
                     data: JSON.stringify({
-                        partnerId:self.partnerId(),
+                        franchiseId:self.franchiseId(),
                     }),
                     dataType: 'json',
                     error: function (xhr, textStatus, errorThrown) {
@@ -1611,19 +1605,20 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
             });
 
 
-            self.getPartnerNote = ()=>{
-                self.partnerNoteData([])
+            self.getFranchiseNote = ()=>{
+                self.franchiseNoteData([])
                 $.ajax({
-                    url: BaseURL+"/getPartnerNotes",
+                    url: BaseURL+"/getFranchiseNotes",
                     type: 'POST',
                     data: JSON.stringify({
-                        partnerId:self.partnerId(),
+                        franchiseId:self.franchiseId(),
                     }),
                     dataType: 'json',
                     error: function (xhr, textStatus, errorThrown) {
                         console.log(textStatus);
                     },
                     success: function (data) {
+                        console.log(data)
                         if(data[0]!='No data found'){
                             data = JSON.parse(data);
                             console.log(data)
@@ -1635,7 +1630,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 var month = ('0' + (date.getMonth() + 1)).slice(-2);
                                 var day = ('0' + date.getDate()).slice(-2);
                                 date =  `${day}-${month}-${year}`
-                                self.partnerNoteData.push({
+                                self.franchiseNoteData.push({
                                     "staffName" : data[i][0],
                                     "note" : data[i][1],
                                     "date" : date,
@@ -1647,18 +1642,18 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 })
             }
 
-            self.partnerNoteDataProvider = new ArrayDataProvider(self.partnerNoteData, { keyAttributes: 'id' });
+            self.franchiseNoteDataProvider = new ArrayDataProvider(self.franchiseNoteData, { keyAttributes: 'id' });
 
-            self.addPartnerLog = ()=>{
-                if(self.partnerId()==undefined){
-                    document.getElementById("partnerLogMessage").style.display = "block";
+            self.addFranchiseLog = ()=>{
+                if(self.franchiseId()==undefined){
+                    document.getElementById("franchiseLogMessage").style.display = "block";
                     setTimeout(()=>{
-                        document.getElementById("partnerLogMessage").style.display = "none";
+                        document.getElementById("franchiseLogMessage").style.display = "none";
                     }, 5000);
                 }else{
                     let popup = document.getElementById("addLog");
                     popup.open();
-                    self.partnerNote('')
+                    self.franchiseNote('')
                  }
             }
             
@@ -1673,12 +1668,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         let popup = document.getElementById("progress");
                         popup.open();
                         $.ajax({
-                            url: BaseURL+"/addPartnerNotes",
+                            url: BaseURL+"/addFranchiseNotes",
                             type: 'POST',
                             data: JSON.stringify({
                                 staffId : sessionStorage.getItem("userId"),
-                                note : self.partnerNote(),
-                                partnerId : self.partnerId()
+                                note : self.franchiseNote(),
+                                franchiseId : self.franchiseId()
                             }),
                             dataType: 'json',
                             error: function (xhr, textStatus, errorThrown) {
@@ -1689,8 +1684,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 let popup = document.getElementById("progress");
                                 popup.close();
                                 self.addLogCancel()
-                                self.partnerNote('')
-                                self.getPartnerNote()
+                                self.franchiseNote('')
+                                self.getFranchiseNote()
                             }
                         })
                     }
@@ -1701,22 +1696,21 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 let popup = document.getElementById("progress");
                 popup.open();
                 $.ajax({
-                    url: BaseURL+"/deletePartnerNote",
+                    url: BaseURL+"/deleteFranchiseNote",
                     type: 'POST',
                     data: JSON.stringify({
-                        partnerNoteId : id
+                        franchiseNoteId : id
                     }),
                     dataType: 'json',
                     error: function (xhr, textStatus, errorThrown) {
                         console.log(textStatus);
                     },
                     success: function (data) {
-                        console.log(data);
                         let popup = document.getElementById("progress");
                         popup.close();
                         self.addLogCancel()
-                        self.partnerNote(''),
-                        self.getPartnerNote()
+                        self.franchiseNote(''),
+                        self.getFranchiseNote()
                     }
                 })
             }
@@ -1735,7 +1729,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     success: function (data) {
                         data = JSON.parse(data);
                         console.log(data)
-                        self.partnerName(data[0][3] + " " + data[0][4]);
+                        self.franchiseName(data[0][3] + " " + data[0][4]);
                         self.franchiseEmail(data[0][5]);
                     }
                 })
@@ -1768,7 +1762,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 url: BaseURL+"/addUser",
                                 type: 'POST',
                                 data: JSON.stringify({
-                                    name : self.partnerName(),
+                                    name : self.franchiseName(),
                                     office : self.processingOffice(),
                                     role : 'franchise',
                                     email : self.franchiseEmail(),
@@ -1842,7 +1836,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         url: BaseURL+"/sendFranchiseCredential",
                                         type: 'POST',
                                         data: JSON.stringify({
-                                            name : self.partnerName(),
+                                            name : self.franchiseName(),
                                             email : self.franchiseEmail(),
                                             password : self.password(),
                                         }),
