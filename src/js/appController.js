@@ -93,6 +93,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: 'privacyPolicy', detail : {label :'Privacy policy',iconClass: "fa-solid fa-magnifying-glass"} },
       ];
     } else if (sessionStorage.getItem("userRole") == "manager") {
       var navData = [
@@ -151,6 +152,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: 'privacyPolicy', detail : {label :'Privacy policy',iconClass: "fa-solid fa-magnifying-glass"} },
       ];
     } else if (sessionStorage.getItem("userRole") == "partner") {
       var navData = [
@@ -179,6 +181,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: 'privacyPolicy', detail : {label :'Privacy policy',iconClass: "fa-solid fa-magnifying-glass"} },
       ];
     }else if (sessionStorage.getItem("userRole") == "franchise") {
       var navData = [
@@ -206,6 +209,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         // { path: "guideManagePartner", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         // { path: "guideManagePartnerView", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: "help", detail: { label: "Help", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: 'privacyPolicy', detail : {label :'Privacy policy',iconClass: "fa-solid fa-magnifying-glass"} },
       ];
     } else {
       var navData = [
@@ -253,6 +257,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseApplication", detail: { label: "Application", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
+        { path: 'privacyPolicy', detail : {label :'Privacy policy',iconClass: "fa-solid fa-magnifying-glass"} },
       ];
     }
     
