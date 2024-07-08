@@ -1102,7 +1102,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                     self.applicationFileName(fileName);
                                 }
                                 else{
-                                    alert('a')
                                     var rowData = []; 
                                     csvContent += rowData.join(',') + '\n';
                                     var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });

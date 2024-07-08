@@ -129,12 +129,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         "email" : data[i][9],
                                         "leadSource" : data[i][10],
                                         "utmSource" : data[i][11],
-                                        "franchiseName" : data[i][12]+" "+data[i][13],
+                                        "franchiseName" : data[i][16],
                                         "signedBy" : data[i][14],
                                         "coa" : data[i][15]
                                     });
                                     var rowData = [data[i][0], data[i][1], data[i][2]+" "+data[i][3], data[i][4], data[i][5], data[i][6], data[i][7], 
-                                                data[i][8], data[i][9], data[i][10], data[i][11], data[i][12], data[i][13], data[i][14], data[i][15] ]; 
+                                                data[i][8], data[i][9], data[i][10], data[i][11], data[i][16], data[i][14], data[i][15] ]; 
                                     csvContent += rowData.join(',') + '\n';
                                 }
                                 var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -190,7 +190,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 let len = data.length;
                                 for(let i=0;i<len;i++){
                                     self.applicationCountData.push({
-                                        franchiseName: data[i][6] + " " + data[i][7],
+                                        franchiseName: data[i][12],
                                         totalApplications: data[i][0],
                                         totalConditional: data[i][2],
                                         totalUnconditional: data[i][1],

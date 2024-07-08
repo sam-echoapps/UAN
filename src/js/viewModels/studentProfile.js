@@ -59,6 +59,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     { id: "all", label: "All Log" },
                 ]; 
                 self.selectedTab = ko.observable('log');  
+                self.franchise = ko.observable();
 
                 self.getInstitution = ()=>{
                     $.ajax({
@@ -1247,6 +1248,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.utmCampaign(data[0][23]);
                                 self.hearAbout(data[0][24]);
                                 //self.partner(data[0][25]);
+                                self.franchise(data[0][29]);
                                 if(data[0][1]==null){
                                     self.getCounselors(data[0][2], "");
                                     self.partners(data[0][2],data[0][25]);
@@ -1663,7 +1665,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 applicationMethod: self.applicationMethod(),
                                 counsellingType: self.counsellingType(),
                                 ielts: self.ielts()[0],
-                                franchise: 'NULL',
+                                franchise: self.franchise(),
                             }),
                             dataType: 'json',
                             error: function (xhr, textStatus, errorThrown) {
