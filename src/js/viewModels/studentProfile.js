@@ -997,7 +997,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     {"label":"Canada","value":"Canada"},
                     {"label":"USA","value":"USA"},
                     {"label":"Australia","value":"Australia"},
-                    {"label":"New Zealand","value":"New Zealand"}
+                    {"label":"New Zealand","value":"New Zealand"},
+                    {"label":"Ireland","value":"Ireland"},
+                    {"label":"European countries","value":"European"},
+                    {"label":"UAE","value":"UAE"}
                 ]
 
                 self.abroadDestionationsDp = new ArrayDataProvider(self.abroadDestionations, {
