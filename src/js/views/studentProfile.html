@@ -80,6 +80,10 @@
                             <oj-select-single id="select" label-hint="Select Counsultant" label-edge="inside" class="oj-form-control-max-width-md"
                                 data="[[counselorList]]" value="{{consultant}}"></oj-select-single>
                         </oj-bind-if>
+                        <oj-bind-if test="[[userRole() === 'manager' ]]">
+                            <oj-select-single id="select" label-hint="Select Counsultant" label-edge="inside" class="oj-form-control-max-width-md"
+                                data="[[counselorList]]" value="{{consultant}}"></oj-select-single>
+                        </oj-bind-if>
                         <oj-input-text id="marketingSource" label-hint="Marketing Source" required="true"  value="{{marketingSource}}"></oj-input-text>
                         <oj-select-single id="selectPartner" label-hint="Select Partner" label-edge="inside" 
                             data="[[partnersDp]]" value="{{partner}}"></oj-select-single>
