@@ -1,6 +1,6 @@
 define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovider",
     "ojs/ojlistdataproviderview","ojs/ojdataprovider", "ojs/ojkeyset",
-    "ojs/ojinputtext", "ojs/ojformlayout", "ojs/ojvalidationgroup", "ojs/ojselectsingle", 
+    "ojs/ojinputtext", "ojs/ojformlayout", "ojs/ojvalidationgroup", "ojs/ojselectsingle",  "ojs/ojselectcombobox",
     "ojs/ojtable", "ojs/ojinputsearch", "ojs/ojdialog", "ojs/ojpopup", "ojs/ojprogress-circle", "ojs/ojmenu"], 
     function (oj,ko,$, app, ArrayDataProvider, ListDataProviderView, ojdataprovider_1, ojkeyset_1) {
 
@@ -14,10 +14,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.userRole = ko.observable(sessionStorage.getItem("userRole"));
                 self.userId = ko.observable();
                 self.office = ko.observable();
-                
+
+               
                 if(self.userRole()=="admin" || self.userRole()=="director"){
-                    self.officeId("All")
-                    self.userId("All")
+                    self.officeId(["All"])
+                    self.userId(["All"])
                 }
                 else if(self.userRole()=="manager"){
                     self.officeId(sessionStorage.getItem("userOfficeId"));
@@ -30,13 +31,56 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     self.userId(sessionStorage.getItem("userId"))
                 }
 
-                self.year = ko.observable(sessionStorage.getItem("selectYear"));
+                //self.year = ko.observable(sessionStorage.getItem("selectYear"));
                 
                 self.studentsCnt = ko.observable();
 
                 self.studentData = ko.observableArray([]);
 
-                self.offices = [];
+                self.offices = ko.observableArray();
+                self.officesList = ko.observableArray();
+
+                self.years = ko.observable();
+                const currentYear = new Date().getFullYear();
+                self.selectYear = ko.observable(currentYear.toString());
+
+                if(sessionStorage.getItem("selectYear")==null || self.selectYear()==currentYear){
+                    sessionStorage.setItem("selectYear", self.selectYear())
+                }
+
+                const years = [];
+                for (let year = currentYear+2; year >= 2022; year--) {
+                    years.push({ value: `${year}`, label: `${year}`})
+                }
+                self.years(years);
+                self.yearsDp = new ArrayDataProvider(self.years(), {
+                    keyAttributes: 'value'
+                });
+
+                self.selectList = ko.observable();
+
+                self.list = [
+                    { value: 'All', label: 'All' },
+                    { value: 'lead', label: 'Lead' },
+                    { value: 'active', label: 'Active' },
+                    { value: 'inactive', label: 'Inactive' },
+                    { value: 'SPAM', label: 'SPAM' },
+                    { value: 'Offer Received', label: 'Offer Received' },
+                    { value: 'Deposit Paid', label: 'Deposit Paid' },
+                    { value: 'Visa Grant', label: 'Visa Grant' },
+                    { value: 'Not Interested', label: 'Not Interested' },
+                    { value: 'Rejected', label: 'Rejected' },
+                    { value: 'closed', label: 'Closed' }
+                ];
+
+                self.listDP = new ArrayDataProvider(self.list, {
+                    keyAttributes: 'value'
+                });
+                self.selectList(['All'])
+
+                self.yearChanged = ()=>{
+                    self.getAllStudents(self.officeId(),self.userId(),self.selectList());
+                }
 
                 self.getOffices = ()=>{
                     $.ajax({
@@ -63,16 +107,37 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.studentIds = ko.observableArray()
 
-                self.getAllStudents = ()=>{
+                self.officeAction = (e)=>{ 
+                    let selectOffice = self.officeId();
+                    let selectStaff = self.userId();
+                    let selectStatus = self.selectList();
+                    self.getAllStudents(selectOffice,selectStaff,selectStatus)
+                }
+                self.staffMissing = ko.observable();
+
+                self.getAllStudents = (selectOffice,selectStaff,statusList)=>{
+                    if(selectStaff== undefined || selectStaff== ""){
+                        self.staffMissing("Please select a staff");
+                    }else{
+                        self.staffMissing(""); 
+                    }
                     self.studentData([]);
+                    let office = selectOffice;
+                    if(self.userRole() == "admin" || self.userRole() == "director"){
+                        office = office.join(",");
+                    }
+                    let staff = selectStaff;
+                    staff = staff.join(",");
+                    let status = statusList;
+                    status = status.join(",");
                     $.ajax({
-                        url: BaseURL+"/getSelectedData",
+                        url: BaseURL+"/getSelectedReassignData",
                         type: 'POST',
                         data: JSON.stringify({
-                            officeId: self.officeId(),
-                            userId: self.userId(),
-                            selectVal: "All",
-                            year: self.year()
+                            officeId: office,
+                            userId: staff,
+                            status: status,
+                            year: self.selectYear()
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
@@ -93,7 +158,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         phone: data[i][4],
                                         dob: data[i][5],
                                         counselor: data[i][6],
-                                        office: data[i][7]
+                                        office: data[i][7],
+                                        status: data[i][11]
                                     });
                                     self.studentIds.push(data[i][0])
                                 }
@@ -182,8 +248,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 
                 self.selectedIds = ko.observableArray();
 
+                self.selectedCount = ko.observable('0');
+
+
                 self.selectedChangedListener = (event) => {
                     let selectionText = '';
+                    let selectedCount = 0;
                     self.selectedIds([])
                     if (event.detail.value.row.isAddAll()) {
                         const iterator = event.detail.value.row.deletedValues();
@@ -208,6 +278,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             self.selectedIds(addArray)
                         }
                     }
+                      // Calculate selected count
+                      selectedCount = self.selectedIds().length;
+                      self.selectedCount(selectedCount);
+                      // Log or display the count
+                      console.log(`Selected Rows Count: ${selectedCount}`);
                 };
 
                 self.message = ko.observable();
@@ -283,7 +358,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 }
 
                 self.resultPopupCloseButton = ()=>{
-                    self.getAllStudents()
+                    self.getAllStudents(self.officeId(),self.userId(),self.selectList())
                     let popUp = document.getElementById("resultMsg")
                     popUp.close();
                 }
@@ -304,7 +379,78 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     self.stIdRightClick(context.key);
                 };
                 
-                self.getAllStudents()
+
+                self.getOfficesList = ()=>{
+                    $.ajax({
+                        url: BaseURL+"/getOffices",
+                        type: 'GET',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            if(data[0] != "No data found"){
+                                data = JSON.parse(data);
+                                let len = data.length;
+                                self.officesList.push({value: `All`, label: `All`})
+                                for(let i=0;i<len;i++){
+                                    self.officesList.push({value: `${data[i][0]}`, label: `${data[i][1]}`})
+                                }
+                                if(self.userRole()=="admin" || self.userRole()=="director"){
+                                    self.officeId(["All"])
+                                }
+                                else{
+                                    self.officeId(sessionStorage.getItem("userOfficeId"));
+                                }
+                            }
+                        }
+                    })
+                }
+                self.officesListDP = new ArrayDataProvider(self.officesList, {
+                    keyAttributes: 'value'
+                });
+
+                self.getOfficesList()
+
+                self.officeChangedHandler = (event) => {
+                    let offices = event.detail["value"];
+                    offices = offices.join(",");
+                    self.getStaffCounsilors(offices);
+                };
+                
+                self.staffs = ko.observableArray();
+                self.getStaffCounsilors = (officeId)=>{
+                    self.staffs([])
+                    $.ajax({
+                        url: BaseURL+"/getOfficesCounsilors",
+                        type: 'POST',
+                        data: JSON.stringify({
+                            officeId: officeId,
+                        }),
+                        dataType: 'json',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            if(data[0]!="No data found"){
+                                data = JSON.parse(data);
+                                let len = data.length;
+                                self.staffs.push({value: `All`, label: `All`})
+                                for(let i=0;i<len;i++){
+                                    self.staffs.push({value: `${data[i][0]}`, label: `${data[i][3]}`})
+                                }
+                            }
+                            else{
+                                self.staffs.push({value: `All`, label: `All`})
+                            }
+                        }
+                    })
+                }
+                self.staffsDP = new ArrayDataProvider(self.staffs, {
+                    keyAttributes: 'value'
+                });
+
+
+                self.getAllStudents(self.officeId(),self.userId(),self.selectList())
                 self.connected = function () {
                     if (sessionStorage.getItem("userName") == null) {
                         self.router.go({path : 'signin'});

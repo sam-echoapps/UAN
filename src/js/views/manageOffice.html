@@ -195,6 +195,9 @@
             <oj-button id="button1" on-oj-action="[[reassignCounselor]]" style="background-color: #04812f ">
                 Submit
             </oj-button>
+           <!--  <p class="oj-flex oj-sm-align-items-center" style="margin-left: 100px; padding: 4px 10px; border-radius: 10px; background-color: #06668a; color: #fff;">
+                Selected Rows: <oj-bind-text value="[[selectedCount]]"></oj-bind-text>
+            </p> -->
         </div>
         <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[usersDataProvider]]"
             dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'

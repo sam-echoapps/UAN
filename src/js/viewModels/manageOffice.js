@@ -47,6 +47,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.searchOffice = ko.observable();
                 self.officeSuggestions = ko.observable([]);;
 
+                self.selectedIds = ko.observableArray();
+                self.selectedCount = ko.observable('0');
+
                 self.getOfficesWithManager = (status)=>{
                     let popup = document.getElementById("progressBar");
                     if(popup!=null){
@@ -553,6 +556,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.selectedCounsilorChangedListener = (e)=>{
                     let selectionText = '';
+                    let selectedCount = 0;
                     self.selectedCounsilors([])
                     if (e.detail.value.row.isAddAll()) {
                         const iterator = e.detail.value.row.deletedValues();
@@ -577,6 +581,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             self.selectedCounsilors(addArray)
                         }
                     }
+                     // Calculate selected count
+                     selectedCount = self.selectedCounsilors().length;
+                     self.selectedCount(selectedCount);
+                     // Log or display the count
+                     console.log(`Selected Rows Count: ${selectedCount}`);
                 }
 
                 self.counselorWarnMsg = ko.observable();

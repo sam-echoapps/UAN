@@ -436,7 +436,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
 
                 self.blob = ko.observable();
                 self.fileName = ko.observable();
-
+                self.selectedIds = ko.observableArray();
+                self.selectedCount = ko.observable('0');
+                
                 self.viewStudents = (e)=>{
                     let userId = e.currentTarget.id
                     self.studentData([]);
@@ -518,6 +520,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
 
                 self.selectedChangedListener = (e)=>{
                     let selectionText = '';
+                    let selectedCount = 0;
                     self.selectedIds([])
                     if (e.detail.value.row.isAddAll()) {
                         const iterator = e.detail.value.row.deletedValues();
@@ -542,6 +545,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                             self.selectedIds(addArray)
                         }
                     }
+                      // Calculate selected count
+                      selectedCount = self.selectedIds().length;
+                      self.selectedCount(selectedCount);
+                      // Log or display the count
+                      console.log(`Selected Rows Count: ${selectedCount}`);
                 }
                 
                 self.viewProfile = (e)=>{

@@ -224,9 +224,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.counsilor = ko.observable();
                 
                 self.selectedIds = ko.observableArray();
+                self.selectedCount = ko.observable('0');
 
                 self.selectedChangedListener = (event) => {
                     let selectionText = '';
+                    let selectedCount = 0;
                     self.selectedIds([])
                     if (event.detail.value.row.isAddAll()) {
                         const iterator = event.detail.value.row.deletedValues();
@@ -251,6 +253,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             self.selectedIds(addArray)
                         }
                     }
+                        // Calculate selected count
+                        selectedCount = self.selectedIds().length;
+                        self.selectedCount(selectedCount);
+                        // Log or display the count
+                        console.log(`Selected Rows Count: ${selectedCount}`);
+
                 };
 
                 self.message = ko.observable();

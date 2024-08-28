@@ -13,25 +13,68 @@
         placeholder="Search.." on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}" 
         clear-icon="always" style="width: 300px;"></oj-input-text>
 </div>
-<div class="oj-flex">
-    <oj-bind-if test="[[userRole() === 'admin' ]]">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
-            data="[[officesDP]]" on-value-changed="[[officeSelectedData]]" value="{{office}}" style="width: 350px;"></oj-select-single>
-    </oj-bind-if>
-    <oj-bind-if test="[[userRole() === 'director' ]]">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
-            data="[[officesDP]]" on-value-changed="[[officeSelectedData]]" value="{{office}}" style="width: 350px;"></oj-select-single>
-    </oj-bind-if>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <oj-select-single id="select" label-hint="Reassign Counsilor" label-edge="inside" class="oj-form-control-max-width-md"
-        data="[[counsilorsDp]]" value="{{counsilor}}" style="width: 350px;"></oj-select-single>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <oj-button id="button1" on-oj-action="[[reassignData]]" style="background-color: #04812f ">
-        Submit
-    </oj-button>
-</div>
+    <div class="oj-panel">
+            <div class="oj-flex">
+                    <oj-select-single id="select" label-hint="Select the year to see the data" label-edge="inside"
+                        class="oj-form-control-max-width-md" data="[[yearsDp]]" value="{{selectYear}}" on-value-changed="[[yearChanged]]" style="width: 250px;"></oj-select-single>
+                        <oj-bind-if test="[[userRole() === 'admin' ]]">
+                            <div>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <oj-select-many id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
+                                options="[[officesListDP]]" on-value-changed="[[officeChangedHandler]]" value="{{officeId}}" style="width: 350px;"></oj-select-many>
+                                <oj-select-many label-hint="Select Staff" label-edge="inside" class="oj-form-control-max-width-md" value="{{userId}}"
+                                options="[[staffsDP]]" style="width: 200px;"></oj-select-many>
+                                <div style="color:red;margin-left:380px;">
+                                    <oj-bind-text value="[[staffMissing]]"></oj-bind-text>
+                                </div>
+                            </div>    
+                        </oj-bind-if>
+                        <oj-bind-if test="[[userRole() === 'director' ]]">
+                            <div>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <oj-select-many id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
+                                options="[[officesListDP]]" on-value-changed="[[officeChangedHandler]]" value="{{officeId}}" style="width: 350px;"></oj-select-many>
+                                <oj-select-many label-hint="Select Staff" label-edge="inside" class="oj-form-control-max-width-md" value="{{userId}}"
+                                options="[[staffsDP]]" style="width: 200px;"></oj-select-many>
+                                <oj-bind-text value="[[message]]"></oj-bind-text>
+                            </div>    
+                        </oj-bind-if>
+                        <oj-bind-if test="[[userRole() != 'director' ]]">
+                            <div></div>
+                        </oj-bind-if>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <oj-select-many label-hint="Select Status" label-edge="inside" class="oj-form-control-max-width-md" value="{{selectList}}"
+                        options="[[listDP]]" style="width: 200px;"></oj-select-many>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <oj-button id="button1" on-oj-action="[[officeAction]]" style="background-color: #04812f;margin-top:8px; ">
+                            Submit
+                        </oj-button>
+            </div>
+            <br><br>
+            <div class="oj-flex">
+                <oj-bind-if test="[[userRole() === 'admin' ]]">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
+                        data="[[officesDP]]" on-value-changed="[[officeSelectedData]]" value="{{office}}" style="width: 350px;"></oj-select-single>
+                </oj-bind-if>
+                <oj-bind-if test="[[userRole() === 'director' ]]">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
+                        data="[[officesDP]]" on-value-changed="[[officeSelectedData]]" value="{{office}}" style="width: 350px;"></oj-select-single>
+                </oj-bind-if>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <oj-select-single id="select" label-hint="Reassign Counsilor" label-edge="inside" class="oj-form-control-max-width-md"
+                    data="[[counsilorsDp]]" value="{{counsilor}}" style="width: 350px;"></oj-select-single>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <oj-button id="button1" on-oj-action="[[reassignData]]" style="background-color: #04812f ">
+                    Submit
+                </oj-button>
+            <!--  <p class="oj-flex oj-sm-align-items-center" style="margin-left: 400px; padding: 4px 10px; border-radius: 10px; background-color: #06668a; color: #fff;">
+                    Selected Rows: <oj-bind-text value="[[selectedCount]]"></oj-bind-text>
+                </p> -->
+            </div>
+        </div>
+
 <div class="oj-panel" style="margin: 10px;padding: 20px;">
     <div style="margin-top: 20px;">
         <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[studentDataProvider]]"
@@ -52,7 +95,9 @@
                 {"headerText": "Counselor", "field": "counselor", "headerClassName": "oj-md-down-hide",
                     "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
                 {"headerText": "Office", "field": "office", "headerClassName": "oj-md-down-hide",
-                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"}]'
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Status", "field": "status", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "status"}]'
             class="demo-table-container">
             <template slot="rowTemplate" data-oj-as="row">
                 <tr>
@@ -81,6 +126,9 @@
                     </td>
                     <td>
                         <oj-bind-text value="[[row.data.office]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.status]]"></oj-bind-text>
                     </td>
                 </tr>
             </template>
