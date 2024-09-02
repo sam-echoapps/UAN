@@ -107,6 +107,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.studentIds = ko.observableArray()
 
+                self.countList = ko.observableArray([]); 
+                self.countSelect = ko.observable();
+                self.tableSelection = ko.observableArray([]); // Define an observable array for selection
+
                 self.officeAction = (e)=>{ 
                     let selectOffice = self.officeId();
                     let selectStaff = self.userId();
@@ -114,6 +118,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     self.getAllStudents(selectOffice,selectStaff,selectStatus)
                 }
                 self.staffMissing = ko.observable();
+
+                self.rowSelect = (e)=>{ 
+                    // Call the function to select the rows initially or based on your condition
+                    selectRows(self.countSelect());
+                }
+                
 
                 self.getAllStudents = (selectOffice,selectStaff,statusList)=>{
                     if(selectStaff== undefined || selectStaff== ""){
@@ -168,9 +178,27 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.studentsCnt(0)
                                 self.studentIds.push([])
                             }
+                            self.countList([])
+                            for (let count = 0; count <= self.studentsCnt(); count++) {
+                                self.countList.push({value: count, label: count}); 
+                            }
                         }
                     })
                 }
+
+                // Function to select the given count rows
+                function selectRows(count) {
+                    const selections = [];
+                    for (let i = 0; i < count; i++) {
+                        selections.push({ startIndex: { row: i }, endIndex: { row: i } });
+                    }
+                    self.tableSelection(selections);
+                }
+                
+            
+                self.countListDP = new ArrayDataProvider(self.countList, {
+                    keyAttributes: 'value'
+                });
                 
                 self.viewProfile = (e)=>{
                     // window.location.href = `/?ojr=studentProfile&id=${e.currentTarget.id}`;
@@ -361,6 +389,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     self.getAllStudents(self.officeId(),self.userId(),self.selectList())
                     let popUp = document.getElementById("resultMsg")
                     popUp.close();
+                    location.reload()
                 }
 
                 self.stIdRightClick = ko.observable();

@@ -66,6 +66,9 @@
                 <oj-select-single id="select" label-hint="Reassign Counsilor" label-edge="inside" class="oj-form-control-max-width-md"
                     data="[[counsilorsDp]]" value="{{counsilor}}" style="width: 350px;"></oj-select-single>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <oj-select-single id="select" label-hint="Number of students" label-edge="inside"
+                    class="oj-form-control-max-width-md" data="[[countListDP]]" value="{{countSelect}}" on-value-changed="[[rowSelect]]" style="width: 250px;"></oj-select-single>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <oj-button id="button1" on-oj-action="[[reassignData]]" style="background-color: #04812f ">
                     Submit
                 </oj-button>
@@ -81,11 +84,12 @@
             dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
             selection-mode='{"row": "multiple", "column": "multiple"}'
             on-selected-changed="[[selectedChangedListener]]"
+            selection="{{tableSelection}}"
             columns='[
                 {"headerText": "Student Id",  "field": "id", "headerClassName": "oj-sm-only-hide",
                     "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},
                 {"headerText": "First Name",  "field": "firstName", "resizable": "enabled", "id": "depName"},
-                {"headerText": "Last Name",  "field": "lastNa`me", "headerClassName": "oj-sm-only-hide",
+                {"headerText": "Last Name",  "field": "lastName", "headerClassName": "oj-sm-only-hide",
                     "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
                 {"headerText": "Email",  "field": "email", "resizable": "enabled", "id": "manId"},
                 {"headerText": "Phone", "field": "phone", "headerClassName": "oj-md-down-hide",

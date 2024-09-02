@@ -407,10 +407,16 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.submitInstitution = ()=>{
                     const formValid = self._checkValidationGroup("usersApplication");
-                    if(formValid){
+                     if(self.commissionRate()==undefined){
+                         self.commissionRate(null);
+                     }                    
+                     if(formValid){
                         if(self.emailPatternValidator(self.email()) && self.emailPatternValidator(self.invoiceEmail())){
                             let courseType = self.courseType();
                             courseType = courseType.join(",");
+                            // if(data[i][7]==null || data[i][7]==""){
+                            //     self.commissionRate(null);
+                            // }
                             let popup = document.getElementById("progress");
                             popup.open();
                             $.ajax({
