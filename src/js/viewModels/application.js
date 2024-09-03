@@ -62,6 +62,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.applicationData = ko.observableArray([]);
 
                 self.getAllApplication = ()=>{
+                    self.applicationData([]); 
                     $.ajax({
                         url: BaseURL+"/getApplications",
                         type: 'POST',
@@ -75,7 +76,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             console.log(textStatus);
                         },
                         success: function (data) {
-                            self.applicationData([]);  
+                            console.log(data) 
                             if(data[0] != "No data found"){
                                 data = JSON.parse(data);
                                 let len = data.length;
@@ -88,11 +89,13 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         courseName: data[i][3],
                                         courseStartDate: data[i][4],
                                         studentName: `${data[i][5]} ${data[i][6]}`,
-                                        appSentDate: data[i][7]
+                                        appSentDate: data[i][7],
+                                        office: data[i][8]
                                     });
                                 }
                             }
                             else{
+                                self.applicationData([]); 
                                 self.applicationCnt(0)
                             }
                         }

@@ -23,7 +23,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 else if(self.userRole()=="manager"){
                     self.officeId(sessionStorage.getItem("userOfficeId"));
                     self.office(sessionStorage.getItem("userOfficeId"))
-                    self.userId("All")
+                    self.userId(["All"])
                 }
                 else{
                     self.officeId(sessionStorage.getItem("userOfficeId"));
@@ -179,7 +179,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.studentIds.push([])
                             }
                             self.countList([])
-                            for (let count = 0; count <= self.studentsCnt(); count++) {
+                            for (let count = 1; count <= self.studentsCnt(); count++) {
                                 self.countList.push({value: count, label: count}); 
                             }
                         }
@@ -382,14 +382,20 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.closeButton = ()=>{
                     let popUp = document.getElementById("msgBox")
+                    self.userId(["All"])
+                    self.office('')
+                    self.counsilor('')
                     popUp.close();
+                    self.getAllStudents(self.officeId(),self.userId(),self.selectList())
                 }
 
                 self.resultPopupCloseButton = ()=>{
-                    self.getAllStudents(self.officeId(),self.userId(),self.selectList())
                     let popUp = document.getElementById("resultMsg")
                     popUp.close();
-                    location.reload()
+                    self.office('')
+                    self.counsilor('')
+                    self.userId(["All"])
+                    self.getAllStudents(self.officeId(),self.userId(),self.selectList())
                 }
 
                 self.stIdRightClick = ko.observable();

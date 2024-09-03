@@ -59,6 +59,8 @@
                     "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
                 {"headerText": "Office", "field": "office", "headerClassName": "oj-md-down-hide",
                     "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                {"headerText": "Destination", "field": "destination", "headerClassName": "oj-md-down-hide",
+                    "className": "oj-md-down-hide", "resizable": "enabled", "id": "destination"},
                 {"headerText": "Campaign Source", "field": "source", "headerClassName": "oj-md-down-hide",
                     "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
                 {"headerText": "Last Note", "field": "note", "headerClassName": "oj-md-down-hide",
@@ -90,6 +92,9 @@
                     </td>
                     <td>
                         <oj-bind-text value="[[row.data.office]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.destination]]"></oj-bind-text>
                     </td>
                     <td>
                         <oj-bind-text value="[[row.data.source]]"></oj-bind-text>

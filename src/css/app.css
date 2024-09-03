@@ -163,6 +163,14 @@ td{
 }
 
 
+.hint-icon{
+  color: #012552;
+  font-size: 30px;
+  padding:10px;
+}
+
+
+
 @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi), (min-resolution: 1.5dppx) {
   .demo-appheader-avatar:before {
       content:url("images/avatar_24px_2x.png");

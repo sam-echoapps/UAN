@@ -459,6 +459,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
     self.reminderCount = ko.observable();
     $.ajax({
       url: "http://169.197.183.168:9000/getUserReminderNotes",
+      //url: "http://65.0.111.226:8010/getUserReminderNotes",
       //url: "/getUserReminderNotes",
       type: "POST",
       data: JSON.stringify({
@@ -550,6 +551,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         self.onepDeployList([]);
         $.ajax({
           url: "http://169.197.183.168:9000/onepdep",
+          //url: "http://65.0.111.226:8010/onepdep",
           //url: "/onepdep",
           type: "GET",
           dataType: "json",

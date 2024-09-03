@@ -81,14 +81,14 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             console.log(textStatus);
                         },
                         success: function (data) {
-                            console.log(data)
                             self.studentData([]);
                             if(data[0] != "No data found"){
                                 data = JSON.parse(data);
+                                console.log(data)
                                 let len = data.length;
                                 self.studentsCnt(len)
                                 var csvContent = '';
-                                var headers = ['Student Id', 'First Name', 'Last Name', 'Email', 'Phone', 'Counselor', 'Office', 'Source', 'Note', 'Note Date'];
+                                var headers = ['Student Id', 'First Name', 'Last Name', 'Email', 'Phone', 'Counselor', 'Office', 'Destiantion', 'Source', 'Note', 'Note Date'];
                                 csvContent += headers.join(',') + '\n';
                                 for(var i=0;i<len;i++){
                                     const noteDate = new Date(data[i][10])
@@ -109,8 +109,9 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         source: data[i][8],
                                         note: data[i][9],
                                         noteDate: customDateFormat,
+                                        destination: data[i][11],
                                     });
-                                    var rowData = [data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][6], data[i][7], data[i][8], data[i][9], data[i][10]]; 
+                                    var rowData = [data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][6], data[i][7], data[i][11], data[i][8], data[i][9], data[i][10]]; 
                                     csvContent += rowData.join(',') + '\n';
                                 }
                                 var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
