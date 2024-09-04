@@ -89,6 +89,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         courseStartDate: data[i][4],
                                         studentName: `${data[i][5]} ${data[i][6]}`,
                                         appSentDate: data[i][7],
+                                        office: data[i][8]
                                     });
                                 }
                             }

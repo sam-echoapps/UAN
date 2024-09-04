@@ -323,7 +323,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         self.message("Please select a office");
                         popUp.open();
                     }
-                    else if(self.counsilor()==undefined){
+                    else if(self.counsilor()==undefined || self.counsilor()==""){
                         self.message("Please select a counsilor");
                         popUp.open();
                     }
@@ -383,8 +383,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.closeButton = ()=>{
                     let popUp = document.getElementById("msgBox")
                     self.userId(["All"])
-                    self.office('')
-                    self.counsilor('')
+                  
                     popUp.close();
                     self.getAllStudents(self.officeId(),self.userId(),self.selectList())
                 }

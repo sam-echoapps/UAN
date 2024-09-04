@@ -36,6 +36,8 @@
                     {"headerText": "Student Name",  "field": "studentName", "headerClassName": "oj-sm-only-hide",
                         "className": "oj-sm-only-hide", "resizable": "enabled", "id": "locId"},
                     {"headerText": "University",  "field": "university", "resizable": "enabled", "id": "manId"},
+                    {"headerText": "Office",  "field": "office", "headerClassName": "oj-md-down-hide",
+                        "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
                     {"headerText": "Course Name",  "field": "courseName", "headerClassName": "oj-md-down-hide",
                         "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
                     {"headerText": "Course Start Date",  "field": "courseStartDate", "headerClassName": "oj-md-down-hide",
@@ -56,6 +58,9 @@
                     </td>
                     <td>
                         <oj-bind-text value="[[row.data.university]]"></oj-bind-text>
+                    </td>
+                    <td>
+                        <oj-bind-text value="[[row.data.office]]"></oj-bind-text>
                     </td>
                     <td>
                         <oj-bind-text value="[[row.data.courseName]]"></oj-bind-text>
