@@ -461,6 +461,52 @@
                 </div>
             </div>
         </div>
+
+        <div id="university" style="display: none;">
+            <h6 style="font-weight: 500;font-size: 22px;color: #06668a;margin-left: 20px;">Institution List</h6>
+            <div class="oj-flex oj-sm-justify-content-space-between" style="margin-top:30px;">
+                <p class="oj-flex oj-sm-align-items-center" style="padding: 4px 10px; border-radius: 10px;background-color: #06668a; color: #fff; width: 150px;margin-left: 20px;">
+                    Total Records: <oj-bind-text value="[[institutionCount]]"></oj-bind-text>
+                </p>
+                <div class="oj-flex">
+                    <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Search" label-edge="inside"
+                        placeholder="Search...." on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}" clear-icon="always" style="width: 300px;">
+                    </oj-input-text>
+                </div>
+            </div>
+            <br><br>
+            <div>
+                <oj-table id="table" aria-label="Task Table" accessibility.row-header="name"
+                    data="[[institutionDataProvider]]" columns-default.sortable="disabled" layout="fixed"
+                    columns='[
+                        {"headerText": "#", "id": "institutionId"},
+                        {"headerText": "Institution", "id": "institutionName", "weight": 5},
+                        {"headerText": "Institution Type", "id": "institutionType", "weight": 2},
+                        {"headerText": "Institution Country", "id": "institutionCountry", "weight": 2},
+                        {"headerText": "Home Page", "id": "homePage", "weight": 5}
+                        ]'
+                    class="demo-table-container">
+                    <template slot="rowTemplate" data-oj-as="row">
+                        <tr>
+                            <td>
+                                <a :id="[[row.data.institutionId]]" on-click= "[[viewInstitution]]" target="_blank">
+                                    <oj-bind-text value="[[row.data.institutionId]]"></oj-bind-text>
+                                </a>
+                            </td>
+                            <td><oj-bind-text value="[[row.data.institutionName]]"></oj-bind-text></td>
+                            <td><oj-bind-text value="[[row.data.institutionType]]"></oj-bind-text></td>
+                            <td><oj-bind-text value="[[row.data.institutionCountry]]"></oj-bind-text></td>
+                            <td>
+                                <a :id="[[row.data.homePage]]" on-click= "[[viewHomePage]]" target="_blank">
+                                    <oj-bind-text value="[[row.data.homePage]]"></oj-bind-text>
+                                </a>
+                            </td>
+                        </tr>
+                    </template>
+                </oj-table>
+            </div>
+        </div>
+        
     </div>
 </div>
 

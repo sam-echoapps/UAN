@@ -16,7 +16,7 @@
     <div class="oj-panel">
             <div class="oj-flex">
                 <div style="padding-top:5px;">
-                    <i class="fa-solid fa-circle-exclamation hint-icon" title="Select filters to refine your search results."></i>
+                    <i class="fa-solid fa-info-circle hint-icon" title="Select filters to refine your search results."></i>
                 </div>                
                 <oj-select-single id="select" label-hint="Select the year to see the data" label-edge="inside"
                         class="oj-form-control-max-width-md" data="[[yearsDp]]" value="{{selectYear}}" on-value-changed="[[yearChanged]]" style="width: 250px;padding-top:5px;"></oj-select-single>
@@ -58,7 +58,7 @@
             <br><br>
             <div class="oj-flex">
                 <div>
-                    <i class="fa-solid fa-circle-exclamation hint-icon" title="Select office, counselor, and optionally the number of students to reassign staff to a new counselor."></i>                    
+                    <i class="fa-solid fa-info-circle hint-icon" title="Select office, counselor, and optionally the number of students to reassign students to a new counselor."></i>                    
                 </div>
                 <oj-bind-if test="[[userRole() === 'admin' ]]">
                     <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
@@ -67,6 +67,9 @@
                 <oj-bind-if test="[[userRole() === 'director' ]]">
                     <oj-select-single id="select" label-hint="Select Office" label-edge="inside" class="oj-form-control-max-width-md"
                         data="[[officesDP]]" on-value-changed="[[officeSelectedData]]" value="{{office}}" style="width: 250px;"></oj-select-single>
+                </oj-bind-if>
+                <oj-bind-if test="[[userRole() != 'manager' ]]">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </oj-bind-if>
                 <oj-select-single id="select" label-hint="Reassign Counsilor" label-edge="inside" class="oj-form-control-max-width-md"
                     data="[[counsilorsDp]]" value="{{counsilor}}" style="width: 210px;"></oj-select-single>

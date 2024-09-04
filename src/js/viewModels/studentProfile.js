@@ -1,7 +1,7 @@
-define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovider", "ojs/ojtrain", 
+define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovider", "ojs/ojlistdataproviderview","ojs/ojdataprovider", "ojs/ojtrain", 
     "ojs/ojformlayout","ojs/ojdatetimepicker", "ojs/ojinputtext", "ojs/ojtable", "ojs/ojcheckboxset", "ojs/ojinputnumber",
     "ojs/ojselectsingle", "ojs/ojpopup", "ojs/ojvalidationgroup", "ojs/ojprogress-circle", "ojs/ojfilepicker", "ojs/ojdialog"], 
-    function (oj,ko,$, app, ArrayDataProvider) {
+    function (oj,ko,$, app, ArrayDataProvider, ListDataProviderView, ojdataprovider_1) {
 
         class StudentProfile {
             constructor(args) {
@@ -1284,9 +1284,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 };       
                 self.selectedStep2 = ko.observable('stp1');
                 self.stepArray2 = ko.observableArray([
-                    { label: 'Personal Details', id: 'stp1' },
-                    { label: 'Document Upload', id: 'stp2' },
-                    { label: 'Applications', id: 'stp3' }
+                    { label: 'Personal Details', id: 'stp1'},
+                    { label: 'Document Upload', id: 'stp2'},
+                    { label: 'Applications', id: 'stp3'},
+                    { label: 'Institution List', id: 'stp4'}
                 ]);
 
                 self.update2 = (event) => {
@@ -1296,25 +1297,41 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         let personalDiv = document.getElementById("personalInfo");
                         let applicationDiv = document.getElementById("application");
                         let documentDiv = document.getElementById("documentUpload");
+                        let universityDiv = document.getElementById("university");
                         applicationDiv.style.display = "none"
                         personalDiv.style.display = "block"
                         documentDiv.style.display = "none"
+                        universityDiv.style.display = "none"
                     }
                     else if (selectedStep2.id == "stp2") {
                         let personalDiv = document.getElementById("personalInfo");
                         let applicationDiv = document.getElementById("application");
                         let documentDiv = document.getElementById("documentUpload");
+                        let universityDiv = document.getElementById("university");
                         documentDiv.style.display = "block"
                         applicationDiv.style.display = "none"
                         personalDiv.style.display = "none"
+                        universityDiv.style.display = "none"
+                    }
+                    else if (selectedStep2.id == "stp3"){
+                        let personalDiv = document.getElementById("personalInfo");
+                        let applicationDiv = document.getElementById("application");
+                        let documentDiv = document.getElementById("documentUpload");
+                        let universityDiv = document.getElementById("university");
+                        applicationDiv.style.display = "block"
+                        personalDiv.style.display = "none"
+                        documentDiv.style.display = "none"
+                        universityDiv.style.display = "none"
                     }
                     else{
                         let personalDiv = document.getElementById("personalInfo");
                         let applicationDiv = document.getElementById("application");
                         let documentDiv = document.getElementById("documentUpload");
-                        applicationDiv.style.display = "block"
+                        let universityDiv = document.getElementById("university");
+                        applicationDiv.style.display = "none"
                         personalDiv.style.display = "none"
                         documentDiv.style.display = "none"
+                        universityDiv.style.display = "block"
                     }
                 };
 
@@ -1820,6 +1837,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 
                 self.offerFileMessage = ko.observable()
                 self.selectListenButtonClick = ko.observable(false);
+
+                self.filter = ko.observable('');
+                self.institutionData = ko.observableArray([]);
+                self.institutionCount = ko.observable();
+
 
                 self.selectListener = (event)=>{
                     let files = event.detail.files;
@@ -2509,6 +2531,62 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         }
                     })
                 }
+
+                self.getInstitution = ()=>{
+                    self.institutionData([]);
+                    $.ajax({
+                        url: BaseURL+"/getInstitution",
+                        type: 'GET',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            if(data[0] != "No data found"){
+                                data = JSON.parse(data);
+                                let len = data.length;
+                                self.institutionCount(len)
+                                for(let i=0;i<len;i++){
+                                    self.institutionData.push({
+                                        institutionId: data[i][0],
+                                        institutionName: data[i][1],
+                                        institutionType: data[i][2],
+                                        homePage: data[i][4],
+                                        institutionCountry: data[i][5]
+                                    })
+                                }
+                            }
+                            else{
+                                self.institutionCount(0)
+                            }
+                        }
+                    })
+                }
+                self.getInstitution();
+
+                self.institutionDataProvider = ko.computed(function () {
+                    let filterCriterion = null;
+                    if (this.filter() && this.filter() != '') {
+                        filterCriterion = ojdataprovider_1.FilterFactory.getFilter({
+                            filterDef: { text: this.filter() }
+                        });
+                    }
+                    const arrayDataProvider = new ArrayDataProvider(this.institutionData, { keyAttributes: 'DepartmentId' });
+                    return new ListDataProviderView(arrayDataProvider, { filterCriterion: filterCriterion });
+                }, self);
+                self.handleValueChanged = () => {
+                    self.filter(document.getElementById('filter').rawValue);
+                };
+
+                self.viewInstitution = (e)=>{
+                    let institutionId = e.currentTarget.id;
+                    sessionStorage.setItem("institutionId", institutionId);
+                    window.location.href = `/?ojr=institutionProfile`;
+                }
+                self.viewHomePage = (e) => {
+                    let homePageURL = e.currentTarget.id;
+                    window.open(homePageURL, '_blank');
+                };
+                
 
             }
         }
