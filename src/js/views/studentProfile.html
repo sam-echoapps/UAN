@@ -139,6 +139,8 @@
                                     {"headerText": "Lead Source",  "field": "lead_source", "resizable": "enabled", "id": "manId"},
                                     {"headerText": "Date Added",  "field": "date", "headerClassName": "oj-md-down-hide",
                                         "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
+                                    {"headerText": "Reminder Date",  "field": "reminderDate", "headerClassName": "oj-sm-only-hide",
+                                        "className": "oj-sm-only-hide", "resizable": "enabled", "id": "reminderDate"},
                                     {"headerText": "Action",  "field": "status", "headerClassName": "oj-md-down-hide",
                                         "className": "oj-md-down-hide", "resizable": "enabled", "id": "status", "sortable": "disabled"}]'
                                 class="demo-table-container">
@@ -158,6 +160,9 @@
                                         </td>
                                         <td>
                                             <oj-bind-text value="[[row.data.date]]"></oj-bind-text>
+                                        </td>
+                                        <td>
+                                            <oj-bind-text value="[[row.data.reminderDate]]"></oj-bind-text>
                                         </td>
                                         <td>
                                             <oj-bind-if test="[[row.data.complete24 === true ]]">
