@@ -94,6 +94,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: 'privacyPolicy', detail : {label :'Privacy policy',iconClass: "fa-solid fa-magnifying-glass"} },
+        { path: 'institutionReport', detail : {label :'Institution Report',iconClass: "fa-solid fa-magnifying-glass"} },
       ];
     } else if (sessionStorage.getItem("userRole") == "manager") {
       var navData = [
@@ -153,6 +154,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseFinalchoiced", detail: { label: "Finalchoiced", iconClass: "oj-ux-ico-bar-chart", }, },
         { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: 'privacyPolicy', detail : {label :'Privacy policy',iconClass: "fa-solid fa-magnifying-glass"} },
+        { path: 'institutionReport', detail : {label :'Institution Report',iconClass: "fa-solid fa-magnifying-glass"} },
       ];
     } else if (sessionStorage.getItem("userRole") == "partner") {
       var navData = [
@@ -290,6 +292,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
          "children": [
           {"name": "Institution List","id": "institutionList","icons": "fa-solid fa-landmark", "path":"institutionList"},
           {"name": "Institution Profile","id": "institutionProfile","icons": "fa-solid fa-landmark", "path":"institutionProfile"}, 
+          {"name": "Institution Report","id": "institutionReport","icons": "oj-ux-ico-bar-chart", "path":"institutionReport"}, 
         ]
       },
         {"name": "Manage Staff","id": "manageUsers","icons": "fa-solid fa-people-roof", "path":"manageUsers"},
@@ -339,6 +342,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         "children": [
          {"name": "Institution List","id": "institutionList","icons": "fa-solid fa-landmark", "path":"institutionList"},
          {"name": "Institution Profile","id": "institutionProfile","icons": "fa-solid fa-landmark", "path":"institutionProfile"}, 
+         {"name": "Institution Report","id": "institutionReport","icons": "oj-ux-ico-bar-chart", "path":"institutionReport"}, 
        ]
      },
         {"name": "Manage Staff","id": "manageManagerUsers","icons": "fa-solid fa-people-roof", "path":"manageManagerUsers"},

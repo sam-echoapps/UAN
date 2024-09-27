@@ -1,0 +1,92 @@
+<link rel="stylesheet" href="../../css/dashboard.css">
+
+<div class="oj-panel oj-flex  oj-sm-align-items-center" style="margin: 10px;">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        Institution Report
+    </h6>
+</div>
+
+<div class="oj-panel" style="padding: 20px; margin: 20px 0px;">
+    <div class="oj-flex oj-sm-justify-content-center oj-sm-align-items-center">
+        <div style="margin: 20px 0px;">
+            <oj-label for="type">Institution Type</oj-label>
+            <oj-select-many id="select1" value="{{institutionType}}" label-edge="inside" label-hint="Institution Type" options="[[institutionTypeSet]]"
+            class="oj-form-control-max-width-md" style="width: 220px;margin-top: 5px;">
+        </oj-select-many>    
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div style="margin: 20px 0px;">
+            <oj-label for="type">Territory</oj-label>
+            <oj-select-many id="select2" value="{{territory}}" label-edge="inside" label-hint="Territory" options="[[territorySet]]"
+            class="oj-form-control-max-width-md" style="width: 220px;margin-top: 5px;">
+        </oj-select-many>    
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div style="margin: 20px 0px;">
+            <oj-label for="type">Institution Name</oj-label>
+            <oj-select-many id="select3" value="{{institutionName}}" label-edge="inside" label-hint="Institution Name" options="[[institutionNameList]]"
+            class="oj-form-control-max-width-md" style="width: 220px;margin-top: 5px;">
+        </oj-select-many>    
+        </div>
+    </div>
+    <div class="oj-flex oj-sm-justify-content-center oj-sm-align-items-center">
+        <oj-button id="button1" on-oj-action="[[showData]]">
+            Show
+        </oj-button>&nbsp;&nbsp;
+        <oj-button id="button1" on-oj-action="[[downloadData]]" style="background-color: #04812f ">
+            Export <i class="fa-solid fa-download"></i>
+        </oj-button>
+    </div>
+</div>
+
+<div class="oj-flex oj-sm-justify-content-space-between" style="margin-top:30px;">
+    <p class="oj-flex oj-sm-align-items-center" style="padding: 4px 10px; border-radius: 10px;background-color: #06668a; color: #fff; width: 150px;">
+        Total Records: <oj-bind-text value="[[institutionCount]]"></oj-bind-text>
+    </p>
+
+</div>
+
+<div>
+    <oj-table id="table" aria-label="Task Table" accessibility.row-header="name"
+        data="[[institutionDataProvider]]" columns-default.sortable="disabled" layout="fixed"
+        columns='[
+            {"headerText": "Institution ID", "id": "institutionId"},
+            {"headerText": "Institution", "id": "institutionName", "weight": 5},
+            {"headerText": "Institution Type", "id": "institutionType", "weight": 2},
+            {"headerText": "Territory", "id": "terittory"},
+            {"headerText": "Commission Rate New", "id": "commissionRate", "weight": 2},
+            {"headerText": "Bonus/Special Offer", "id": "bonus","weight": 2},
+            {"headerText": "Application Method", "id": "applicationMethod","weight": 2},
+            {"headerText": "Agent Portal Details", "id": "agentPortal","weight": 2},
+            {"headerText": "Notes", "id": "restrictionNotes","weight": 2}]'
+        class="demo-table-container">
+        <template slot="rowTemplate" data-oj-as="row">
+            <tr>
+                <td>
+                    <a :id="[[row.data.institutionId]]" on-click= "[[viewInstitution]]" target="_blank">
+                        <oj-bind-text value="[[row.data.institutionId]]"></oj-bind-text>
+                    </a>
+                </td>
+                <td><oj-bind-text value="[[row.data.institutionName]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.institutionType]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.terittory]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.commissionRate]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.bonus]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.applicationMethod]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.agentPortal]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.restrictionNotes]]"></oj-bind-text></td>
+            </tr>
+        </template>
+    </oj-table>
+</div>
+
+
+
+<oj-popup id="progress" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
