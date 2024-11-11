@@ -87,6 +87,8 @@
                         <oj-input-text id="marketingSource" label-hint="Marketing Source" required="true"  value="{{marketingSource}}"></oj-input-text>
                         <oj-select-single id="selectPartner" label-hint="Select Partner" label-edge="inside" 
                             data="[[partnersDp]]" value="{{partner}}"></oj-select-single>
+                        <oj-select-single id="selectRefferal" label-hint="Select Refferal ID" label-edge="inside" 
+                            data="[[refferalsDp]]" value="{{refferal}}"></oj-select-single>
                     </oj-form-layout>
                     <oj-bind-if test="[[userRole() === 'admin' ]]">
                     <div class="oj-flex oj-sm-justify-content-center">

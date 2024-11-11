@@ -118,6 +118,30 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     keyAttributes: 'value'
                 });
 
+                self.refferal = ko.observable()
+                self.refferalIdList = ko.observableArray()
+
+                self.getRefferalIds = async () => {
+                    $.ajax({
+                        url: BaseURL+"/getActiveRefferrals",
+                        type: 'GET',
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
+                        },
+                        success: function (data) {
+                            if(data[0] != "No data found"){
+                                let len = data.length;
+                                for(let i=0;i<len;i++){
+                                    self.refferalIdList.push({value: `${data[i].unique_id}`, label: `${data[i].unique_id}`})
+                                }
+                            }
+                        }
+                    })
+                };
+                self.refferalsDp = new ArrayDataProvider(self.refferalIdList, {
+                    keyAttributes: 'value'
+                });
+
                 self.courseStartDate = ko.observable('');
                 self.courseName = ko.observable('');
                 self.courseEndDate = ko.observable(null);
@@ -1204,10 +1228,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 });
 
                 self.fileNames = ko.observableArray(new Array());
+                self.refferal = ko.observable();
 
 
 
-                self.getStudent = (studentId)=>{
+                self.getStudent = async (studentId)=>{
+                    await self.getRefferalIds();
                     $.ajax({
                         url: BaseURL+"/searchStudents",
                         type: 'POST',
@@ -1252,6 +1278,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.hearAbout(data[0][24]);
                                 //self.partner(data[0][25]);
                                 self.franchise(data[0][29]);
+                                self.refferal(data[0][30])
                                 if(data[0][1]==null){
                                     self.getCounselors(data[0][2], "");
                                     self.partners(data[0][2],data[0][25]);
@@ -1427,14 +1454,15 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             phone: self.mobileNumber(),
                             email: self.email(),
                             nationality: self.nationality(),
-                            updated_by: sessionStorage.getItem("userName")
+                            updated_by: sessionStorage.getItem("userName"),
+                            refferalId: self.refferal()
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);
                         },
                         success: function (data) {
-                            location.reload()
+                            location.reload()                            
                         }
                     })
                 }
@@ -2353,14 +2381,14 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             email: self.email(),
                             nationality: self.nationality(),
                             userId: sessionStorage.getItem("userId"),
-                            updated_by: sessionStorage.getItem("userName")
+                            updated_by: sessionStorage.getItem("userName"),
+                            refferalId: self.refferal()
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);
                         },
                         success: function (data) {
-                            console.log(data)
                             location.reload()
                         }
                     })

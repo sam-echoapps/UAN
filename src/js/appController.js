@@ -95,6 +95,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: "franchiseReport", detail: { label: "Franchise Report", iconClass: "fa-solid fa-magnifying-glass", },},
         { path: 'privacyPolicy', detail : {label :'Privacy policy',iconClass: "fa-solid fa-magnifying-glass"} },
         { path: 'institutionReport', detail : {label :'Institution Report',iconClass: "fa-solid fa-magnifying-glass"} },
+        { path: 'referralList', detail : {label :'Referral List',iconClass: "fa-solid fa-magnifying-glass"} },
       ];
     } else if (sessionStorage.getItem("userRole") == "manager") {
       var navData = [
@@ -312,6 +313,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
             {"name": "Franchise Report","id": "franchiseReport","icons": "oj-ux-ico-bar-chart", "path":"franchiseReport"},  
           ]
         },
+        {"name": "Referral List","id": "referralList","icons": "fa-solid fa-handshake", "path":"referralList"},
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
       ]
     }
@@ -462,8 +464,8 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
     self.reminderData = ko.observableArray(new Array());
     self.reminderCount = ko.observable();
     $.ajax({
-      url: "http://169.197.183.168:9000/getUserReminderNotes",
-      //url: "http://65.0.111.226:8010/getUserReminderNotes",
+      //url: "http://169.197.183.168:9000/getUserReminderNotes",
+      url: "http://65.0.111.226:8010/getUserReminderNotes",
       //url: "/getUserReminderNotes",
       type: "POST",
       data: JSON.stringify({
@@ -554,8 +556,8 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         document.querySelector("#RemoteDeploymentDialog").open();
         self.onepDeployList([]);
         $.ajax({
-          url: "http://169.197.183.168:9000/onepdep",
-          //url: "http://65.0.111.226:8010/onepdep",
+          //url: "http://169.197.183.168:9000/onepdep",
+          url: "http://65.0.111.226:8010/onepdep",
           //url: "/onepdep",
           type: "GET",
           dataType: "json",
