@@ -44,7 +44,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         name: data[i].name,
                                         phone: data[i].phone,
                                         email: data[i].email,
-                                        students: data[i].students
+                                        students: data[i].students,
+                                        status: data[i].status
                                     })
                                 }
                             }
