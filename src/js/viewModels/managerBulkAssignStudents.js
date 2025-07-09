@@ -67,7 +67,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     self.unAssignedData([]);
                     $.ajax({
                         url: BaseURL+"/getUnAssignedAllStudents",
-                        type: 'GET',
+                        type: 'POST',
+                        data: JSON.stringify({
+                            year: '',
+                        }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);

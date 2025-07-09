@@ -45,7 +45,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                     self.offices.push({value: `${data[i][0]}`, label: `${data[i][1]}`})
                                 }
                                 if(self.userRole()=="admin" || self.userRole()=="director"){
-                                    self.officeId(["All"])
+                                    self.officeId(["All"]);
+                                    self.getCounsilors(["All"]);
                                 }
                                 else{
                                     self.officeId(sessionStorage.getItem(["userOfficeId"]));
@@ -92,6 +93,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             else{
                                 self.staffs.push({value: `All`, label: `All`})
                             }
+                            self.selectStaff(["All"]);
                         }
                     })
                 }
@@ -167,6 +169,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.inactiveCount = ko.observable();
                 self.closedCount = ko.observable();
                 self.casCount = ko.observable();
+                self.otherCount = ko.observable();
                 
                 self.statisticCount = ()=>{
                     let fromDate = self.fromDate()
@@ -201,11 +204,13 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             success: function (data) {
                                 if(data[0]!='No data found'){
                                     data = JSON.parse(data);
-                                    self.enquiryCount(data[0][0]);
-                                    self.activeCount(data[0][3]);
-                                    self.inactiveCount(data[0][4]);
-                                    self.closedCount(data[0][5]);
-                                    self.casCount(data[0][6]);
+                                    self.enquiryCount(data[0]);
+                                    self.activeCount(data[1]);
+                                    self.inactiveCount(data[2]);
+                                    self.closedCount(data[3]);
+                                    self.casCount(data[4]);
+                                    self.recordsCount(data[5]);
+                                    self.otherCount(data[6]);
                                 }
                             }
                         })
@@ -246,7 +251,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             if(data[0]!='No data found'){
                                 data = JSON.parse(data);
                                 let len = data.length;
-                                self.recordsCount(len)
 
                                 var csvContent = '';
 
@@ -299,7 +303,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.fileName(fileName);
                             }
                             else{
-                                self.recordsCount(0)
                                 var csvContent = '';
                                 var headers = ['Student Id', 'First name', 'Last Name', 'Email', 'Contact','Enquiry Date', 'Status', 
                                                 'Marketing',  'Last Note', 'Office'];

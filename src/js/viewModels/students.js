@@ -25,7 +25,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     self.officeId(sessionStorage.getItem("userOfficeId"));
                     self.userId(sessionStorage.getItem("userId"))
                 }
-
                 self.year = ko.observable(sessionStorage.getItem("selectYear"));
                 
                 self.studentsCnt = ko.observable();
@@ -67,6 +66,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 });
 
                 self.getAllStudents = (selectval, officeId)=>{
+                    self.studentData([]);
                     $.ajax({
                         url: BaseURL+"/getSelectedData",
                         type: 'POST',
@@ -81,10 +81,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             console.log(textStatus);
                         },
                         success: function (data) {
-                            self.studentData([]);
                             if(data[0] != "No data found"){
                                 data = JSON.parse(data);
-                                console.log(data)
                                 let len = data.length;
                                 self.studentsCnt(len)
                                 var csvContent = '';

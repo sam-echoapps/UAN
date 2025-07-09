@@ -68,6 +68,7 @@
         <p>Inactive:  <oj-bind-text value="[[inactiveCount]]"></oj-bind-text></p>
         <p>Closed:  <oj-bind-text value="[[closedCount]]"></oj-bind-text></p>
         <p>CAS Issued: <oj-bind-text value="[[casCount]]"></oj-bind-text></p>
+        <p>Others: <oj-bind-text value="[[otherCount]]"></oj-bind-text></p>
     </div>
 </div>
 
@@ -93,7 +94,7 @@
                     {"headerText": "Status", "field": "status", "headerClassName": "oj-md-down-hide",
                         "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"},
                     {"headerText": "Marketing", "field": "marketing", "resizable": "enabled", "id": "manId"},
-                    {"headerText": "Last Note", "field": "lastNote", "resizable": "enabled", "id": "manId"},
+                    {"headerText": "Last Note", "field": "lastNote", "resizable": "enabled", "id": "manId", "className": "wrap-text"},
                     {"headerText": "Office", "field": "office", "headerClassName": "oj-md-down-hide",
                         "className": "oj-md-down-hide", "resizable": "enabled", "id": "empCount"}]'
         class="demo-table-container">

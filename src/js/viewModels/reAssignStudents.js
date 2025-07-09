@@ -119,12 +119,6 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 }
                 self.staffMissing = ko.observable();
 
-                self.rowSelect = (e)=>{ 
-                    // Call the function to select the rows initially or based on your condition
-                    selectRows(self.countSelect());
-                }
-                
-
                 self.getAllStudents = (selectOffice,selectStaff,statusList)=>{
                     if(selectStaff== undefined || selectStaff== ""){
                         self.staffMissing("Please select a staff");
@@ -153,7 +147,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);
                         },
-                        success: function (data) {
+                        success: function (data) {  
                             self.studentIds([])
                             if(data[0] != "No data found"){
                                 data = JSON.parse(data);
@@ -184,17 +178,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             }
                         }
                     })
-                }
-
-                // Function to select the given count rows
-                function selectRows(count) {
-                    const selections = [];
-                    for (let i = 0; i < count; i++) {
-                        selections.push({ startIndex: { row: i }, endIndex: { row: i } });
-                    }
-                    self.tableSelection(selections);
-                }
-                
+                }                
             
                 self.countListDP = new ArrayDataProvider(self.countList, {
                     keyAttributes: 'value'
@@ -306,18 +290,37 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             self.selectedIds(addArray)
                         }
                     }
-                      // Calculate selected count
-                      selectedCount = self.selectedIds().length;
-                      self.selectedCount(selectedCount);
-                      // Log or display the count
-                      console.log(`Selected Rows Count: ${selectedCount}`);
+                    // Calculate selected count
+                    selectedCount = self.selectedIds().length;
+                    self.selectedCount(selectedCount);
                 };
+
+                self.selectedItems = ko.observable({
+                    row: new ojkeyset_1.KeySetImpl(),
+                    column: new ojkeyset_1.KeySetImpl()
+                });
+
+                // Function to select the given count rows
+                self.selectRows = () => {
+                    let count = parseInt(self.countSelect(), 10) || 0; 
+                    let allStudentIds = self.studentIds();
+                    let selectedKeys = new ojkeyset_1.KeySetImpl();
+                    if (count > allStudentIds.length) {
+                        count = allStudentIds.length; 
+                    }
+                    let selectedArray = allStudentIds.slice(0, count);
+                    selectedKeys = selectedKeys.add(selectedArray);
+                    self.selectedItems({ row: selectedKeys, column: new ojkeyset_1.KeySetImpl() });
+                }
 
                 self.message = ko.observable();
                 self.warnMsg = ko.observable();
 
                 self.reassignData = ()=>{
                     let len = self.selectedIds().length;
+                    console.log(self.selectedIds())
+                    console.log(len);
+                    
                     let popUp = document.getElementById("msgBox")
                     if(self.office()== undefined || self.office()== ""){
                         self.message("Please select a office");
@@ -333,10 +336,10 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     }
                     else{
                         if(self.userRole()=="manager"){
-                            self.warnMsg("Are you sure you want to change counselor of the selected students?");
+                            self.warnMsg(`Are you sure you want to change counselor of the ${len} selected students?`);
                         }
                         else{
-                            self.warnMsg("Are you sure you want to change office and counselor of the selected students?");
+                            self.warnMsg(`Are you sure you want to change office and counselor of the ${len} selected students?`);
                         }
                         
                         let warnMsg = document.getElementById("warnMsg")

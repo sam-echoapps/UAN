@@ -196,3 +196,8 @@ td{
 .oj-tabbar .oj-tabbar-item.oj-selected {
   background-color: #06668a;
 }
+
+.wrap-text {
+  white-space: normal !important;
+  word-wrap: break-word;
+}

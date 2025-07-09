@@ -75,7 +75,7 @@
                     data="[[counsilorsDp]]" value="{{counsilor}}" style="width: 210px;"></oj-select-single>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <oj-select-single id="select" label-hint="Number of students" label-edge="inside"
-                    class="oj-form-control-max-width-md" data="[[countListDP]]" value="{{countSelect}}" on-value-changed="[[rowSelect]]" style="width: 240px;"></oj-select-single>
+                    class="oj-form-control-max-width-md" data="[[countListDP]]" value="{{countSelect}}" on-value-changed="[[selectRows]]" style="width: 240px;"></oj-select-single>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <oj-button id="button1" on-oj-action="[[reassignData]]" style="background-color: #04812f ">
                     Submit
@@ -90,9 +90,10 @@
     <div style="margin-top: 20px;">
         <oj-table id="table" aria-label="Departments Table" accessibility.row-header="depName" data="[[studentDataProvider]]"
             dnd='{"reorder": {"columns": "enabled"}}' scroll-policy="loadMoreOnScroll" scroll-policy-options='{"fetchSize": 10}'
+            selected="{{selectedItems}}"
             selection-mode='{"row": "multiple", "column": "multiple"}'
             on-selected-changed="[[selectedChangedListener]]"
-            selection="{{tableSelection}}"
+            
             columns='[
                 {"headerText": "Student Id",  "field": "id", "headerClassName": "oj-sm-only-hide",
                     "className": "oj-sm-only-hide", "resizable": "enabled", "id": "depId"},

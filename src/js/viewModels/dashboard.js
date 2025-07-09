@@ -116,6 +116,7 @@ define(["knockout","jquery","appController", "ojs/ojarraydataprovider",
                 self.yearChanged = ()=>{
                     sessionStorage.setItem("selectYear", self.selectYear());
                     self.getDashboardCount();
+                    self.getunassignedAllStudents();
                 }
                 //-----------------Completed card functionalities----------------------//
 
@@ -325,7 +326,11 @@ define(["knockout","jquery","appController", "ojs/ojarraydataprovider",
                     return new Promise(function(resolve, reject) {
                         $.ajax({
                             url: BaseURL+"/getUnAssignedAllStudents",
-                            type: 'GET',
+                            type: 'POST',
+                            data: JSON.stringify({
+                                year: self.selectYear(),
+                            }),
+                            dataType: 'json',
                             error: function (xhr, textStatus, errorThrown) {
                                 console.log(textStatus);
                             },
@@ -408,7 +413,11 @@ define(["knockout","jquery","appController", "ojs/ojarraydataprovider",
                     self.assignedData([]);
                     $.ajax({
                         url: BaseURL+"/getassignedAllStudents",
-                        type: 'GET',
+                        type: 'POST',
+                        data: JSON.stringify({
+                            year: self.selectYear()
+                        }),
+                        dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);
                         },
@@ -443,6 +452,7 @@ define(["knockout","jquery","appController", "ojs/ojarraydataprovider",
                 }
 
                 self.getUnAssigned = (officeId)=>{
+                    console.log(officeId)
                     return new Promise(function(resolve, reject) {
                         $.ajax({
                             url: BaseURL+"/getUnassignedStudents",
@@ -612,7 +622,6 @@ define(["knockout","jquery","appController", "ojs/ojarraydataprovider",
                     }
                     else {
                         var routes = args.parentRouter._routes;
-                        console.log(routes)
                         if(routes[10].path!="dashboard"){
                             location.reload();
                         }

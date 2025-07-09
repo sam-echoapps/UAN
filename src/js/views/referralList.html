@@ -1,0 +1,164 @@
+<link rel="stylesheet" href="../../css/dashboard.css">
+
+<div class="oj-panel oj-flex  oj-sm-align-items-center" style="margin: 10px;">
+    <h6 style="font-weight: 500;font-size: 22px;color: #06668a;">
+        Referral List
+    </h6>
+</div>
+
+ <div class="oj-flex oj-sm-justify-content-space-between" style="margin-top:30px;">
+    <p class="oj-flex oj-sm-align-items-center" style="padding: 4px 10px; border-radius: 10px;background-color: #06668a; color: #fff; width: 150px;">
+        Total Records: <oj-bind-text value="[[refferalCount]]"></oj-bind-text>
+    </p>
+    <div class="oj-flex">
+        <oj-input-text id="filter" class="oj-form-control-max-width-md" label-hint="Search" label-edge="inside"
+            placeholder="Search...." on-raw-value-changed="[[handleValueChanged]]" value="{{filter}}" clear-icon="always" style="width: 300px;">
+        </oj-input-text>
+        &nbsp;&nbsp;&nbsp;
+    </div>
+</div>
+
+
+<div>
+    <oj-table id="table" aria-label="Task Table" accessibility.row-header="name"
+        data="[[refferalDataProvider]]" columns-default.sortable="disabled" layout="fixed"
+        columns='[
+            {"headerText": "Referrel ID", "id": "refferralId"},
+            {"headerText": "Refferal Type", "id": "refferalType"},
+            {"headerText": "Name", "id": "name", "weight":"2"},
+            {"headerText": "Phone", "id": "phone"},
+            {"headerText": "Email", "id": "email", "weight":"2"},
+            {"headerText": "Student Number", "id": "students"},
+            {"headerText": "Status", "id": "status"},
+            {"headerText": "Actions",  "field": "id", "headerClassName": "oj-md-down-hide","weight":"2",
+            "className": "oj-md-down-hide", "resizable": "enabled", "id": "edit", "sortable": "disabled"}]'
+        class="demo-table-container">
+        <template slot="rowTemplate" data-oj-as="row">
+            <tr>
+                <!-- <td>
+                    <a :id="[[row.data.refferralId]]" on-click= "" target="_blank">
+                        <oj-bind-text value="[[row.data.refferralId]]"></oj-bind-text>
+                    </a>
+                </td> -->
+                <td><oj-bind-text value="[[row.data.refferralId]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.refferalType]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.name]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.phone]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.email]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.students]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.status]]"></oj-bind-text></td>
+                <td>
+                    <oj-button :id="[[row.data.id]]" display="icons" style="background-color: transparent" 
+                        on-oj-action="[[editReferral]]">
+                        <i class="fa-solid fa-pen-to-square" style="color: #06668a; font-size: 20px; margin-top: 15px;"></i>
+                        <p style="color: #06668a;">Edit</p>
+                    </oj-button>
+                    <!-- <oj-button :id="[[row.data.id]]" display="icons" style="background-color: transparent" 
+                        on-oj-action="[[editReferral]]">
+                        <i class="fa-solid fa-pen-to-square" style="color: #06668a; font-size: 20px; margin-top: 15px;"></i>
+                        <p style="color: #06668a;">Deactivate</p>
+                    </oj-button> -->
+                </td>
+            </tr>
+        </template>
+    </oj-table>
+</div>
+
+<oj-dialog id="editIndividualReferral" style="width: 500px;">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">Edit Referral</p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[cancelIndividualEditReferralPopup]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-validation-group id="individualEdit" class="form-container" role="group">
+                <oj-form-layout id="personal-information" direction="row" max-columns="2" style="padding: 20px;">
+                    <oj-input-text id="name" label-hint="Name" required="true" value="{{editName}}"></oj-input-text>
+                    <oj-input-text id="Surname" label-hint="Surname" required="true" value="{{editSurname}}"></oj-input-text>
+                    <div class="oj-flex">
+                        <oj-input-text id="email" label-hint="email" required="true" value="{{editIndividualEmail}}" on-value-changed="[[emailPatternValidator]]"></oj-input-text>
+                        <p class="oj-text-color-danger"><oj-bind-text value="[[editIndividualEmailError]]"></oj-bind-text></p>
+                    </div>
+                    <div class="oj-flex">
+                        <oj-input-text id="phone" label-hint="Phone" required="true" value="{{editIndividualPhone}}"></oj-input-text>
+                        <p class="oj-text-color-danger"><oj-bind-text value="[[editIndividualPhoneError]]"></oj-bind-text></p>
+                    </div>
+                    <oj-select-single data="[[statusList]]" value="{{editIndividualStatus}}" label-hint="enabled"></oj-select-single>
+                </oj-form-layout>
+            </oj-validation-group>
+            <div class=" oj-flex oj-sm-justify-content-center">
+                <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[updateIndividulaRefferal]]" style="width: 100px;">
+                    Update
+                </oj-button>
+            </div>
+        </div>
+    </div>
+</oj-dialog>
+
+
+<oj-dialog id="editBusinessReferral" style="width: 500px;">
+    <div slot="header" style="display: contents;">
+        <p id="dialogTitleId" class="oj-dialog-title">Edit Referral</p>
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[cancelBusinessEditReferralPopup]]">
+            <span slot="startIcon" class="oj-ux-ico-close"></span>
+            Cancel
+        </oj-button>
+    </div>
+    <div slot="body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-validation-group id="businessEdit" class="form-container" role="group">
+                <oj-form-layout id="personal-information" direction="row" max-columns="2" style="padding: 20px;">
+                    <oj-input-text id="name" label-hint="Name" required="true" value="{{editCompnayName}}"></oj-input-text>
+                    
+                    <div class="oj-flex">
+                        <oj-input-text id="url" label-hint="Company URL" required="true" value="{{editCompnayURL}}"></oj-input-text>
+                        <p class="oj-text-color-danger"><oj-bind-text value="[[editCompanyURLError]]"></oj-bind-text></p>
+                    </div>
+                    <div class="oj-flex">
+                        <oj-input-text id="email" label-hint="email" required="true" value="{{editCompanyEmail}}"></oj-input-text>
+                        <p class="oj-text-color-danger"><oj-bind-text value="[[editCompanyEmailError]]"></oj-bind-text></p>
+                    </div>
+                    <div class="oj-flex">
+                        <oj-input-text id="email" label-hint="email" required="true" value="{{editCompanyPhone}}"></oj-input-text>
+                        <p class="oj-text-color-danger"><oj-bind-text value="[[editCompanyPhoneError]]"></oj-bind-text></p>
+                    </div>
+                    <oj-text-area value="{{editCompanyAddress}}" label-hint="Company Address" rows="3"></oj-text-area>
+                    <oj-select-single data="[[statusList]]" value="{{editCompanyStatus}}" label-hint="enabled"></oj-select-single>
+                </oj-form-layout>
+            </oj-validation-group>
+            <div class=" oj-flex oj-sm-justify-content-center">
+                <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[updateBusinessRefferal]]" style="width: 100px;">
+                    Update
+                </oj-button>
+            </div>
+        </div>
+    </div>
+</oj-dialog>
+
+<oj-popup id="progress" class="demo-popup" auto-dismiss="none" modality="modal" position.my.horizontal="center"
+    position.my.vertical="center" position.at.horizontal="center" position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body">
+        <div class="demo-popup-content oj-sm-padding-2x">
+            <oj-progress-circle id="progressCircle" value="-1"></oj-progress-circle>
+        </div>
+    </div>
+</oj-popup>
+
+
+<oj-popup id="messagePopup" class="demo-popup" auto-dismiss="none" modality="modal" aria-labelledby="popupTitle"
+    position.my.horizontal="center" position.my.vertical="center" position.at.horizontal="center"
+    position.at.vertical="center" position.of="window" tail="none">
+    <div class="demo-popup-body oj-sm-padding-2x">
+        <div class="demo-popup-content">
+            <p id="submitMessage" style="font-size: 25px;"></p>
+        </div>
+    </div>
+    <div class="demo-popup-footer  oj-sm-padding-2x " style="display: flex;justify-content: center;">
+        <oj-button id="btnCancel" class="oj-button-sm" display="icons" on-oj-action="[[closeMessagePopup]]" style="width: 100px;">
+            Okay
+        </oj-button>
+    </div>
+</oj-popup>
