@@ -346,6 +346,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.previewClick = (e)=>{
                     let popup = document.getElementById("progress");
                     popup.open();
+                    let fileName = e.target.id
                     $.ajax({
                         url: BaseURL+"/getContractFile",
                         type: 'POST',
@@ -384,7 +385,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 var excelDataUri = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + base64Code;
                                 var downloadLink = document.createElement('a');
                                 downloadLink.href = excelDataUri;
-                                downloadLink.download = self.offerFile();
+                                downloadLink.download = fileName;
                                 document.body.appendChild(downloadLink);
                                 downloadLink.click();
                             }
@@ -392,7 +393,16 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 var csvDataUri = 'data:text/csv;base64,' + base64Code;
                                 var downloadLink = document.createElement('a');
                                 downloadLink.href = csvDataUri;
-                                downloadLink.download = self.offerFile();
+                                downloadLink.download = fileName;
+                                document.body.appendChild(downloadLink);
+                                downloadLink.click();
+                                document.body.removeChild(downloadLink);
+                            }
+                            else if (fileType == "docx") {
+                                var docxDataUri = 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,' + base64Code;
+                                var downloadLink = document.createElement('a');
+                                downloadLink.href = docxDataUri;
+                                downloadLink.download = fileName;
                                 document.body.appendChild(downloadLink);
                                 downloadLink.click();
                                 document.body.removeChild(downloadLink);
