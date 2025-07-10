@@ -307,13 +307,13 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
             {"name": "Partner Report","id": "partnerReport","icons": "oj-ux-ico-bar-chart", "path":"partnerReport"}, 
           ]
         },
-        {"name": "Franchise", "id": "franchise", "icons": "fa-solid fa-handshake-angle", 
-          "children": [
-            {"name": "Franchise","id": "addFranchise","icons": "fa-solid fa-user-plus", "path":"addFranchise"},
-            {"name": "Franchise Profile","id": "franchiseProfile","icons": "fa-solid fa-user", "path":"franchiseProfile"},
-            {"name": "Franchise Report","id": "franchiseReport","icons": "oj-ux-ico-bar-chart", "path":"franchiseReport"},  
-          ]
-        },
+        // {"name": "Franchise", "id": "franchise", "icons": "fa-solid fa-handshake-angle", 
+        //   "children": [
+        //     {"name": "Franchise","id": "addFranchise","icons": "fa-solid fa-user-plus", "path":"addFranchise"},
+        //     {"name": "Franchise Profile","id": "franchiseProfile","icons": "fa-solid fa-user", "path":"franchiseProfile"},
+        //     {"name": "Franchise Report","id": "franchiseReport","icons": "oj-ux-ico-bar-chart", "path":"franchiseReport"},  
+        //   ]
+        // },
         {"name": "Referral List","id": "referralList","icons": "fa-solid fa-handshake", "path":"referralList"},
         {"name": "Referral List","id": "referralList","icons": "fa-solid fa-handshake", "path":"referralList"},
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
