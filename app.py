@@ -120,8 +120,12 @@ def sendMail(subject, content, mailId):
         text = msg.as_string()
         server.sendmail(sender_email, receiver_email, text)
         server.quit()
+    except smtplib.SMTPRecipientsRefused as e:
+        logging.warning(f"Recipient refused for {receiver_email}: {e}")
+    except smtplib.SMTPException as e:
+        logging.error(f"SMTP error occurred while sending email to {receiver_email}: {e}")
     except Exception as e:
-        logging.error("An error occurred while sending the email:", str(e))
+        logging.exception(f"Unexpected error sending email to {receiver_email}: {e}")
 
 
 def sendReminderMail():
@@ -509,168 +513,129 @@ class addStudent(Resource):
 
         return addStudMsg
 
-
 class bulkStudentAdd(Resource):
     def post(self):
         file = request.files.get('file')
         officeId = request.form.get("officeId")
         counsilorId = request.form.get("counsilorId")
         addUserId = request.form.get("addUserId")
-        filename = secure_filename(file.filename)
         bulkStudent = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
-        last_insert_id = ""
-        df = ""
-        validFile = False
-        try:
-            file_extension = file.filename.rsplit('.', 1)[1].lower()
 
+        if not file:
+            return ["Error: No file uploaded"]
+
+        filename = secure_filename(file.filename)
+        file_extension = filename.rsplit('.', 1)[-1].lower()
+
+        try:
             if file_extension == 'xlsx':
-                df = pd.read_excel(file, encoding='iso-8859-1')
-                validFile = True
+                df = pd.read_excel(file, engine='openpyxl')
             elif file_extension == 'csv':
                 df = pd.read_csv(file, encoding='iso-8859-1')
-                validFile = True
             else:
-                validFile = False
+                return ["Invalid file format: Only .xlsx or .csv allowed"]
 
-            if (validFile):
-                excelForm = True
-                if "FirstName" in df.columns:
-                    firstNameList = df["FirstName"].tolist()
+            required_columns = ["FirstName", "LastName", "Country Code", "Phone", "Email"]
+            missing_cols = [col for col in required_columns if col not in df.columns]
+
+            if missing_cols:
+                return [f"Missing columns: {', '.join(missing_cols)}"]
+
+            df.fillna('', inplace=True)  # Replace NaNs with empty strings
+
+            cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+            cursor = cnx.cursor(buffered=True)
+
+            for index, row in df.iterrows():
+                firstName = str(row.get("FirstName", "")).strip()
+                lastName = str(row.get("LastName", "")).strip()
+                email = str(row.get("Email", "")).strip().lower()
+                course = str(row.get("Intrested Course", "")).strip()
+                raw_phone = row.get("Phone", "")
+                try:
+                    phone = str(int(float(raw_phone)))  # handles float values like 9860733572.0
+                except (ValueError, TypeError):
+                    phone = ""
+                # phone = str(int(row.get("Phone"))) if str(row.get("Phone")).isdigit() else ""
+                cc_raw = str(row.get("Country Code")).replace("+", "").strip()
+                countryCode = f"+{cc_raw}" if cc_raw.isdigit() else ""
+
+                if not email:
+                    continue  # Skip rows without email
+
+                # Check if student exists
+                cursor.execute("SELECT student_id FROM students WHERE email = %s", (email,))
+                existing = cursor.fetchone()
+
+                if existing:
+                    student_id = existing[0]
+                    cursor.execute("""
+                        UPDATE students
+                        SET counsilor_id=%s, office_id=%s, first_name=%s, last_name=%s, country_code=%s,
+                            mobile_no=%s, course=%s, lead_source=%s, status=%s
+                        WHERE student_id=%s
+                    """, (counsilorId, officeId, firstName, lastName, countryCode, phone,
+                          course, "Bulk Upload", "Lead", student_id))
                 else:
-                    bulkStudent.append('FirstName column is missing')
-                    excelForm = False
-                if "LastName" in df.columns:
-                    lastNameList = df["LastName"].tolist()
-                else:
-                    bulkStudent.append('LastName column is missing')
-                    excelForm = False
-                if "Country Code" in df.columns:
-                    countryCodeList = df["Country Code"].tolist()
-                else:
-                    bulkStudent.append('Country Code column is missing')
-                    excelForm = False
-                if "Phone" in df.columns:
-                    phoneList = df["Phone"].tolist()
-                else:
-                    bulkStudent.append('Phone column is missing')
-                    excelForm = False
-                if "Email" in df.columns:
-                    emailList = df["Email"].tolist()
-                else:
-                    bulkStudent.append('Email column is missing')
-                    excelForm = False
-                if "Intrested Course" in df.columns:
-                    courseList = df["Intrested Course"].tolist()
-                else:
-                    courseList = [""] * len(firstNameList)
+                    cursor.execute("""
+                        INSERT INTO students (counsilor_id, office_id, first_name, last_name,
+                                              country_code, mobile_no, email, course, lead_source, status)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (counsilorId, officeId, firstName, lastName, countryCode, phone,
+                          email, course, "Bulk Upload", "Lead"))
+                    student_id = cursor.lastrowid
 
-                if (excelForm):
-                    length = len(firstNameList)
+                # Add default note
+                cursor.execute("""
+                    INSERT INTO notes (student_id, counsilor_id, note, contact_type, lead_source)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (student_id, addUserId, "Lead added via bulk upload", "Bulk upload", ""))
 
-                    for i in range(0, length):
-                        if isinstance(firstNameList[i], float):
-                            firstNameList[i] = ""
-                        if isinstance(lastNameList[i], float):
-                            lastNameList[i] = ""
-                        if math.isnan(countryCodeList[i]):
-                            countryCode = ""
-                        else:
-                            countryCode = int(countryCodeList[i])
-                        if math.isnan(phoneList[i]):
-                            phone = ""
-                        else:
-                            phone = int(phoneList[i])
-                        if isinstance(emailList[i], float):
-                            emailList[i] = ""
-                        if isinstance(courseList[i], float):
-                            courseList[i] = ""
-                        firstName = firstNameList[i]
-                        lastName = lastNameList[i]
-                        email = emailList[i]
-                        course = courseList[i]
-
-                        if countryCode != "":
-                            countryCode = "+" + str(countryCode)
-
-                        sqlCheckEmailExist = """select COUNT(*) from students where email=%s"""
-                        value = (email,)
-                        cursor.execute(sqlCheckEmailExist, value)
-                        row_count = cursor.fetchone()[0]
-                        if (row_count == 0):
-                            sqlbulkAdd = """insert into students(counsilor_id, office_id, first_name, last_name, country_code, mobile_no, email, course, lead_source, status)
-                                             values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-                            bulkAddValue = (
-                            counsilorId, officeId, firstName, lastName, countryCode, phone, email, course,
-                            "Bulk Upload", "Lead")
-                            cursor.execute(sqlbulkAdd, bulkAddValue)
-                            last_insert_id = cursor.lastrowid
-                        else:
-                            sqlUpdateStud = """update students set counsilor_id=%s, office_id=%s, first_name=%s, last_name=%s, country_code=%s, mobile_no=%s,
-                                                course=%s, lead_source=%s, status=%s where email=%s"""
-                            value = (
-                            counsilorId, officeId, firstName, lastName, countryCode, phone, course, "Bulk Upload",
-                            "Lead", email)
-                            cursor.execute(sqlUpdateStud, value)
-                            sqlGetStudentId = """select student_id from students where email=%s"""
-                            value = (email,)
-                            cursor.execute(sqlGetStudentId, value)
-                            last_insert_id = cursor.fetchone()[0]
-
-                        sqlAddNote = """insert into notes(student_id, counsilor_id, note, contact_type, lead_source)
-                                                        values (%s, %s, %s, %s, %s)"""
-                        noteAddValue = (last_insert_id, addUserId, "Lead added via bulk upload ", "Bulk upload", "")
-                        cursor.execute(sqlAddNote, noteAddValue)
-
-                    sqlGetCounselorName = """select name, username from users where user_id=%s"""
-                    value = (counsilorId,)
-                    cursor.execute(sqlGetCounselorName, value)
-                    counselorDetail = cursor.fetchone()
-                    counselorName = counselorDetail[0]
-                    counselorMail = counselorDetail[1]
-
-                    htmlContent = f"<p>Hi {counselorName},</p><p>You have been assigned a new set of students</p>" \
-                                  f"<p>Please <a href='http://crm.uan-network.com/'>click here</a> to login and see more details</p><br><p>Thanks<br>UAN Team</p>"
+            # Email Notification - Counselor
+            cursor.execute("SELECT name, username FROM users WHERE user_id=%s", (counsilorId,))
+            counselor = cursor.fetchone()
+            if counselor:
+                counselorName, counselorMail = counselor
+                try:
+                    htmlContent = f"""<p>Hi {counselorName},</p>
+                                  <p>You have been assigned a new set of students</p>
+                                  <p><a href='http://crm.uan-network.com/'>Click here</a> to login.</p><br>
+                                  <p>Thanks<br>UAN Team</p>"""
                     sendMail('Bulk Students Assigned', htmlContent, counselorMail)
+                except Exception as e:
+                    logging.warning(f"Failed to send counselor email to {counselorMail}: {e}")
 
-                    sqlGetManager = """select name, username from users where office_id=%s and role=%s AND username != 'rajindersingh@uan-networks.com'"""
-                    value = (officeId, "manager",)
-                    cursor.execute(sqlGetManager, value)
-                    managerDetails = cursor.fetchall()
-                    if (managerDetails):
-                        for managerDetail in managerDetails:
-                            managerName = managerDetail[0]
-                            managerMail = managerDetail[1]
-                            htmlContent = f"<p>Hi {managerName},</p><p>Your office has been assigned a new set of students</p>" \
-                                          f"<p>Please <a href='http://crm.uan-network.com/'>click here</a> to login and see more details</p><br><p>Thanks<br>UAN Team</p>"
-                            sendMail('New Student Added', htmlContent, managerMail)
+            # Email Notification - Manager(s)
+            cursor.execute("""
+                SELECT name, username FROM users
+                WHERE office_id=%s AND role=%s AND username != 'rajindersingh@uan-networks.com'
+            """, (officeId, "manager"))
+            managers = cursor.fetchall()
 
-                    htmlContent = f"<p>Hi Admin,</p><p>You have Bulk students registration</p>" \
-                                  f"<p>Thanks<br>UAN Team</p>"
-                    sendMail('Bulk Students Assigned', htmlContent, adminMail)
-                    bulkStudent.append('Students Added')
-                    bulkStudent.append('Sucessfully Sent Email')
-            else:
-                bulkStudent.append('Invalid file format')
+            for name, managerMail in managers:
+                try:
+                    htmlContent = f"""<p>Hi {name},</p>
+                                  <p>Your office has been assigned new students</p>
+                                  <p><a href='http://crm.uan-network.com/'>Click here</a> to login.</p><br>
+                                  <p>Thanks<br>UAN Team</p>"""
+                    sendMail('New Student Added', htmlContent, managerMail)
+                except Exception as e:
+                    logging.warning(f"Failed to send manager email to {managerMail}: {e}")
 
-        except FileNotFoundError:
-            bulkStudent.append("Error: The specified file does not exist.")
-        except pd.errors.EmptyDataError:
-            bulkStudent.append("Error: The file is empty or contains no data.")
-        except pd.errors.ParserError:
-            bulkStudent.append("Error: Unable to parse the Excel file. Make sure the file format is correct.")
-        except Exception as e:
-            bulkStudent.append(f"An unexpected error occurred: {e}")
-        except OSError as e:
-            bulkStudent.append(str(e))
-        finally:
+            try:
+                # Admin Notification
+                sendMail('Bulk Students Assigned',
+                         "<p>Hi Admin,</p><p>You have bulk students registration.</p><br><p>Thanks<br>UAN Team</p>",
+                         adminMail)
+            except Exception as e:
+                logging.warning(f"Failed to send admin email to {adminMail}: {e}")
+
             cnx.commit()
             cursor.close()
+            return ['Students added successfully', 'Email notifications sent']
 
-        return bulkStudent
-
+        except Exception as e:
+            return [f"An unexpected error occurred: {e}"]
 
 class bookCounseling(Resource):
     def post(self):
@@ -5575,6 +5540,7 @@ class getContractFile(Resource):
     def post(self):
         data = request.get_json(force=True)
         fileName = data["fileName"]
+        fileName = secure_filename(fileName)
         fileType = ""
         try:
             base64_files = []  # Initialize a list to store the Base64-encoded images
@@ -5597,8 +5563,7 @@ class getContractFile(Resource):
                     base64_pdf = base64.b64encode(file_contents).decode('utf-8')
                     base64_files.append(base64_pdf)
                 fileType = "pdf"
-            elif os.path.exists(file_path) and (os.path.splitext(file_path)[1].lower() == '.xlsx'
-                                                or os.path.splitext(file_path)[1].lower() == '.xls'):
+            elif os.path.exists(file_path) and os.path.splitext(file_path)[1].lower() in ['.xlsx','.xls']:
                 # Open and read the Excel file
                 with open(file_path, 'rb') as excel_file:
                     excel_contents = excel_file.read()
@@ -5614,6 +5579,12 @@ class getContractFile(Resource):
                     base64_csv = base64.b64encode(csv_contents).decode('utf-8')
                     base64_files.append(base64_csv)
                 fileType = "csv"
+            elif os.path.exists(file_path) and os.path.splitext(file_path)[1].lower() == '.docx':
+                with open(file_path, 'rb') as docx_file:
+                    docx_contents = docx_file.read()
+                    base64_docx = base64.b64encode(docx_contents).decode('utf-8')
+                    base64_files.append(base64_docx)
+                fileType = "docx"
             else:
                 base64_files.append('')
                 fileType = ""
@@ -6493,6 +6464,7 @@ class getPartnerContractFile(Resource):
     def post(self):
         data = request.get_json(force=True)
         fileName = data["fileName"]
+        fileName = secure_filename(fileName)
         fileType = ""
         try:
             base64_files = []  # Initialize a list to store the Base64-encoded images
@@ -6515,8 +6487,7 @@ class getPartnerContractFile(Resource):
                     base64_pdf = base64.b64encode(file_contents).decode('utf-8')
                     base64_files.append(base64_pdf)
                 fileType = "pdf"
-            elif os.path.exists(file_path) and (os.path.splitext(file_path)[1].lower() == '.xlsx'
-                                                or os.path.splitext(file_path)[1].lower() == '.xls'):
+            elif os.path.exists(file_path) and os.path.splitext(file_path)[1].lower() in ['.xlsx', '.xls']:
                 # Open and read the Excel file
                 with open(file_path, 'rb') as excel_file:
                     excel_contents = excel_file.read()
@@ -6532,6 +6503,12 @@ class getPartnerContractFile(Resource):
                     base64_csv = base64.b64encode(csv_contents).decode('utf-8')
                     base64_files.append(base64_csv)
                 fileType = "csv"
+            elif os.path.exists(file_path) and os.path.splitext(file_path)[1].lower() == '.docx':
+                with open(file_path, 'rb') as docx_file:
+                    docx_contents = docx_file.read()
+                    base64_docx = base64.b64encode(docx_contents).decode('utf-8')
+                    base64_files.append(base64_docx)
+                fileType = "docx"
             else:
                 base64_files.append('')
                 fileType = ""
@@ -8191,7 +8168,9 @@ class getStudentDocument(Resource):
         data = request.get_json(force=True)
         # fileName = data["fileName"]
         # fileName = data["fileName"].replace(" ", "_")
-        fileName = re.sub(r'\s+', '_', data["fileName"])  # Replace multiple spaces with underscores
+        #fileName = re.sub(r'\s+', '_', data["fileName"])  # Replace multiple spaces with underscores
+        fileName = secure_filename(data["fileName"])
+        print(fileName)
         fileType = ""
         try:
             base64_files = []  # Initialize a list to store the Base64-encoded images
@@ -8214,8 +8193,7 @@ class getStudentDocument(Resource):
                     base64_pdf = base64.b64encode(file_contents).decode('utf-8')
                     base64_files.append(base64_pdf)
                 fileType = "pdf"
-            elif os.path.exists(file_path) and (os.path.splitext(file_path)[1].lower() == '.xlsx'
-                                                or os.path.splitext(file_path)[1].lower() == '.xls'):
+            elif os.path.exists(file_path) and os.path.splitext(file_path)[1].lower() in ['.xlsx', '.xls']:
                 # Open and read the Excel file
                 with open(file_path, 'rb') as excel_file:
                     excel_contents = excel_file.read()
@@ -8231,6 +8209,12 @@ class getStudentDocument(Resource):
                     base64_csv = base64.b64encode(csv_contents).decode('utf-8')
                     base64_files.append(base64_csv)
                 fileType = "csv"
+            elif os.path.exists(file_path) and os.path.splitext(file_path)[1].lower() == '.docx':
+                with open(file_path, 'rb') as docx_file:
+                    docx_contents = docx_file.read()
+                    base64_docx = base64.b64encode(docx_contents).decode('utf-8')
+                    base64_files.append(base64_docx)
+                fileType = "docx"
             else:
                 base64_files.append('')
                 fileType = ""
@@ -9548,6 +9532,7 @@ class getFranchiseContractFile(Resource):
     def post(self):
         data = request.get_json(force=True)
         fileName = data["fileName"]
+        fileName = secure_filename(fileName)
         fileType = ""
         try:
             base64_files = []  # Initialize a list to store the Base64-encoded images
@@ -9570,8 +9555,7 @@ class getFranchiseContractFile(Resource):
                     base64_pdf = base64.b64encode(file_contents).decode('utf-8')
                     base64_files.append(base64_pdf)
                 fileType = "pdf"
-            elif os.path.exists(file_path) and (os.path.splitext(file_path)[1].lower() == '.xlsx'
-                                                or os.path.splitext(file_path)[1].lower() == '.xls'):
+            elif os.path.exists(file_path) and os.path.splitext(file_path)[1].lower() in ['.xlsx', '.xls']:
                 # Open and read the Excel file
                 with open(file_path, 'rb') as excel_file:
                     excel_contents = excel_file.read()

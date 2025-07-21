@@ -96,7 +96,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         { path: 'privacyPolicy', detail : {label :'Privacy policy',iconClass: "fa-solid fa-magnifying-glass"} },
         { path: 'institutionReport', detail : {label :'Institution Report',iconClass: "fa-solid fa-magnifying-glass"} },
         { path: 'referralList', detail : {label :'Referral List',iconClass: "fa-solid fa-magnifying-glass"} },
-        { path: 'referralList', detail : {label :'Referral List',iconClass: "fa-solid fa-magnifying-glass"} },
+        // { path: 'referralList', detail : {label :'Referral List',iconClass: "fa-solid fa-magnifying-glass"} },
       ];
     } else if (sessionStorage.getItem("userRole") == "manager") {
       var navData = [
@@ -315,7 +315,7 @@ define(["knockout","ojs/ojcontext", "ojs/ojmodule-element-utils", "ojs/ojknockou
         //   ]
         // },
         {"name": "Referral List","id": "referralList","icons": "fa-solid fa-handshake", "path":"referralList"},
-        {"name": "Referral List","id": "referralList","icons": "fa-solid fa-handshake", "path":"referralList"},
+        // {"name": "Referral List","id": "referralList","icons": "fa-solid fa-handshake", "path":"referralList"},
         {"name": "Help","id": "help","icons": "fa-solid fa-life-ring", "path":"help"},
       ]
     }
