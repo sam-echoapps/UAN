@@ -54,8 +54,14 @@ LOG_FORMAT = "[%(asctime)s] %(levelname)s - %(message)s"
 logging.basicConfig(filename=os.path.join(oneplace_home, 'oneperror.log'), level=logging.INFO, format=LOG_FORMAT)
 logger = logging.getLogger()
 
-cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-cursor = cnx.cursor()
+
+def get_connection_and_cursor():
+    cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+    cursor = cnx.cursor(buffered=True)
+    return cnx, cursor
+
+# cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+cnx, cursor = get_connection_and_cursor()
 cursor.execute("SELECT email FROM users WHERE role = %s", ("admin",))
 adminEmail = cursor.fetchone()
 adminMail = ""
@@ -129,8 +135,8 @@ def sendMail(subject, content, mailId):
 
 
 def sendReminderMail():
-    cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-    cursor = cnx.cursor()
+    # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+    cnx, cursor = get_connection_and_cursor()
     try:
         sqlGetReminderNotes = """
                             select reminder_date, note, first_name, last_name, note_user.name as noteAddedStaff, 
@@ -165,7 +171,6 @@ def sendReminderMail():
         logging.error("Error:", str(e))
     finally:
         cursor.close()
-
 
 def schedule_email():
     while True:
@@ -252,8 +257,8 @@ class uanLogin(Resource):
         partnerId = ''
         franchiseId = ''
         ErrPrint = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             cursor.execute(
                 "SELECT user_id, username, password, role, password_key, name, office_id, partners_id,franchise_id FROM users WHERE username = %s and deactivate=0",
@@ -293,8 +298,8 @@ class uanLogin(Resource):
 class getOffices(Resource):
     def get(self):
         offices = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             cursor.execute(
                 "select * from offices left outer join users on offices.manager_id=users.user_id where offices.deactivate=%s",
@@ -330,8 +335,8 @@ class student_register(Resource):
 
         studyAbroadDestination = data["studyAbroadDestination"]
         addStudMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
 
         try:
             sqlCheckEmailExist = """select COUNT(*) from students where email=%s"""
@@ -421,8 +426,8 @@ class addStudent(Resource):
         studyAbroadDestination = data["studyAbroadDestination"]
         addStudMsg = []
         last_insert_id = ""
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlCheckEmailExist = """select COUNT(*) from students where email=%s"""
             value = (email,)
@@ -543,8 +548,8 @@ class bulkStudentAdd(Resource):
 
             df.fillna('', inplace=True)  # Replace NaNs with empty strings
 
-            cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-            cursor = cnx.cursor(buffered=True)
+            # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+            cnx, cursor = get_connection_and_cursor()
 
             for index, row in df.iterrows():
                 firstName = str(row.get("FirstName", "")).strip()
@@ -553,13 +558,13 @@ class bulkStudentAdd(Resource):
                 course = str(row.get("Intrested Course", "")).strip()
                 raw_phone = row.get("Phone", "")
                 try:
-                    phone = str(int(float(raw_phone)))  # handles float values like 9860733572.0
+                    phone = str(int(float(raw_phone)))
                 except (ValueError, TypeError):
                     phone = ""
-                # phone = str(int(row.get("Phone"))) if str(row.get("Phone")).isdigit() else ""
+                #phone = str(int(row.get("Phone"))) if str(row.get("Phone")).isdigit() else ""
                 cc_raw = str(row.get("Country Code")).replace("+", "").strip()
-                countryCode = f"+{cc_raw}" if cc_raw.isdigit() else ""
-
+                countryCode = f"+{cc_raw}" if cc_raw.isdigit() else ""             
+                               
                 if not email:
                     continue  # Skip rows without email
 
@@ -654,8 +659,8 @@ class bookCounseling(Resource):
         utmCampaign = data['utmCampaign']
         studyAbroadDestination = data["studyAbroadDestination"]
         addStudMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
 
         try:
             sqlCheckEmailExist = """select COUNT(*) from students where email=%s"""
@@ -743,8 +748,8 @@ class getCountOfDashboard(Resource):
         officeId = data["officeId"]
         userId = data["userId"]
         dashboardCount = [];
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if (officeId == "All" and userId == "All"):
                 sqlGetStudCount = """SELECT count(*) FROM students WHERE YEAR(created_date)=%s"""
@@ -827,8 +832,8 @@ class getUnAssignedAllStudents(Resource):
         data = request.get_json(force=True)
         year = data.get("year", '')
         studentDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """SELECT student_id, students.office_id, office_name, first_name, 
                             last_name, students.created_date, students.study_abroad_destination FROM students 
@@ -858,8 +863,8 @@ class getassignedAllStudents(Resource):
         data = request.get_json(force=True)
         year = data.get("year", '')
         studentDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """select student_id, students.office_id, counsilor_id, office_name, first_name, last_name, 
                             students.created_date, name, students.study_abroad_destination  from students 
@@ -891,8 +896,8 @@ class getUnassignedStudents(Resource):
         year = data.get("year", '')
         officeIds = officeId.split(",")
         unAssignedStudents = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """select student_id, students.office_id, office_name, first_name, last_name, students.created_date, students.study_abroad_destination
                             from students inner join offices on students.office_id=offices.office_id 
@@ -918,8 +923,8 @@ class getAssignedStudents(Resource):
         officeId = data["officeId"]
         officeIds = officeId.split(",")
         unAssignedStudents = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """select student_id, students.office_id, counsilor_id, office_name, first_name, last_name, 
                             students.created_date, name, students.study_abroad_destination from students inner join offices on students.office_id=offices.office_id 
@@ -947,8 +952,8 @@ class updateCounsilor(Resource):
         studentId = data["studentId"]
 
         updateMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlupdateCounsilor = """update students set counsilor_id=%s where student_id=%s"""
             value = (counsilorId, studentId,)
@@ -987,8 +992,8 @@ class getAllStudents(Resource):
         officeId = data["officeId"]
         userId = data["userId"]
         studentDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if (officeId == "All" and userId == "All"):
                 sqlSelectStud = """select student_id, first_name, last_name, students.email, mobile_no, dob, name from students 
@@ -1021,8 +1026,8 @@ class searchStudents(Resource):
         data = request.get_json(force=True)
         studentId = data["studentId"]
         studentDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """SELECT * FROM students WHERE student_id=%s"""
             value = (studentId,)
@@ -1061,8 +1066,8 @@ class personalUpdate(Resource):
         updated_by = data["updated_by"]
 
         personalUpdateMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
 
         try:
             sqlUpdateStud = """update students set first_name=%s, last_name=%s, country_code=%s, mobile_no=%s, email=%s, gender=%s, eu_status=%s,
@@ -1100,8 +1105,8 @@ class statusUpdate(Resource):
 
         addStudMsg = []
         statusUpdateMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateStud = """update students set status=%s, office_id=%s, counsilor_id=%s, lead_source=%s, partner_id=%s, updated_by=%s, refferal_id=%s
                             where student_id=%s"""
@@ -1135,8 +1140,8 @@ class addStudentNotes(Resource):
         else:
             status = 1
         addNoteMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddNote = """insert into notes(student_id, counsilor_id, note, reminder_date, contact_type, lead_source, status)
                             values (%s, %s, %s, %s, %s, %s, %s)"""
@@ -1159,8 +1164,8 @@ class getStudentNotes(Resource):
         student_id = data["studentId"]
         studentNotes = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """SELECT name, note, contact_type, lead_source, notes.created_date, notes.status, reminder_date, note_id FROM notes 
                             left outer join users on users.user_id=notes.counsilor_id WHERE student_id=%s order by note_id desc"""
@@ -1202,8 +1207,8 @@ class addNewApplication(Resource):
         franchise = data["franchise"]
 
         insertMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddApplication = """insert into application(student_id, course_type, institution_name, course_start_date, course_end_date,
                                 course_name, date_of_application_sent, partner,tutionfee_currency, tution_fee, login_url, username, password, application_method,
@@ -1233,8 +1238,8 @@ class getApplicationData(Resource):
         studentId = data["studentId"]
 
         applicationData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetApplication = """select * from application where student_id=%s"""
             value = (studentId,)
@@ -1356,8 +1361,8 @@ class applicationUpdate(Resource):
 
         updateApplication = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateApplication = """update application set institution_name=%s, course_name=%s, course_type=%s, login_url=%s,
                                     username=%s, password=%s, course_start_date=%s, course_end_date=%s, date_of_application_sent=%s,
@@ -1390,8 +1395,8 @@ class checkItsFinalChoice(Resource):
         applicationId = data["applicationId"]
         finalChoiceApplication = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetFinalChoiceApplication = "select count(*) from application where application_id=%s and final_choiced=1"
             value = (applicationId,)
@@ -1416,8 +1421,8 @@ class deleteApplication(Resource):
         applicationId = data["applicationId"]
         deleteApplication = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateApplication = "delete from application where application_id=%s"
             value = (applicationId,)
@@ -1437,8 +1442,8 @@ class getStudentFinalChoicedCount(Resource):
         data = request.get_json(force=True)
         studentId = data["studentId"]
         studentFinalChoiceCount = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddFinalChoice = "select COUNT(*) from application where student_id=%s and final_choiced=%s"
             cursor.execute(sqlAddFinalChoice, (studentId, 1,))
@@ -1460,8 +1465,8 @@ class addFinalChoice(Resource):
         data = request.get_json(force=True)
         applicationId = data["applicationId"]
         addFinalChoiceData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddFinalChoice = "update application set final_choiced=%s where application_id=%s"
             cursor.execute(sqlAddFinalChoice, (1, applicationId))
@@ -1480,8 +1485,8 @@ class removeFinalChoice(Resource):
         data = request.get_json(force=True)
         applicationId = data["applicationId"]
         removeFinalChoiceData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlRemoveFinalChoice = "update application set final_choiced=%s where application_id=%s"
             cursor.execute(sqlRemoveFinalChoice, (0, applicationId))
@@ -1501,8 +1506,8 @@ class getFinalChoicedData(Resource):
         studentId = data["studentId"]
 
         finalChoiceData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddApplication = """select * from application where student_id=%s AND final_choiced=%s"""
             value = (studentId, 1)
@@ -1526,8 +1531,8 @@ class editApplication(Resource):
         applicationId = data["applicationId"]
 
         applicationData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddApplication = """select application_id,student_id,course_type,institution_name,course_start_date,course_end_date,
                 course_name,date_of_application_sent,partner,tution_fee,login_url,username,application.password,application_method,counselling_type,
@@ -1556,8 +1561,8 @@ class deleteStudent(Resource):
         studentId = data["studentId"]
 
         deletePersonResult = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqldeleteStudent = """delete from students where student_id=%s"""
             value = (studentId,)
@@ -1581,8 +1586,8 @@ class deleteStudent(Resource):
 class getUsers(Resource):
     def get(self):
         users = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectUsers = """select user_id, name, office_name, role, username,password_str, users.created_date, 
                                 count(students.counsilor_id) as studentsCount, users.deactivate, users.email from users 
@@ -1611,8 +1616,8 @@ class searchUser(Resource):
         userId = data["userId"]
 
         userList = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetUsers = """select user_id, name, office_name, role, username,password_str, users.created_date, users.email from users
                             inner join offices on users.office_id=offices.office_id where user_id=%s"""
@@ -1648,8 +1653,8 @@ class addUser(Resource):
         franchiseId = data["franchiseId"]
 
         userAdd = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             password_key = Fernet.generate_key()
             fernet = Fernet(password_key)
@@ -1698,8 +1703,8 @@ class updateUser(Resource):
         passwordStr = data["password"]
 
         userUpdate = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetOldOffice = "select office_id from users where user_id=%s"
             value = (userId,)
@@ -1777,8 +1782,8 @@ class deleteUser(Resource):
         userId = data["userId"]
 
         userDelete = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlDeleteUser = """update users set deactivate=%s where user_id=%s"""
             value = (1, userId,)
@@ -1799,8 +1804,8 @@ class searchOffice(Resource):
         officeId = data["officeId"]
 
         officeList = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetOffice = """select * from offices where office_id=%s"""
             value = (officeId,)
@@ -1827,8 +1832,8 @@ class searchOffice(Resource):
 class getManagers(Resource):
     def get(self):
         managersList = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetManager = """select user_id,name from users where role=%s and deactivate=%s"""
             value = ("manager", 0,)
@@ -1850,8 +1855,8 @@ class getManagers(Resource):
 class getOfficeWithManager(Resource):
     def get(self):
         officesManager = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetOffices = """SELECT o.office_id, o.office_name, o.manager_id, o.created_date, COALESCE(u.userCount, 0) AS userCount, 
                             COALESCE(s.studentCount, 0) AS studentCount, o.deactivate
@@ -1914,8 +1919,8 @@ class updateOffice(Resource):
         manager = data["manager"]
 
         officeList = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateOffice = """update offices set office_name=%s,manager_id=%s where office_id=%s"""
             value = (officeName, manager, officeId,)
@@ -1936,8 +1941,8 @@ class deleteOffice(Resource):
         officeId = data["officeId"]
 
         officeList = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlDeleteOffice = """update offices set deactivate=%s where office_id=%s"""
             value = (1, officeId,)
@@ -1959,8 +1964,8 @@ class addOffice(Resource):
         manager = data["manager"]
 
         officeList = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddOffice = """insert into offices (office_name,manager_id) values (%s,%s)"""
             value = (office, manager,)
@@ -1980,8 +1985,8 @@ class getCounselors(Resource):
         data = request.get_json(force=True)
         officeId = data["office"]
         counselorList = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetCounselor = """select user_id,name from users where role in ('manager', 'counselor') and deactivate=0 and office_id=%s"""
             value = (officeId,)
@@ -2004,8 +2009,8 @@ class getCounsilorStudents(Resource):
         data = request.get_json(force=True)
         counsilorId = data["counsilorId"]
         students = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetStudents = """select student_id, students.office_id, counsilor_id, office_name, first_name, last_name, 
                             students.created_date, students.status, students.study_abroad_destination from students inner join offices on students.office_id=offices.office_id 
@@ -2031,8 +2036,8 @@ class getManagerCount(Resource):
         data = request.get_json(force=True)
         officeId = data["officeId"]
         managerCount = [];
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetManagerCount = """select count(*) from users where role=%s AND office_id=%s"""
             value = ("manager", officeId,)
@@ -2051,8 +2056,8 @@ class getStaffEmailCount(Resource):
         data = request.get_json(force=True)
         email = data["email"]
         emailCount = [];
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetManagerCount = """select count(*) from users where username=%s or email=%s"""
             value = (email, email,)
@@ -2077,8 +2082,8 @@ class getSelectedData(Resource):
         selectedData = []
 
         try:
-            cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-            cursor = cnx.cursor()
+            # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+            cnx, cursor = get_connection_and_cursor()
 
             base_query = """
                             SELECT DISTINCT s.student_id, s.first_name, s.last_name, s.email, s.mobile_no, s.dob, u.name, o.office_name, 
@@ -2154,8 +2159,8 @@ class getApplications(Resource):
         selectedYear = data['year']
 
         applicationData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if (officeId == "All" and userId == "All"):
                 sqlSelectApp = """select application.student_id, application_id, institution_name, course_name, course_start_date,
@@ -2196,8 +2201,8 @@ class getAllFinalChoicedApplication(Resource):
         userId = data['userId']
         selectedYear = data['year']
         finalChoiceApplicationData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if (officeId == "All" and userId == "All"):
                 sqlSelectApp = """select application.student_id, application_id, institution_name, course_name, course_start_date,
@@ -2239,8 +2244,8 @@ class getUnassignedStudentsYear(Resource):
         officeIds = officeId.split(",")
         selectedYear = data['year']
         unAssignedStudents = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if (officeId == "All"):
                 sqlSelectStud = """select student_id, students.office_id, office_name, first_name, last_name, students.created_date 
@@ -2273,8 +2278,8 @@ class getApplicationCountYear(Resource):
         selectedYear = data['year']
         officeId = data['officeId']
         applicationCount = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
 
         try:
             if (officeId != ""):
@@ -2341,8 +2346,8 @@ class getApplicationCSDReport(Resource):
         institutionId = data['institutionId']
         institutionIds = institutionId.split(",")
         applicationReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if officeId != "" and "All" in courseTypes and "All" in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
@@ -2450,8 +2455,8 @@ class getApplicationCSDReport(Resource):
 #         officeId = data['officeId']
 #         courseType = data['courseType']
 #         applicationReport = []
-#         cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-#         cursor = cnx.cursor()
+#         # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+#         cnx, cursor = get_connection_and_cursor()
 #         try:
 #             if(courseType!="" and officeId!=""):
 #                 sqlSelectAppReport = """SELECT COUNT(DISTINCT application.student_id) AS total_student_count,
@@ -2511,8 +2516,8 @@ class getApplicationCSDCount(Resource):
         institutionId = data['institutionId']
         institutionIds = institutionId.split(",")
         applicationReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if officeId != "" and "All" in courseTypes and "All" in institutionIds:
                 sqlSelectAppReport = """SELECT COUNT(DISTINCT application.student_id) AS total_student_count,
@@ -2630,8 +2635,8 @@ class getApplicationASDReport(Resource):
         institutionId = data['institutionId']
         institutionIds = institutionId.split(",")
         applicationReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if officeId != "" and "All" in courseTypes and "All" in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
@@ -2739,8 +2744,8 @@ class getApplicationASDReport(Resource):
 #         officeId = data['officeId']
 #         courseType = data['courseType']
 #         applicationReport = []
-#         cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-#         cursor = cnx.cursor()
+#         # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+#         cnx, cursor = get_connection_and_cursor()
 #         try:
 #             if (courseType != "" and officeId != ""):
 #                 sqlSelectAppReport = """SELECT COUNT(DISTINCT application.student_id) AS total_student_count,
@@ -2800,8 +2805,8 @@ class getApplicationASDCount(Resource):
         institutionId = data['institutionId']
         institutionIds = institutionId.split(",")
         applicationReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if officeId != "" and "All" in courseTypes and "All" in institutionIds:
                 sqlSelectAppReport = """SELECT COUNT(DISTINCT application.student_id) AS total_student_count, 
@@ -2913,9 +2918,9 @@ class getOfficesCounsilors(Resource):
         data = request.get_json(force=True)
         officeId = data["officeId"]
         officeIds = officeId.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         officeCounsilors = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if 'All' in officeIds:
                 sqlSelectCounsilor = """select user_id, office_id, username, name from users where username !='admin' and role !='partner' and deactivate=0"""
@@ -2954,9 +2959,9 @@ class getFinalChoiceCSDReport(Resource):
         courseTypes = courseType.split(",")
         institutionId = data["institutionId"];
         institutionIds = institutionId.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         finalChoiceCSDReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in staffIds and "All" in courseTypes and "All" in institutionIds:
                 sqlSelectCSDReport = """
@@ -3238,9 +3243,9 @@ class getFinalChoiceASDReport(Resource):
         courseTypes = courseType.split(",")
         institutionId = data["institutionId"];
         institutionIds = institutionId.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         finalChoiceASDReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in staffIds and "All" in courseTypes and "All" in institutionIds:
                 sqlSelectASDReport = """
@@ -3525,9 +3530,9 @@ class getStudentManagerEDReport(Resource):
         status = data["status"]
         status = status.split(",")
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         studentManagerEDReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectEDReport = """
                                 SELECT students.student_id AS student_id, first_name, last_name, students.email, mobile_no, 
@@ -3585,9 +3590,9 @@ class getStaticCount(Resource):
         officeIds = officeId.split(",")
         staffIds = staffId.split(",")
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         staticCountReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectCountReport = """
                                     select 
@@ -3641,9 +3646,9 @@ class getStudentLogReport(Resource):
         officeIds = officeId.split(",")
         staffId = data["staffId"]
         staffIds = staffId.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         studentLogReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in staffIds:
                 sqlgetLogReport = """
@@ -3731,9 +3736,9 @@ class updateReminderNoteStatus(Resource):
     def post(self):
         data = request.get_json(force=True)
         noteId = data["noteId"]
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         reminderDoneStatus = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateReminderNoteStatus = """update notes set status=0 where note_id=%s"""
             values = (noteId,)
@@ -3759,9 +3764,9 @@ class getMissedReminderReport(Resource):
         officeIds = officeId.split(",")
         countryOfIntrest = data["countryOfIntrest"]
         countryOfIntrests = countryOfIntrest.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         missedReminderReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in countryOfIntrests:
                 sqlgetReminderReport = """
@@ -3849,9 +3854,9 @@ class getUserMissedReport(Resource):
         countryOfIntrest = data["countryOfIntrest"]
         countryOfIntrests = countryOfIntrest.split(",")
         userId = data["userId"]
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         userMissedReminderReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in countryOfIntrests:
                 sqlgetReminderReport = """
@@ -3940,9 +3945,9 @@ class getApplicantReport(Resource):
         officeIds = officeId.split(",")
         staffId = data["staffId"]
         staffIds = staffId.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         applicantReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in staffIds:
                 sqlgetApplicantReport = """
@@ -4029,9 +4034,9 @@ class getStudentList(Resource):
         toDate = toDate.strftime('%Y-%m-%d')
         officeId = data["officeId"]
         staffId = data["staffId"]
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         studentListDetails = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if staffId == "":
                 sqlgetStudentList = """
@@ -4076,9 +4081,9 @@ class getStaffApplicationASDReport(Resource):
         officeIds = officeId.split(",")
         staffId = data["staffId"]
         staffIds = staffId.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         stafApplicationASDReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in staffIds:
                 sqlgetStafApplicationASDReport = """
@@ -4166,9 +4171,9 @@ class getStaffApplicationCSDReport(Resource):
         officeIds = officeId.split(",")
         staffId = data["staffId"]
         staffIds = staffId.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         stafApplicationCSDReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in staffIds:
                 sqlgetStafApplicationCSDReport = """
@@ -4256,9 +4261,9 @@ class getStaffApplicationASDStaffCount(Resource):
         officeIds = officeId.split(",")
         staffId = data["staffId"]
         staffIds = staffId.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         stafApplicationASDStaffCount = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in staffIds:
                 sqlgetStafApplicationASDStaffCount = """
@@ -4342,9 +4347,9 @@ class getStaffApplicationCSDStaffCount(Resource):
         officeIds = officeId.split(",")
         staffId = data["staffId"]
         staffIds = staffId.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         stafApplicationCSDStaffCount = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in staffIds:
                 sqlgetStafApplicationCSDStaffCount = """
@@ -4422,8 +4427,8 @@ class getNote(Resource):
         noteId = data["noteId"]
         notes = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectNote = """SELECT contact_type, lead_source, note, reminder_date, note_id FROM notes WHERE note_id=%s"""
             value = (noteId,)
@@ -4454,8 +4459,8 @@ class updateStudentNotes(Resource):
         else:
             status = 1
         updateNoteMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateNote = """update notes set contact_type=%s, lead_source=%s, note=%s, reminder_date=%s, status=%s 
                             where note_id=%s """
@@ -4482,8 +4487,8 @@ class reAssignStudents(Resource):
         userId = data["userId"]
 
         reAssignMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             placeholders = ', '.join(['%s'] * len(studentIds))
             for studentId in studentIds:
@@ -4588,8 +4593,8 @@ class getCounsilorAllStudents(Resource):
         data = request.get_json(force=True)
         counsilorId = data["counsilorId"]
         students = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetStudents = """select student_id, first_name, last_name, students.email, mobile_no, dob, name, 
                                 office_name from students 
@@ -4616,9 +4621,9 @@ class getOfficeStudents(Resource):
     def post(self):
         data = request.get_json(force=True)
         officeId = data["officeId"]
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         officeStudents = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectCounsilor = """select student_id, first_name, last_name, students.email, mobile_no, dob, name, 
                                 office_name from students 
@@ -4644,9 +4649,9 @@ class getOfficeAllCounsilors(Resource):
     def post(self):
         data = request.get_json(force=True)
         officeId = data["officeId"]
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         officeCounsilors = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectCounsilor = """select user_id, users.office_id, username, name, role, count(students.counsilor_id) as studentCount, 
                                     deactivate from users 
@@ -4673,9 +4678,9 @@ class getCounsilorCount(Resource):
         data = request.get_json(force=True)
         counsilorId = data["counsilorId"]
         counsilorIds = counsilorId.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         counsilorsStudentCount = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetStaffCount = """select count(counsilor_id), counsilor_id from students where counsilor_id IN ({}) group by counsilor_id"""
 
@@ -4704,8 +4709,8 @@ class reAssignCounselors(Resource):
         counsilorIds = counsilorId.split(",")
 
         reAssignMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateCounselor = (
                 "update users set office_id=%s where user_id in ({})".format(','.join(['%s'] * len(counsilorIds)))
@@ -4729,8 +4734,8 @@ class activateUser(Resource):
         userId = data["userId"]
 
         userDelete = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlDeleteUser = """update users set deactivate=%s where user_id=%s"""
             value = (0, userId,)
@@ -4751,8 +4756,8 @@ class activateOffice(Resource):
         officeId = data["officeId"]
 
         officeList = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlDeleteOffice = """update offices set deactivate=%s where office_id=%s"""
             value = (0, officeId,)
@@ -4773,8 +4778,8 @@ class getUserReminderNotes(Resource):
         userId = data["userId"]
         notes = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectNote = """select note_id, student_id, note, reminder_date, created_date, status from notes 
                             where reminder_date IS NOT NULL AND status=1 AND counsilor_id=%s"""
@@ -4814,8 +4819,8 @@ class addInstitution(Resource):
         commissionable = data["commissionable"]
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddInstitution = """insert into institution (institution_name,institution_type, email, home_page, country, teritory, 
                             commission_rate, bonus, application_method, agent_portal_details, course_type, restriction_notes, 
@@ -4839,8 +4844,8 @@ class addInstitution(Resource):
 class getInstitution(Resource):
     def get(self):
         institutions = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetInstitutions = """SELECT institution_id, institution_name, institution_type, email, home_page, country, teritory,
                             commission_rate, bonus, application_method, agent_portal_details, course_type, restriction_notes, validFrom, 
@@ -4864,8 +4869,8 @@ class getInstitutionWithId(Resource):
     def post(self):
         data = request.get_json(force=True)
         institutionId = data["institutionId"]
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetInstitutions = """SELECT institution_id, institution_name, institution_type, email, home_page, country, teritory,
                             commission_rate, bonus, application_method, agent_portal_details, course_type, restriction_notes,
@@ -4893,8 +4898,8 @@ class getInstitutionsName(Resource):
         institutionType = data["institutionType"]
         country = data["country"]
         institutions = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if institutionType == "" and country == "":
                 sqlGetInstitutions = """SELECT institution_id, institution_name FROM institution"""
@@ -4938,8 +4943,8 @@ class getInstitutionProfile(Resource):
         institutionType = data["institutionType"]
         country = data["country"]
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if institutionType == "All":
                 sqlGetInstitutions = """SELECT institution_id, institution_name, institution_type, email, home_page, country, teritory, 
@@ -4974,8 +4979,8 @@ class getCountryInstitutionProfile(Resource):
         country = data["country"]
         countries = country.split(",")
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in countries:
                 sqlGetInstitutions = """SELECT institution_id, institution_name, institution_type, email, home_page, country, teritory, 
@@ -5031,8 +5036,8 @@ class updateInstitutionProfile(Resource):
         commissionable = data["commissionable"]
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateInstitution = """update institution set institution_name=%s,institution_type=%s, email=%s, home_page=%s, 
                             country=%s, teritory=%s, commission_rate=%s, bonus=%s, application_method=%s, agent_portal_details=%s, 
@@ -5061,8 +5066,8 @@ class updateContractFiles(Resource):
         contractFiles = data["contractFiles"]
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateInstitution = """update institution set contract_files=%s where institution_id=%s"""
             value = (contractFiles, institutionId,)
@@ -5087,8 +5092,8 @@ class getApplicationsInstitutionProfileASDReport(Resource):
         officeIds = officeId.split(",")
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """
@@ -5139,8 +5144,8 @@ class getApplicationsInstitutionProfileCSDReport(Resource):
         officeIds = officeId.split(",")
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """
@@ -5191,8 +5196,8 @@ class getApplicationsInstitutionProfileYearCountCSDReport(Resource):
         officeIds = officeId.split(",")
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """
@@ -5243,8 +5248,8 @@ class getApplicationsInstitutionProfileYearCountASDReport(Resource):
         officeIds = officeId.split(",")
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """
@@ -5295,8 +5300,8 @@ class getFinalChoicesInstitutionProfileASDReport(Resource):
         officeIds = officeId.split(",")
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """SELECT students.student_id AS student_id, first_name, last_name, students.email, 
@@ -5350,8 +5355,8 @@ class getFinalChoicessInstitutionProfileCSDReport(Resource):
         officeIds = officeId.split(",")
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """SELECT students.student_id AS student_id, first_name, last_name, students.email, 
@@ -5405,8 +5410,8 @@ class getFinalChoicesInstitutionCourseTypeASDCount(Resource):
         officeIds = officeId.split(",")
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """SELECT COUNT(*) AS total_count, COUNT(CASE WHEN course_type = 'Postgraduate' THEN 1 END) AS pg_count, 
@@ -5461,8 +5466,8 @@ class getFinalChoicesInstitutionCourseTypeCSDCount(Resource):
         officeIds = officeId.split(",")
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """SELECT COUNT(*) AS total_count, COUNT(CASE WHEN course_type = 'Postgraduate' THEN 1 END) AS pg_count, 
@@ -5513,8 +5518,8 @@ class contractFileUpload(Resource):
         institutionId = request.form["institutionId"]
         filename = secure_filename(file.filename)
         uploadFile = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             file.save(os.path.join(CONTRACT_FOLDER, filename))
             uploadFile.append('File uploaded Successfully\n')
@@ -5602,8 +5607,8 @@ class getCommissionDetails(Resource):
         data = request.get_json(force=True)
         institutionId = data["institutionId"]
         commission_datas = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetCommissionDetails = """SELECT commission_rate_id, course_type, course_name, valid_from, valid_until, min_num, 
                                         max_num, commission, institution_id, territory FROM commission_rate where institution_id=%s and status=0"""
@@ -5630,8 +5635,8 @@ class addInstitutionNotes(Resource):
         institutionId = data["institutionId"]
         note = data["note"]
         noteAdd = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddInstitutionNote = """insert into institution_notes (staff_id,institution_id, note) values (%s,%s,%s)"""
             value = (staffId, institutionId, note,)
@@ -5651,8 +5656,8 @@ class getInstitutionNotes(Resource):
         data = request.get_json(force=True)
         institutionId = data["institutionId"]
         institutionNotes = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetCommissionDetails = """select name, note, institution_name, institution_notes.created_date, institution_notes.note_id from institution_notes 
                                     left outer join users on users.user_id=institution_notes.staff_id 
@@ -5679,8 +5684,8 @@ class deleteInstitutionNote(Resource):
         data = request.get_json(force=True)
         institutionNoteId = data["institutionNoteId"]
         institutionNotes = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetCommissionDetails = """update institution_notes set status=1 where note_id=%s"""
             value = (institutionNoteId,)
@@ -5700,8 +5705,8 @@ class getApplicationInvoiceDetails(Resource):
         data = request.get_json(force=True)
         applicationId = data["applicationId"]
         invoiceDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetInvoiceDetails = """select invoiceNo, invoiceSent, paidToUs from application where application_id=%s"""
             value = (applicationId,)
@@ -5728,8 +5733,8 @@ class updateApplicationInvoiceDetails(Resource):
         invoiceSent = data["invoiceSent"]
         paidToUs = data["paidToUs"]
         institutionNotes = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetCommissionDetails = """update application set invoiceNo=%s, invoiceSent=%s, paidToUs=%s where application_id=%s"""
             value = (invoiceNumber, invoiceSent, paidToUs, applicationId,)
@@ -5757,8 +5762,8 @@ class submitCommission(Resource):
         commissionPercent = data["commissionPercent"]
         commissionTerritory = data["commissionTerritory"]
         commissionAdd = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddCommission = """insert into commission_rate (course_type, course_name, valid_from, valid_until, min_num, 
                                     max_num, commission, territory, institution_id) 
@@ -5782,8 +5787,8 @@ class deleteCommissionRate(Resource):
         data = request.get_json(force=True)
         commissionId = data["commissionId"]
         commissionRate = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetCommissionDetails = """update commission_rate set status=1 where commission_rate_id=%s"""
             value = (commissionId,)
@@ -5818,8 +5823,8 @@ class addPartner(Resource):
 
         addPartnerMsg = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlPartnerAdd = """insert into partners(company_name, company_website, director_first_name, director_last_name, 
                             director_email, country_code, director_contact_number, postal_address, city, country, bdm, consultant_assigned, 
@@ -5844,8 +5849,8 @@ class addPartner(Resource):
 class getPartners(Resource):
     def get(self):
         partnerDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetPartnerDetails = """select partner_id, company_name from partners order by partner_id asc"""
             cursor.execute(sqlGetPartnerDetails)
@@ -5867,8 +5872,8 @@ class getPartners(Resource):
 class getPartnersDetails(Resource):
     def get(self):
         partnerDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetPartnerDetails = """select partner_id, company_name, company_website, director_first_name, director_last_name, 
                                     director_email, country, offices.office_name, consultant_assigned_user.name AS 
@@ -5900,8 +5905,8 @@ class getPartnerWithId(Resource):
         data = request.get_json(force=True)
         partnerId = data["partnerId"]
         partnerDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetPartnerDetails = """select partner_id, company_name, company_website, director_first_name, director_last_name, 
                                     director_email, country_code, director_contact_number, postal_address, city, country, bdm, consultant_assigned, 
@@ -5944,8 +5949,8 @@ class updatePartner(Resource):
 
         updatePartnerMsg = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlPartnerUpdate = """update partners set company_name=%s, company_website=%s, director_first_name=%s, director_last_name=%s, 
                             director_email=%s, country_code=%s, director_contact_number=%s, postal_address=%s, city=%s, country=%s, 
@@ -5982,8 +5987,8 @@ class getApplicationsPartnerASDReport(Resource):
         officeIds = officeId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """
@@ -6034,8 +6039,8 @@ class getApplicationsPartnerCSDReport(Resource):
         officeIds = officeId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """
@@ -6086,8 +6091,8 @@ class getApplicationsPartnerYearCountCSDReport(Resource):
         officeIds = officeId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """
@@ -6139,8 +6144,8 @@ class getApplicationsPartnerYearCountASDReport(Resource):
         officeIds = officeId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """
@@ -6192,8 +6197,8 @@ class getFinalChoicesPartnerASDReport(Resource):
         officeIds = officeId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """SELECT students.student_id AS student_id, first_name, last_name, students.email, 
@@ -6246,8 +6251,8 @@ class getFinalChoicessPartnerCSDReport(Resource):
         officeIds = officeId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """SELECT students.student_id AS student_id, first_name, last_name, students.email, 
@@ -6300,8 +6305,8 @@ class getFinalChoicesPartnerCourseTypeASDCount(Resource):
         officeIds = officeId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """SELECT COUNT(*) AS total_count, COUNT(CASE WHEN course_type = 'Postgraduate' THEN 1 END) AS pg_count, 
@@ -6357,8 +6362,8 @@ class getFinalChoicesPartnerCourseTypeCSDCount(Resource):
         officeIds = officeId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """SELECT COUNT(*) AS total_count, COUNT(CASE WHEN course_type = 'Postgraduate' THEN 1 END) AS pg_count, 
@@ -6409,8 +6414,8 @@ class getPartnerWithOfficeId(Resource):
         data = request.get_json(force=True)
         officeId = data["officeId"]
         partnerDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetPartnerDetails = """select partner_id, company_name, company_website, director_first_name, director_last_name, 
                                     director_email, country_code, director_contact_number, postal_address, city, country, bdm, consultant_assigned, 
@@ -6437,8 +6442,8 @@ class partnerContractFileUpload(Resource):
         partnerId = request.form["partnerId"]
         filename = secure_filename(file.filename)
         uploadFile = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             file.save(os.path.join(CONTRACT_FOLDER, filename))
             uploadFile.append('File uploaded Successfully\n')
@@ -6528,8 +6533,8 @@ class updatePartnerContractFiles(Resource):
         contractFiles = data["contractFiles"]
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateInstitution = """update partners set partner_contract_files=%s where partner_id=%s"""
             value = (contractFiles, partnerId,)
@@ -6549,8 +6554,8 @@ class getPartnerContractFileList(Resource):
         data = request.get_json(force=True)
         partnerId = data["partnerId"]
         partnerContract = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetPartnerContractFile = """select partner_id, partner_contract_files from partners where partner_id= %s order by partner_id asc"""
             value = (partnerId,)
@@ -6576,8 +6581,8 @@ class addPartnerNotes(Resource):
         partnerId = data["partnerId"]
         note = data["note"]
         noteAdd = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddPartnerNote = """insert into partner_note (staff_id,partner_id, partner_note) values (%s,%s,%s)"""
             value = (staffId, partnerId, note,)
@@ -6597,8 +6602,8 @@ class getPartnerNotes(Resource):
         data = request.get_json(force=True)
         partnerId = data["partnerId"]
         partnerNotes = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetPartnerNotes = """select name, partner_note, partner_note.created_date, partner_note.partner_note_id from partner_note 
                                     left outer join users on users.user_id=partner_note.staff_id 
@@ -6624,8 +6629,8 @@ class deletePartnerNote(Resource):
         data = request.get_json(force=True)
         partnerNoteId = data["partnerNoteId"]
         partnerNotes = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetPartnerNote = """update partner_note set status=1 where partner_note_id=%s"""
             value = (partnerNoteId,)
@@ -6646,8 +6651,8 @@ class updatePartnerCredential(Resource):
         partnerId = data["partnerId"]
         passwordStr = data["password"]
         partnerCredential = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             password_key = Fernet.generate_key()
             fernet = Fernet(password_key)
@@ -6674,8 +6679,8 @@ class sendPartnerCredential(Resource):
         email = data["email"]
         password = data["password"]
         partnerCredential = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             htmlContent = f"<p>Hi {name},</p><p>Your account credentials are as follows</p><p>Username :- {email} <br>Password:- {password}" \
                           f"</p>" \
@@ -6696,8 +6701,8 @@ class getPartnerPassword(Resource):
         data = request.get_json(force=True)
         partnerId = data["partnerId"]
         partnerPassword = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetpartnerPassword = """select password_str FROM users WHERE partners_id = %s"""
             value = (partnerId,)
@@ -6731,8 +6736,8 @@ class addPartnerStudent(Resource):
         leadSource = data['leadSource']
         studyAbroadDestination = data["studyAbroadDestination"]
         addStudMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectPartner = """select consultant_assigned from partners where partners.partner_id=%s"""
             value = (partner,)
@@ -6794,8 +6799,8 @@ class getPartnerStudents(Resource):
         officeId = data["officeId"]
         partnerId = data["partnerId"]
         studentDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """select student_id, first_name, last_name, students.email, mobile_no, dob, name from students 
                         left outer join users on students.partner_id=users.partners_id where students.partner_id=%s"""
@@ -6825,9 +6830,9 @@ class getPartnerStudentManagerEDReport(Resource):
         partnerId = data["partnerId"]
         status = data["status"]
         status = status.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         studentManagerEDReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in status:
                 sqlSelectEDReport = """
@@ -6883,9 +6888,9 @@ class getPartnerStaticCount(Resource):
         partnerId = data["partnerId"]
         status = data["status"]
         statusIds = status.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         staticCountReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in statusIds:
                 sqlSelectCountReport = """
@@ -6938,8 +6943,8 @@ class getCountOfPartnerDashboard(Resource):
         year = data["year"]
         partnerId = data["partnerId"]
         dashboardCount = [];
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetStudCount = """SELECT count(*) FROM students WHERE YEAR(created_date)=%s and partner_id=%s"""
             value = (year, partnerId,)
@@ -6993,8 +6998,8 @@ class getAllPartnerStudents(Resource):
         status = data["status"]
         status = status.capitalize()
         students = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if (status == "Unassigned"):
                 sqlGetStudents = """select student_id, partner_id, first_name, last_name, 
@@ -7037,8 +7042,8 @@ class getPartnerStudentNotes(Resource):
         student_id = data["studentId"]
         studentNotes = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """SELECT name, note, contact_type, lead_source, notes.created_date, notes.status, reminder_date, note_id FROM notes 
                             left outer join users on users.partners_id=notes.partner_ids WHERE student_id=%s order by note_id desc"""
@@ -7071,8 +7076,8 @@ class addPartnerStudentNotes(Resource):
         else:
             status = 1
         addNoteMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddNote = """insert into notes(student_id, partner_ids, note, reminder_date, contact_type, lead_source, status)
                             values (%s, %s, %s, %s, %s, %s, %s)"""
@@ -7096,8 +7101,8 @@ class getPartnerYearStudents(Resource):
         status = data["status"]
         status = status.capitalize()
         selectedData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if (status == "Unassigned"):
                 sqlSelectStud = """SELECT s.student_id, s.first_name, s.last_name, s.email, s.mobile_no, s.dob, utm_source, sn.note AS last_note, sn.created_date AS last_note_date,s.status FROM students s 
@@ -7150,8 +7155,8 @@ class getPartnerApplications(Resource):
         selectedYear = data['year']
 
         applicationData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectApp = """select application.student_id, application_id, institution_name, course_name, course_start_date,
                             first_name, last_name, date_of_application_sent from application left outer join students on 
@@ -7181,8 +7186,8 @@ class getPartnerFinalChoicedApplication(Resource):
         selectedYear = data['year']
 
         finalChoiceApplicationData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectApp = """select application.student_id, application_id, institution_name, course_name, course_start_date,
                             first_name, last_name, date_of_application_sent from application left outer join students on 
@@ -7208,8 +7213,8 @@ class getPartnerFinalChoicedApplication(Resource):
 class getStaffCount(Resource):
     def get(self):
         staffCount = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             # Count active users
             cursor.execute("SELECT COUNT(*) FROM users WHERE deactivate = 0 and role!='partner'")
@@ -7249,8 +7254,8 @@ class partnerStatusUpdate(Resource):
 
         addStudMsg = []
         statusUpdateMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             cursor.execute("SELECT partner_id FROM students WHERE student_id = %s", (studentId,))
             old_partner_id = cursor.fetchone()[0]
@@ -7372,8 +7377,8 @@ class getPartnerReportApplicationCountASD(Resource):
         countryIds = countryId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in partnerIds and "All" in countryIds:
                 sqlSelectASDReport = """
@@ -7516,8 +7521,8 @@ class getPartnerReportApplicationCountCSD(Resource):
         countryIds = countryId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in partnerIds and "All" in countryIds:
                 sqlSelectASDReport = """
@@ -7661,8 +7666,8 @@ class getPartnerReportApplicationsASD(Resource):
         countryIds = countryId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in partnerIds and "All" in countryIds:
                 sqlSelectASDReport = """
@@ -7750,8 +7755,8 @@ class getPartnerReportApplicationsCSD(Resource):
         countryIds = countryId.split(",")
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in partnerIds and "All" in countryIds:
                 sqlSelectASDReport = """
@@ -7836,8 +7841,8 @@ class getYearlyPartnerProfilePerformance(Resource):
         previous_year = int(current_year) - 1
 
         partnerReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectPartnerPerformance = """
                         SELECT  
@@ -7904,8 +7909,8 @@ class getManagerUsers(Resource):
         data = request.get_json(force=True)
         officeId = data["officeId"]
         users = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectUsers = """select user_id, name, office_name, role, username,password_str, users.created_date, 
                                 count(students.counsilor_id) as studentsCount, users.deactivate, users.email from users 
@@ -7934,8 +7939,8 @@ class getManagerStaffCount(Resource):
         data = request.get_json(force=True)
         officeId = data["officeId"]
         staffCount = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             # Count active users
             cursor.execute("SELECT COUNT(*) FROM users WHERE deactivate = 0 and role!='partner' and office_id=%s",
@@ -7965,8 +7970,8 @@ class bulkAssignStudents(Resource):
         studentIds = studentId.split(",")
 
         reAssignMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateNote = (
                 "update students set office_id=%s, counsilor_id=%s where student_id in ({})".format(
@@ -8030,8 +8035,8 @@ class managerBulkAssignStudents(Resource):
         studentIds = studentId.split(",")
 
         reAssignMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateNote = (
                 "update students set office_id=%s, counsilor_id=%s where student_id in ({})".format(
@@ -8092,8 +8097,8 @@ class studentDocumentUpload(Resource):
         studentId = request.form["studentId"]
         filename = secure_filename(file.filename)
         uploadFile = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             file.save(os.path.join(CONTRACT_FOLDER, filename))
             uploadFile.append('File uploaded Successfully\n')
@@ -8120,8 +8125,8 @@ class getStudentDocumentList(Resource):
         data = request.get_json(force=True)
         studentId = data["studentId"]
         studentDocument = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetStudentDocument = """select student_id, student_document from students where student_id= %s order by student_id asc"""
             value = (studentId,)
@@ -8147,8 +8152,8 @@ class updateStudentDocument(Resource):
         contractFiles = data["contractFiles"]
 
         institution = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateInstitution = """update students set student_document=%s where student_id=%s"""
             value = (contractFiles, studentId,)
@@ -8240,9 +8245,9 @@ class getCounsellorMissedReminderReport(Resource):
         countryOfIntrest = data["countryOfIntrest"]
         countryOfIntrests = countryOfIntrest.split(",")
         staff = data["staff"]
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         missedReminderReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds and "All" in countryOfIntrests:
                 sqlgetReminderReport = """
@@ -8337,8 +8342,8 @@ class addFranchise(Resource):
 
         addFranchiseMsg = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlFranchiseAdd = """insert into franchise(company_name, company_website, director_first_name, director_last_name, 
                             director_email, country_code, director_contact_number, postal_address, city, country, bdm, consultant_assigned, 
@@ -8363,8 +8368,8 @@ class addFranchise(Resource):
 class getFranchiseDetails(Resource):
     def get(self):
         franchiseDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetFranchiseDetails = """select franchise.franchise_id, company_name, company_website, director_first_name, director_last_name, 
                                     director_email, country, offices.office_name, consultant_assigned_user.name AS 
@@ -8394,8 +8399,8 @@ class getFranchiseDetails(Resource):
 class getFranchises(Resource):
     def get(self):
         franchiseDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetFranchiseDetails = """select franchise_id, company_name from franchise order by franchise_id asc"""
             cursor.execute(sqlGetFranchiseDetails)
@@ -8419,8 +8424,8 @@ class getFranchiseWithId(Resource):
         data = request.get_json(force=True)
         franchiseId = data["franchiseId"]
         franchiseDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetFranchiseDetails = """select franchise_id, company_name, company_website, director_first_name, director_last_name, 
                                     director_email, country_code, director_contact_number, postal_address, city, country, bdm, consultant_assigned, 
@@ -8447,8 +8452,8 @@ class getStudentLogNotes(Resource):
         student_id = data["studentId"]
         studentNotes = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """SELECT name, note, contact_type, lead_source, notes.created_date, notes.status, reminder_date, note_id FROM notes 
                             left outer join users on users.user_id=notes.counsilor_id WHERE student_id=%s AND (contact_type = 'Phone' OR contact_type = 'Email') order by note_id desc"""
@@ -8473,8 +8478,8 @@ class getStudentActivityLogNotes(Resource):
         student_id = data["studentId"]
         studentNotes = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """SELECT name, note, contact_type, lead_source, notes.created_date, notes.status, reminder_date, note_id FROM notes 
                             left outer join users on users.user_id=notes.counsilor_id WHERE student_id=%s AND contact_type NOT IN ('Phone', 'Email') order by note_id desc"""
@@ -8498,8 +8503,8 @@ class getFranchisePassword(Resource):
         data = request.get_json(force=True)
         franchiseId = data["franchiseId"]
         franchisePassword = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetFranchisePassword = """select password_str FROM users WHERE franchise_id = %s"""
             value = (franchiseId,)
@@ -8524,8 +8529,8 @@ class updateFranchiseCredential(Resource):
         franchiseId = data["franchiseId"]
         passwordStr = data["password"]
         franchiseCredential = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             password_key = Fernet.generate_key()
             fernet = Fernet(password_key)
@@ -8552,8 +8557,8 @@ class sendFranchiseCredential(Resource):
         email = data["email"]
         password = data["password"]
         franchiseCredential = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             htmlContent = f"<p>Hi {name},</p><p>Your account credentials are as follows</p><p>Username :- {email} <br>Password:- {password}" \
                           f"</p>" \
@@ -8584,8 +8589,8 @@ class addFranchiseStudent(Resource):
         leadSource = data['leadSource']
         studyAbroadDestination = data["studyAbroadDestination"]
         addStudMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlStudentAdd = """insert into students(office_id, franchises_id, first_name, last_name, country_code, mobile_no, email, lead_source, 
                             nationality, dob, status, study_abroad_destination)
@@ -8639,8 +8644,8 @@ class getCountOfFranchiseDashboard(Resource):
         year = data["year"]
         franchiseId = data["franchiseId"]
         dashboardCount = [];
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetStudCount = """SELECT count(*) FROM students WHERE YEAR(created_date)=%s and franchises_id=%s"""
             value = (year, franchiseId,)
@@ -8694,8 +8699,8 @@ class getAllFranchiseStudents(Resource):
         status = data["status"]
         status = status.capitalize()
         students = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if (status == "Unassigned"):
                 sqlGetStudents = """select student_id, franchises_id, first_name, last_name, 
@@ -8738,8 +8743,8 @@ class getFranchiseStudents(Resource):
         officeId = data["officeId"]
         franchiseId = data["franchiseId"]
         studentDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """select student_id, first_name, last_name, students.email, mobile_no, dob, name from students 
                         left outer join users on students.franchises_id=users.franchise_id where students.franchises_id=%s"""
@@ -8763,8 +8768,8 @@ class getFranchiseWithOfficeId(Resource):
         data = request.get_json(force=True)
         officeId = data["officeId"]
         franchiseDetails = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetFranchiseDetails = """select franchise_id, company_name, company_website, director_first_name, director_last_name, 
                                     director_email, country_code, director_contact_number, postal_address, city, country, bdm, consultant_assigned, 
@@ -8797,8 +8802,8 @@ class franchiseStatusUpdate(Resource):
         updated_by = data["updated_by"]
 
         statusUpdateMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateStud = """update students set status=%s, office_id=%s, counsilor_id=%s, lead_source=%s, franchises_id=%s, updated_by=%s
                             where student_id=%s"""
@@ -8826,8 +8831,8 @@ class getFranchiseYearStudents(Resource):
         status = data["status"]
         status = status.capitalize()
         selectedData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if (status == "Unassigned"):
                 sqlSelectStud = """SELECT s.student_id, s.first_name, s.last_name, s.email, s.mobile_no, s.dob, utm_source, sn.note AS last_note, sn.created_date AS last_note_date,s.status FROM students s 
@@ -8887,8 +8892,8 @@ class addFranchiseStudentNotes(Resource):
         else:
             status = 1
         addNoteMsg = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddNote = """insert into notes(student_id, franchise_ids, note, reminder_date, contact_type, lead_source, status)
                             values (%s, %s, %s, %s, %s, %s, %s)"""
@@ -8910,8 +8915,8 @@ class getFranchiseStudentNotes(Resource):
         student_id = data["studentId"]
         studentNotes = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """SELECT name, note, contact_type, lead_source, notes.created_date, notes.status, reminder_date, note_id FROM notes 
                             left outer join users on users.franchise_id=notes.franchise_ids WHERE student_id=%s order by note_id desc"""
@@ -8941,9 +8946,9 @@ class getFranchiseStaticCount(Resource):
         franchiseId = data["franchiseId"]
         status = data["status"]
         statusIds = status.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         staticCountReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in statusIds:
                 sqlSelectCountReport = """
@@ -9001,9 +9006,9 @@ class getFranchiseStudentManagerEDReport(Resource):
         franchiseId = data["franchiseId"]
         status = data["status"]
         status = status.split(",")
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         studentManagerEDReport = []
-        cursor = cnx.cursor()
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in status:
                 sqlSelectEDReport = """
@@ -9055,8 +9060,8 @@ class getFranchiseApplications(Resource):
         selectedYear = data['year']
 
         applicationData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectApp = """select application.student_id, application_id, institution_name, course_name, course_start_date,
                             first_name, last_name, date_of_application_sent from application left outer join students on 
@@ -9086,8 +9091,8 @@ class getFranchiseFinalChoicedApplication(Resource):
         selectedYear = data['year']
 
         finalChoiceApplicationData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectApp = """select application.student_id, application_id, institution_name, course_name, course_start_date,
                             first_name, last_name, date_of_application_sent from application left outer join students on 
@@ -9120,8 +9125,8 @@ class getApplicationsFranchiseASDReport(Resource):
         officeIds = officeId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """
@@ -9172,8 +9177,8 @@ class getApplicationsFranchiseCSDReport(Resource):
         officeIds = officeId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """
@@ -9224,8 +9229,8 @@ class getApplicationsFranchiseYearCountASDReport(Resource):
         officeIds = officeId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """
@@ -9277,8 +9282,8 @@ class getApplicationsFranchiseYearCountCSDReport(Resource):
         officeIds = officeId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """
@@ -9328,8 +9333,8 @@ class getYearlyFranchiseProfilePerformance(Resource):
         previous_year = int(current_year) - 1
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectFranchisePerformance = """
                         SELECT  
@@ -9401,8 +9406,8 @@ class getFinalChoicesFranchiseASDReport(Resource):
         officeIds = officeId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """SELECT students.student_id AS student_id, first_name, last_name, students.email, 
@@ -9455,8 +9460,8 @@ class getFinalChoicessFranchiseCSDReport(Resource):
         officeIds = officeId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """SELECT students.student_id AS student_id, first_name, last_name, students.email, 
@@ -9505,8 +9510,8 @@ class franchiseContractFileUpload(Resource):
         franchiseId = request.form["franchiseId"]
         filename = secure_filename(file.filename)
         uploadFile = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             file.save(os.path.join(CONTRACT_FOLDER, filename))
             uploadFile.append('File uploaded Successfully\n')
@@ -9590,8 +9595,8 @@ class updateFranchiseContractFiles(Resource):
         contractFiles = data["contractFiles"]
 
         contract = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateContract = """update franchise set franchise_contract_files=%s where franchise_id=%s"""
             value = (contractFiles, franchiseId,)
@@ -9611,8 +9616,8 @@ class getFranchiseContractFileList(Resource):
         data = request.get_json(force=True)
         franchiseId = data["franchiseId"]
         franchiseContract = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetFranchiseContractFile = """select franchise_id, franchise_contract_files from franchise where franchise_id= %s order by franchise_id asc"""
             value = (franchiseId,)
@@ -9636,8 +9641,8 @@ class getFranchiseNotes(Resource):
         data = request.get_json(force=True)
         franchiseId = data["franchiseId"]
         franchiseNotes = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetFranchiseNotes = """select name, franchise_note, franchise_note.created_date, franchise_note.franchise_note_id from franchise_note 
                                     left outer join users on users.user_id=franchise_note.staff_id 
@@ -9665,8 +9670,8 @@ class addFranchiseNotes(Resource):
         franchiseId = data["franchiseId"]
         note = data["note"]
         noteAdd = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlAddFranchiseNote = """insert into franchise_note (staff_id,franchise_id, franchise_note) values (%s,%s,%s)"""
             value = (staffId, franchiseId, note,)
@@ -9686,8 +9691,8 @@ class deleteFranchiseNote(Resource):
         data = request.get_json(force=True)
         franchiseNoteId = data["franchiseNoteId"]
         franchiseNotes = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetFranchiseNote = """update franchise_note set status=1 where franchise_note_id=%s"""
             value = (franchiseNoteId,)
@@ -9724,8 +9729,8 @@ class updateFranchise(Resource):
 
         updateFranchiseMsg = []
 
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlFranchiseUpdate = """update franchise set company_name=%s, company_website=%s, director_first_name=%s, director_last_name=%s, 
                             director_email=%s, country_code=%s, director_contact_number=%s, postal_address=%s, city=%s, country=%s, 
@@ -9757,8 +9762,8 @@ class getFinalChoicesFranchiseCourseTypeASDCount(Resource):
         officeIds = officeId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectASDReport = """SELECT COUNT(*) AS total_count, COUNT(CASE WHEN course_type = 'Postgraduate' THEN 1 END) AS pg_count, 
@@ -9814,8 +9819,8 @@ class getFinalChoicesFranchiseCourseTypeCSDCount(Resource):
         officeIds = officeId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in officeIds:
                 sqlSelectCSDReport = """SELECT COUNT(*) AS total_count, COUNT(CASE WHEN course_type = 'Postgraduate' THEN 1 END) AS pg_count, 
@@ -9872,8 +9877,8 @@ class getFranchiseReportApplicationsASD(Resource):
         countryIds = countryId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in franchiseIds and "All" in countryIds:
                 sqlSelectASDReport = """
@@ -9961,8 +9966,8 @@ class getFranchiseReportApplicationsCSD(Resource):
         countryIds = countryId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in franchiseIds and "All" in countryIds:
                 sqlSelectASDReport = """
@@ -10050,8 +10055,8 @@ class getFranchiseReportApplicationCountASD(Resource):
         countryIds = countryId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in franchiseIds and "All" in countryIds:
                 sqlSelectASDReport = """
@@ -10198,8 +10203,8 @@ class getFranchiseReportApplicationCountCSD(Resource):
         countryIds = countryId.split(",")
 
         franchiseReport = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             if "All" in franchiseIds and "All" in countryIds:
                 sqlSelectASDReport = """
@@ -10351,8 +10356,8 @@ class getSelectedReassignData(Resource):
         selectedYear = data["year"]
 
         selectedData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlSelectStud = """WITH latest_notes AS 
                             (SELECT student_id, note, created_date, ROW_NUMBER() OVER (PARTITION BY student_id ORDER BY created_date DESC) AS rn 
@@ -10405,8 +10410,8 @@ class getInstitutionReport(Resource):
         values = []
 
         # Connect to the database
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
 
         try:
             # Build the SQL query dynamically
@@ -10469,8 +10474,8 @@ class individualReferralInsert(Resource):
         termsAccept = request.form.get('termsAccept')
 
         # Connect to the database
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
 
         try:
             insert_query = """
@@ -10527,8 +10532,8 @@ class businessReferralInsert(Resource):
         termsAccept = request.form.get('termsAccept')
 
         # Connect to the database
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
 
         try:
             insert_query = """
@@ -10573,8 +10578,8 @@ class businessReferralInsert(Resource):
 
 class getRefferralDetails(Resource):
     def get(self):
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         refferals = []
         try:
             sqlGetIndividualRefferals = """SELECT person_id, person_uniqueId, person_firstname, person_phone, person_email, 
@@ -10630,8 +10635,8 @@ class getIndividualUser(Resource):
         data = request.get_json(force=True)
         userId = data['userId']
         userData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetIndividualRefferals = """SELECT person_id, person_uniqueId, person_firstname, person_surname, person_phone, person_email, status
                                     FROM individualReferral where person_id=%s"""
@@ -10660,8 +10665,8 @@ class getBusinessUser(Resource):
         data = request.get_json(force=True)
         userId = data['userId']
         userData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlGetBusinessRefferals = """SELECT business_id, company_uniqueId, company_name, company_phone, company_email, company_url, company_address,
                                     status FROM business_referral where business_id=%s"""
@@ -10698,8 +10703,8 @@ class updateIndividualRefferal(Resource):
         phone = data['phone']
         status = data['status']
         userUpdateData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateIndividualRefferals = """update individualReferral set person_firstname=%s, person_surname=%s, person_phone=%s, person_email=%s, status=%s
                                         where person_id=%s"""
@@ -10724,8 +10729,8 @@ class updateBusinessRefferal(Resource):
         address = data['address']
         status = data['status']
         userUpdateData = []
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         try:
             sqlUpdateBusinessRefferals = """update business_referral set company_name=%s, company_phone=%s, company_email=%s, company_url=%s, company_address=%s,
                                         status=%s where business_id=%s"""
@@ -10742,8 +10747,8 @@ class updateBusinessRefferal(Resource):
 
 class getActiveRefferrals(Resource):
     def get(self):
-        cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
-        cursor = cnx.cursor()
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
+        cnx, cursor = get_connection_and_cursor()
         refferals = []
         try:
             sqlGetIndividualRefferals = """SELECT person_id, person_uniqueId, person_firstname, person_phone, person_email FROM individualReferral
