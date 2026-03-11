@@ -522,6 +522,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.partner = ko.observable();
                 self.franchise = ko.observable();
+                self.createdStudentId = ko.observable("");
 
 
                 self.offices = ko.observableArray([]);
@@ -647,6 +648,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 success: function (data) {
                                     let popup = document.getElementById("popup1");
                                     popup.close();
+                                    self.createdStudentId(data.student_id);
                                     let popup1 = document.getElementById("popup2");
                                     popup1.open();
                                 }
@@ -716,6 +718,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 success: function (data) {
                                     let popup = document.getElementById("popup1");
                                     popup.close();
+                                    self.createdStudentId(data.student_id);
                                     let popup1 = document.getElementById("popup2");
                                     popup1.open();
                                 }
@@ -760,6 +763,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 success: function (data) {
                                     let popup = document.getElementById("popup1");
                                     popup.close();
+                                    self.createdStudentId(data.student_id);
                                     let popup1 = document.getElementById("popup2");
                                     popup1.open();
                                 }

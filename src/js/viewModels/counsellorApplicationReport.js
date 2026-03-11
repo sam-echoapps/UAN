@@ -57,6 +57,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.data = ko.observableArray();
                 self.totalApplicationCnt = ko.observable(0);
                 self.course = ko.observable(["All"]);
+                self.status = ko.observable(["All"]);
 
                 self.countries = ko.observableArray()
                 self.countries.push(
@@ -376,6 +377,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     courseType = courseType.join(",");
                     let institution = self.institution()
                     institution = institution.join(",");
+                    let status = self.status()
+                    status = status.join(",");
                     let dataUrl = "/getApplicationCSDReport"
                     if(radio=="ASD"){
                         dataUrl = "/getApplicationASDReport"
@@ -388,7 +391,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             toDate: toDate,
                             officeId: self.officeId(),
                             courseType: courseType,
-                            institutionId : institution
+                            institutionId : institution,
+                            status : status
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
@@ -402,7 +406,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 self.totalApplicationCnt(len)
                                 var csvContent = '';
                                 var headers = ['Student Id', 'Application Id', 'University', 'firstName','Nationality', 'Ref',
-                                             'Programme',  'Start Date', 'Date Received', 'Offer Status', 'Tution Fee'];
+                                             'Programme',  'Start Date', 'Date Received', 'Offer Status', 'Tution Fee', 'Current Status'];
                                 csvContent += headers.join(',') + '\n';
 
                                 for(var i=0;i<len;i++){
@@ -419,11 +423,12 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                         startDate:data[i][9],
                                         dateReceived:data[i][10],
                                         offerStatus:data[i][11],
-                                        tutionFee:data[i][12]
+                                        tutionFee:data[i][12],
+                                        status:data[i][13]
                                     });
                                     
                                     var rowData = [data[i][0], data[i][1], data[i][2], data[i][3], data[i][6], data[i][7], 
-                                                    data[i][8], data[i][9], data[i][10], data[i][11], data[i][12] ]; 
+                                                    data[i][8], data[i][9], data[i][10], data[i][11], data[i][12], data[i][13] ]; 
                                     csvContent += rowData.join(',') + '\n';
                                 }
                                 
@@ -436,7 +441,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             else{
                                 var csvContent = '';
                                 var headers = ['Student Id', 'Application Id', 'University', 'firstName', 'Nationality', 'Ref',
-                                            'Programme',  'Start Date', 'Date Received', 'Offer Status', 'Tution Fee'];
+                                            'Programme',  'Start Date', 'Date Received', 'Offer Status', 'Tution Fee', 'Current Status'];
                                 csvContent += headers.join(',') + '\n';
                                 self.appData([])    
                                 var rowData = []; 
@@ -569,6 +574,23 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     keyAttributes: 'value'
                 });
 
+                self.studentStatus = [
+                    { value: 'All', label: 'All' },
+                    { value: 'Closed', label: 'Closed' },
+                    { value: 'Not Interested', label: 'Not Interested' },
+                    { value: 'Inactive', label: 'Inactive' },
+                    { value: 'Active', label: 'Active' },
+                    { value: 'Lead', label: 'Lead' },
+                    { value: 'SPAM', label: 'SPAM' },
+                    { value: 'Deposit Paid', label: 'Deposit Paid' },
+                    { value: 'Offer Received', label: 'Offer Received' },
+                    { value: 'Visa Grant', label: 'Visa Grant' },
+                ];
+                self.studentStatusSet = new ArrayDataProvider(self.studentStatus, {
+                    keyAttributes: 'value'
+                });
+
+                
                 self.institution = ko.observable(["All"])
                 self.institutionList = ko.observableArray()
                 self.getInstitutions = ()=>{

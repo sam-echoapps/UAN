@@ -23,6 +23,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojinputtext", "oj
                         popup.open();
                         $.ajax({
                             // url: "http://65.0.111.226:8010/uanLogin",
+                            // url: "http://35.154.193.243:8010/uanLogin",
                             url: "/uanLogin",
                             type: 'POST',
                             data: JSON.stringify({
@@ -49,6 +50,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojinputtext", "oj
                                     sessionStorage.setItem("userPartnerId", data[7]);
                                     sessionStorage.setItem("userFranchiseId", data[8]);
                                     // sessionStorage.setItem("BaseURL", "http://65.0.111.226:8010");
+                                    // sessionStorage.setItem("BaseURL", "http://35.154.193.243:8010");
                                     sessionStorage.setItem("BaseURL", "");
                                     self.SignIn('Y');
                                     app.onLoginSuccess();

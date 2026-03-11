@@ -86,6 +86,9 @@
     <oj-select-many options="[[institutionSet]]" label-hint="Select Institution" label-edge="inside" class="oj-form-control-max-width-md" 
     value="{{institution}}" style="width: 300px;"></oj-select-many>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <oj-select-many options="[[studentStatusSet]]" label-hint="Select Current Status" label-edge="inside" class="oj-form-control-max-width-md" 
+    value="{{status}}" style="width: 300px;"></oj-select-many>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <div style="margin: 20px 0px;">
         <oj-radioset id="enabledRadioset" value="{{selectRadio}}">
             <oj-option value="ASD">ASD</oj-option>
@@ -138,7 +141,9 @@
                     {"headerText": "Offer Status",  "field": "offerStatus", "headerClassName": "oj-md-down-hide",
                        "className": "oj-md-down-hide", "resizable": "enabled", "id": "offerStatus"},
                     {"headerText": "Tution Fee",  "field": "tutionFee", "headerClassName": "oj-md-down-hide",
-                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "tutionFee"}]'
+                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "tutionFee"},
+                    {"headerText": "Current Status",  "field": "status", "headerClassName": "oj-md-down-hide",
+                       "className": "oj-md-down-hide", "resizable": "enabled", "id": "status"}]'
         class="demo-table-container">
 
         <template slot="rowTemplate" data-oj-as="row">
@@ -157,6 +162,7 @@
                 <td><oj-bind-text value="[[row.data.dateReceived]]"></oj-bind-text></td>
                 <td><oj-bind-text value="[[row.data.offerStatus]]"></oj-bind-text></td>
                 <td><oj-bind-text value="[[row.data.tutionFee]]"></oj-bind-text></td>
+                <td><oj-bind-text value="[[row.data.status]]"></oj-bind-text></td>
             </tr>
         </template>
         <oj-menu

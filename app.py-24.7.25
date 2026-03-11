@@ -45,8 +45,8 @@ dataBase = config.get('ONEPLACE_CONFIG', 'DB_NAME')
 # adminMail  = config.get('ONEPLACE_CONFIG','ADMIN_EMAIL')
 UPLOAD_FOLDER = config.get('ONEPLACE_CONFIG', 'UPLOAD_FOLDER')
 CONTRACT_FOLDER = config.get('ONEPLACE_CONFIG', 'CONTRACT_FOLDER')
-senderMail = config.get('ONEPLACE_CONFIG', 'Sender_EMAIL')
-senderPassword = config.get('ONEPLACE_CONFIG', 'Sender_Password')
+senderMail  = config.get('ONEPLACE_CONFIG','Sender_EMAIL')
+senderPassword  = config.get('ONEPLACE_CONFIG','Sender_Password')
 # print(senderMail)
 # print(senderPassword)
 
@@ -59,7 +59,6 @@ def get_connection_and_cursor():
     cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
     cursor = cnx.cursor(buffered=True)
     return cnx, cursor
-
 
 # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
 cnx, cursor = get_connection_and_cursor()
@@ -153,11 +152,12 @@ def sendReminderMail():
             for reminderNote in reminderNotes:
                 reminderDate = reminderNote[0]
                 note = reminderNote[1]
-                studentName = f"{reminderNote[2] or ''} {reminderNote[3] or ''}".strip()
+                studentName = reminderNote[2] + " " + reminderNote[3]
                 staffName = reminderNote[4]
                 counselorName = reminderNote[5]
                 staffEmail = reminderNote[6]
                 counselorEmail = reminderNote[7]
+
                 current_date = datetime.now().date()
                 if reminderDate == current_date:
                     htmlContent = f"<p>Hi {staffName},</p><br><p>You have a reminder log for today.</p><p> student: {studentName}.</p><p>Reminder text: {note}</p>" \
@@ -172,13 +172,12 @@ def sendReminderMail():
     finally:
         cursor.close()
 
-
 def schedule_email():
     while True:
         india_timezone = pytz.timezone('Asia/Kolkata')
         current_time = datetime.now(india_timezone)
         if ((current_time.hour == 9 and current_time.minute == 15) or (
-                current_time.hour == 19 and current_time.minute == 3)):
+                current_time.hour == 15 and current_time.minute == 15)):
             sendReminderMail()
         time.sleep(60)
 
@@ -439,8 +438,8 @@ class addStudent(Resource):
                                 nationality, dob, status, study_abroad_destination)
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
                 valStudAdd = (
-                    office, counselor, firstName, lastName, countryCode, phone, email, course, leadSource, nationality,
-                    dob, "Lead", studyAbroadDestination,)
+                office, counselor, firstName, lastName, countryCode, phone, email, course, leadSource, nationality,
+                dob, "Lead", studyAbroadDestination,)
                 cursor.execute(sqlStudentAdd, valStudAdd)
                 last_insert_id = cursor.lastrowid
                 addStudMsg.append("Sucessfully Added the Student")
@@ -449,8 +448,8 @@ class addStudent(Resource):
                                     mobile_no=%s, course=%s, lead_source=%s, nationality=%s, dob=%s, status=%s, study_abroad_destination=%s
                                     where email=%s"""
                 value = (
-                    office, counselor, firstName, lastName, countryCode, phone, course, leadSource, nationality, dob,
-                    "Lead", studyAbroadDestination, email,)
+                office, counselor, firstName, lastName, countryCode, phone, course, leadSource, nationality, dob,
+                "Lead", studyAbroadDestination, email,)
                 cursor.execute(sqlUpdateStud, value)
                 sqlGetStudentId = """select student_id from students where email=%s"""
                 value = (email,)
@@ -498,17 +497,17 @@ class addStudent(Resource):
                 htmlContent = f"<p>Hi UAN,</p><p>You have a new student registration</p><p>Student Name :- {firstName} {lastName}<br>Student id:- {last_insert_id}" \
                               f"<br>Mobile :- {phone}<br>Email :- {email} <br>Nationality :- {nationality}</p>" \
                               f"<p>Thanks<br>UAN Team</p>"
-                sendMail('Registration form Student Added', htmlContent, email)
+                sendMail('Registration form Student Added', htmlContent, "uandocuments7@gmail.com")
             elif nationality == "indian":
                 htmlContent = f"<p>Hi Mansi,</p><p>You have a new student registration</p><p>Student Name :- {firstName} {lastName}<br>Student id:- {last_insert_id}" \
                               f"<br>Mobile :- {phone}<br>Email :- {email} <br>Nationality :- {nationality}</p>" \
                               f"<p>Thanks<br>UAN Team</p>"
-                sendMail('Registration form Student Added', htmlContent, "uandocuments7@gmail.com")
+                sendMail('Registration form Student Added', htmlContent, "mansi.s@uninetworks.co.uk")
 
             htmlContent = f"<p>Hi Admin,</p><p>You have a new student registration</p><p>Student Name :- {firstName} {lastName}<br>Student id:- {last_insert_id}" \
                           f"<br>Mobile :- {phone}<br>Email :- {email} <br>Nationality :- {nationality}</p>" \
                           f"<p>Thanks<br>UAN Team</p>"
-            sendMail('Registration form Student Added', htmlContent, "mansi.s@uninetworks.co.uk")
+            sendMail('Registration form Student Added', htmlContent, adminMail)
 
             addStudMsg.append('Sucessfully Sent Email')
         except mysql.Error as e:
@@ -517,12 +516,7 @@ class addStudent(Resource):
             cnx.commit()
             cursor.close()
 
-        return {
-            "status": "success",
-            "message": "Student added successfully",
-            "student_id": last_insert_id
-        }, 200
-
+        return addStudMsg
 
 class bulkStudentAdd(Resource):
     def post(self):
@@ -567,10 +561,10 @@ class bulkStudentAdd(Resource):
                     phone = str(int(float(raw_phone)))
                 except (ValueError, TypeError):
                     phone = ""
-                # phone = str(int(row.get("Phone"))) if str(row.get("Phone")).isdigit() else ""
+                #phone = str(int(row.get("Phone"))) if str(row.get("Phone")).isdigit() else ""
                 cc_raw = str(row.get("Country Code")).replace("+", "").strip()
-                countryCode = f"+{cc_raw}" if cc_raw.isdigit() else ""
-
+                countryCode = f"+{cc_raw}" if cc_raw.isdigit() else ""             
+                               
                 if not email:
                     continue  # Skip rows without email
 
@@ -648,7 +642,6 @@ class bulkStudentAdd(Resource):
         except Exception as e:
             return [f"An unexpected error occurred: {e}"]
 
-
 class bookCounseling(Resource):
     def post(self):
         data = request.get_json(force=True)
@@ -681,8 +674,8 @@ class bookCounseling(Resource):
                                 utm_campaign, hear_about)
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
                 valStudAdd = (
-                    officeId, firstName, lastName, countryCode, phone, email, "Counselling booking", nationality,
-                    "Lead", studyAbroadDestination, year, utmSource, utmMedium, utmCampaign, hearAbout,)
+                officeId, firstName, lastName, countryCode, phone, email, "Counselling booking", nationality,
+                "Lead", studyAbroadDestination, year, utmSource, utmMedium, utmCampaign, hearAbout,)
                 cursor.execute(sqlStudentAdd, valStudAdd)
                 last_insert_id = cursor.lastrowid
                 addStudMsg.append("Sucessfully Added the Counseling Student")
@@ -1222,10 +1215,9 @@ class addNewApplication(Resource):
                                 counselling_type, ielts, institution_id, franchise) Values 
                                 (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
             value = (
-                studentId, courseType, institutionName, courseStartDate, courseEndDate, courseName,
-                dateOfApplicationSent,
-                partner, tutionFeeCurrency, tutionFee, loginUrl, username, password, applicationMethod, counsellingType,
-                ielts, institutionId, franchise)
+            studentId, courseType, institutionName, courseStartDate, courseEndDate, courseName, dateOfApplicationSent,
+            partner, tutionFeeCurrency, tutionFee, loginUrl, username, password, applicationMethod, counsellingType,
+            ielts, institutionId, franchise)
             cursor.execute(sqlAddApplication, value)
 
             sqlUpdateStud = """update students set status=%s where student_id=%s"""
@@ -2353,23 +2345,21 @@ class getApplicationCSDReport(Resource):
         courseTypes = courseType.split(",")
         institutionId = data['institutionId']
         institutionIds = institutionId.split(",")
-        studentStatus = data['status']
-        statusList = studentStatus.split(",")
         applicationReport = []
         # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         cnx, cursor = get_connection_and_cursor()
         try:
-            if officeId != "" and "All" in courseTypes and "All" in institutionIds and "All" in statusList:
+            if officeId != "" and "All" in courseTypes and "All" in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.course_start_date BETWEEN %s AND %s and office_id=%s"""
                 value = (fromDate, toDate, officeId,)
-            elif officeId == "" and "All" not in courseTypes and "All" in institutionIds and "All" in statusList:
+            elif officeId == "" and "All" not in courseTypes and "All" in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.course_start_date BETWEEN %s AND %s and course_type IN ({})"""
                 courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
@@ -2377,10 +2367,10 @@ class getApplicationCSDReport(Resource):
                 sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData)
 
                 value = [fromDate, toDate] + courseTypes
-            elif officeId == "" and "All" in courseTypes and "All" not in institutionIds and "All" in statusList:
+            elif officeId == "" and "All" in courseTypes and "All" not in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.course_start_date BETWEEN %s AND %s and institution_id IN ({})"""
                 institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
@@ -2388,21 +2378,10 @@ class getApplicationCSDReport(Resource):
                 sqlSelectAppReport = sqlSelectAppReport.format(institutionIdJoinData)
 
                 value = [fromDate, toDate] + institutionIds
-            elif officeId == "" and "All" in courseTypes and "All" in institutionIds and "All" not in statusList:
+            elif officeId == "" and "All" not in courseTypes and "All" not in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                    left outer join students on students.student_id=application.student_id 
-                                    where application.course_start_date BETWEEN %s AND %s and students.status IN ({})"""
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(statusJoinData)
-
-                value = [fromDate, toDate] + statusList
-            elif officeId == "" and "All" not in courseTypes and "All" not in institutionIds and "All" in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                    last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.course_start_date BETWEEN %s AND %s and course_type IN ({}) and institution_id IN ({})"""
                 institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
@@ -2411,62 +2390,23 @@ class getApplicationCSDReport(Resource):
                 sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData)
 
                 value = [fromDate, toDate] + courseTypes + institutionIds
-            elif officeId == "" and "All" not in courseTypes and "All" in institutionIds and "All" not in statusList:
+            elif officeId != "" and "All" not in courseTypes and "All" not in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                    left outer join students on students.student_id=application.student_id 
-                                    where application.course_start_date BETWEEN %s AND %s and course_type IN ({}) and students.status IN ({})"""
-                courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, statusJoinData)
-
-                value = [fromDate, toDate] + courseTypes + statusList
-            elif officeId == "" and "All" in courseTypes and "All" not in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                             last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                             date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                             left outer join students on students.student_id=application.student_id 
-                                             where application.course_start_date BETWEEN %s AND %s and institution_id IN ({}) and students.status IN ({})"""
-                institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format( institutionIdJoinData,
-                                                               statusJoinData)
-
-                value = [fromDate, toDate] + institutionIds + statusList
-            elif officeId == "" and "All" not in courseTypes and "All" not in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                    last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                    left outer join students on students.student_id=application.student_id 
-                                    where application.course_start_date BETWEEN %s AND %s and course_type IN ({}) and institution_id IN ({}) and students.status IN ({})"""
-                institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
-                courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData, statusJoinData)
-
-                value = [fromDate, toDate] + courseTypes + institutionIds + statusList
-            elif officeId != "" and "All" not in courseTypes and "All" not in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                    last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.course_start_date BETWEEN %s AND %s and office_id=%s and course_type IN ({}) and 
-                                    institution_id IN ({}) and students.status IN ({})"""
+                                    institution_id IN ({})"""
                 institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
                 courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
-                statusJoinData = ', '.join(['%s'] * len(statusList))
 
-                sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData, statusJoinData)
+                sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData)
 
-                value = [fromDate, toDate, officeId] + courseTypes + institutionIds + statusList
-            elif officeId != "" and "All" not in courseTypes and "All" in institutionIds and "All" in statusList:
+                value = [fromDate, toDate, officeId] + courseTypes + institutionIds
+            elif officeId != "" and "All" not in courseTypes and "All" in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.course_start_date BETWEEN %s AND %s and office_id=%s and course_type IN ({})"""
                 courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
@@ -2474,10 +2414,10 @@ class getApplicationCSDReport(Resource):
                 sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData)
 
                 value = [fromDate, toDate, officeId] + courseTypes
-            elif officeId != "" and "All" in courseTypes and "All" not in institutionIds and "All" in statusList:
+            elif officeId != "" and "All" in courseTypes and "All" not in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.course_start_date BETWEEN %s AND %s and office_id=%s and institution_id IN ({})"""
                 institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
@@ -2485,49 +2425,10 @@ class getApplicationCSDReport(Resource):
                 sqlSelectAppReport = sqlSelectAppReport.format(institutionIdJoinData)
 
                 value = [fromDate, toDate, officeId] + institutionIds
-            elif officeId != "" and "All" in courseTypes and "All" not in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                               last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                               date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                               left outer join students on students.student_id=application.student_id 
-                                               where application.course_start_date BETWEEN %s AND %s and office_id=%s  and 
-                                               institution_id IN ({}) and students.status IN ({})"""
-                institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format( institutionIdJoinData,
-                                                               statusJoinData)
-
-                value = [fromDate, toDate, officeId] +  institutionIds + statusList
-            elif officeId != "" and "All" in courseTypes and "All" in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                               last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                               date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                               left outer join students on students.student_id=application.student_id 
-                                               where application.course_start_date BETWEEN %s AND %s and office_id=%s and students.status IN ({})"""
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(
-                                                               statusJoinData)
-
-                value = [fromDate, toDate, officeId] + statusList
-            elif officeId != "" and "All" not in courseTypes and "All" not in institutionIds and "All" in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                               last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                               date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                               left outer join students on students.student_id=application.student_id 
-                                               where application.course_start_date BETWEEN %s AND %s and office_id=%s and course_type IN ({}) and 
-                                               institution_id IN ({})"""
-                institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
-                courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData)
-
-                value = [fromDate, toDate, officeId] + courseTypes + institutionIds 
             else:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.course_start_date BETWEEN %s AND %s"""
                 value = (fromDate, toDate,)
@@ -2733,23 +2634,21 @@ class getApplicationASDReport(Resource):
         courseTypes = courseType.split(",")
         institutionId = data['institutionId']
         institutionIds = institutionId.split(",")
-        studentStatus = data['status']
-        statusList = studentStatus.split(",")
         applicationReport = []
         # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         cnx, cursor = get_connection_and_cursor()
         try:
-            if officeId != "" and "All" in courseTypes and "All" in institutionIds and "All" in statusList:
+            if officeId != "" and "All" in courseTypes and "All" in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.date_of_application_sent BETWEEN %s AND %s and office_id=%s"""
                 value = (fromDate, toDate, officeId,)
-            elif officeId == "" and "All" not in courseTypes and "All" in institutionIds and "All" in statusList:
+            elif officeId == "" and "All" not in courseTypes and "All" in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.date_of_application_sent BETWEEN %s AND %s and course_type IN ({})"""
                 courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
@@ -2757,10 +2656,10 @@ class getApplicationASDReport(Resource):
                 sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData)
 
                 value = [fromDate, toDate] + courseTypes
-            elif officeId == "" and "All" in courseTypes and "All" not in institutionIds and "All" in statusList:
+            elif officeId == "" and "All" in courseTypes and "All" not in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.date_of_application_sent BETWEEN %s AND %s and institution_id IN ({})"""
                 institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
@@ -2768,21 +2667,10 @@ class getApplicationASDReport(Resource):
                 sqlSelectAppReport = sqlSelectAppReport.format(institutionIdJoinData)
 
                 value = [fromDate, toDate] + institutionIds
-            elif officeId == "" and "All" in courseTypes and "All" in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                               last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                               date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                               left outer join students on students.student_id=application.student_id 
-                                               where application.date_of_application_sent BETWEEN %s AND %s and students.status IN ({})"""
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(statusJoinData)
-
-                value = [fromDate, toDate] + statusList
-            elif officeId == "" and "All" not in courseTypes and "All" not in institutionIds and "All" in statusList:
+            elif officeId == "" and "All" not in courseTypes and "All" not in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.date_of_application_sent BETWEEN %s AND %s and course_type IN ({}) and institution_id IN ({})"""
                 institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
@@ -2791,63 +2679,23 @@ class getApplicationASDReport(Resource):
                 sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData)
 
                 value = [fromDate, toDate] + courseTypes + institutionIds
-            elif officeId == "" and "All" not in courseTypes and "All" in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                               last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                               date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                               left outer join students on students.student_id=application.student_id 
-                                               where application.date_of_application_sent BETWEEN %s AND %s and course_type IN ({}) and students.status IN ({})"""
-                courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData,
-                                                               statusJoinData)
-
-                value = [fromDate, toDate] + courseTypes + statusList
-            elif officeId == "" and "All" in courseTypes and "All" not in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                               last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                               date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                               left outer join students on students.student_id=application.student_id 
-                                               where application.date_of_application_sent BETWEEN %s AND %s and institution_id  IN ({}) and students.status IN ({})"""
-                institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(institutionIdJoinData,
-                                                               statusJoinData)
-
-                value = [fromDate, toDate] + institutionIds + statusList
-            elif officeId == "" and "All" not in courseTypes and "All" not in institutionIds and "All" not in statusList:
+            elif officeId != "" and "All" not in courseTypes and "All" not in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                    left outer join students on students.student_id=application.student_id 
-                                    where application.date_of_application_sent BETWEEN %s AND %s and course_type IN ({}) and institution_id IN ({}) and students.status IN ({})"""
-                institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
-                courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData, statusJoinData)
-
-                value = [fromDate, toDate] + courseTypes + institutionIds + statusList
-            elif officeId != "" and "All" not in courseTypes and "All" not in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                    last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.date_of_application_sent BETWEEN %s AND %s and office_id=%s and course_type IN ({}) and 
-                                    institution_id IN ({}) and students.status IN ({})"""
+                                    institution_id IN ({})"""
                 institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
                 courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
-                statusJoinData = ', '.join(['%s'] * len(statusList))
 
-                sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData, statusJoinData)
+                sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData)
 
-                value = [fromDate, toDate, officeId] + courseTypes + institutionIds + statusList
-            elif officeId != "" and "All" not in courseTypes and "All" in institutionIds and "All" in statusList:
+                value = [fromDate, toDate, officeId] + courseTypes + institutionIds
+            elif officeId != "" and "All" not in courseTypes and "All" in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.date_of_application_sent BETWEEN %s AND %s and office_id=%s and course_type IN ({})"""
                 courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
@@ -2855,10 +2703,10 @@ class getApplicationASDReport(Resource):
                 sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData)
 
                 value = [fromDate, toDate, officeId] + courseTypes
-            elif officeId != "" and "All" in courseTypes and "All" not in institutionIds and "All" in statusList:
+            elif officeId != "" and "All" in courseTypes and "All" not in institutionIds:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.date_of_application_sent BETWEEN %s AND %s and office_id=%s and institution_id IN ({})"""
                 institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
@@ -2866,46 +2714,10 @@ class getApplicationASDReport(Resource):
                 sqlSelectAppReport = sqlSelectAppReport.format(institutionIdJoinData)
 
                 value = [fromDate, toDate, officeId] + institutionIds
-            elif officeId != "" and "All" in courseTypes and "All" not in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                    last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                    left outer join students on students.student_id=application.student_id 
-                                    where application.date_of_application_sent BETWEEN %s AND %s and office_id=%s and institution_id IN ({}) and students.status IN ({})"""
-                institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(institutionIdJoinData, statusJoinData)
-
-                value = [fromDate, toDate, officeId] + institutionIds + statusList
-            elif officeId != "" and "All" in courseTypes and "All" in institutionIds and "All" not in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                    last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                    left outer join students on students.student_id=application.student_id 
-                                    where application.date_of_application_sent BETWEEN %s AND %s and office_id=%s and students.status IN ({})"""
-                statusJoinData = ', '.join(['%s'] * len(statusList))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(statusJoinData)
-
-                value = [fromDate, toDate, officeId] + statusList
-            elif officeId != "" and "All" not in courseTypes and "All" not in institutionIds and "All" in statusList:
-                sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
-                                               last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                               date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
-                                               left outer join students on students.student_id=application.student_id 
-                                               where application.date_of_application_sent BETWEEN %s AND %s and office_id=%s and course_type IN ({}) and 
-                                               institution_id IN ({})"""
-                institutionIdJoinData = ', '.join(['%s'] * len(institutionIds))
-                courseTypeJoinData = ', '.join(['%s'] * len(courseTypes))
-
-                sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData)
-
-                value = [fromDate, toDate, officeId] + courseTypes + institutionIds
             else:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
-                                    date_of_application_sent, offer_decision_type, tution_fee, students.status as status from application 
+                                    date_of_application_sent, offer_decision_type, tution_fee from application 
                                     left outer join students on students.student_id=application.student_id 
                                     where application.date_of_application_sent BETWEEN %s AND %s"""
                 value = (fromDate, toDate,)
@@ -5756,7 +5568,7 @@ class getContractFile(Resource):
                     base64_pdf = base64.b64encode(file_contents).decode('utf-8')
                     base64_files.append(base64_pdf)
                 fileType = "pdf"
-            elif os.path.exists(file_path) and os.path.splitext(file_path)[1].lower() in ['.xlsx', '.xls']:
+            elif os.path.exists(file_path) and os.path.splitext(file_path)[1].lower() in ['.xlsx','.xls']:
                 # Open and read the Excel file
                 with open(file_path, 'rb') as excel_file:
                     excel_contents = excel_file.read()
@@ -6019,9 +5831,9 @@ class addPartner(Resource):
                             contract_done, processing_office)
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
             valPartnerAdd = (
-                companyName, companyWebsite, directorFirstName, directorLastName, directorEmail, countryCode,
-                directorContactNumber,
-                postalAddress, city, country, bdm, consultantAssigned, contractDone, processingOffice,)
+            companyName, companyWebsite, directorFirstName, directorLastName, directorEmail, countryCode,
+            directorContactNumber,
+            postalAddress, city, country, bdm, consultantAssigned, contractDone, processingOffice,)
             cursor.execute(sqlPartnerAdd, valPartnerAdd)
             addPartnerMsg.append("Sucessfully Added the Partner")
 
@@ -6144,10 +5956,10 @@ class updatePartner(Resource):
                             director_email=%s, country_code=%s, director_contact_number=%s, postal_address=%s, city=%s, country=%s, 
                             bdm=%s, consultant_assigned=%s, contract_done=%s, processing_office=%s, commission_rate=%s where partner_id=%s"""
             valPartnerUpdate = (
-                companyName, companyWebsite, directorFirstName, directorLastName, directorEmail, countryCode,
-                directorContactNumber,
-                postalAddress, city, country, bdm, consultantAssigned, contractDone, processingOffice, commissionRate,
-                partnerId,)
+            companyName, companyWebsite, directorFirstName, directorLastName, directorEmail, countryCode,
+            directorContactNumber,
+            postalAddress, city, country, bdm, consultantAssigned, contractDone, processingOffice, commissionRate,
+            partnerId,)
             cursor.execute(sqlPartnerUpdate, valPartnerUpdate)
 
             sqlUpdateCredential = """update users set username=%s where partners_id=%s"""
@@ -8361,7 +8173,7 @@ class getStudentDocument(Resource):
         data = request.get_json(force=True)
         # fileName = data["fileName"]
         # fileName = data["fileName"].replace(" ", "_")
-        # fileName = re.sub(r'\s+', '_', data["fileName"])  # Replace multiple spaces with underscores
+        #fileName = re.sub(r'\s+', '_', data["fileName"])  # Replace multiple spaces with underscores
         fileName = secure_filename(data["fileName"])
         print(fileName)
         fileType = ""
@@ -8538,9 +8350,9 @@ class addFranchise(Resource):
                             contract_done, processing_office)
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
             valFranchiseAdd = (
-                companyName, companyWebsite, directorFirstName, directorLastName, directorEmail, countryCode,
-                directorContactNumber,
-                postalAddress, city, country, bdm, consultantAssigned, contractDone, processingOffice,)
+            companyName, companyWebsite, directorFirstName, directorLastName, directorEmail, countryCode,
+            directorContactNumber,
+            postalAddress, city, country, bdm, consultantAssigned, contractDone, processingOffice,)
             cursor.execute(sqlFranchiseAdd, valFranchiseAdd)
             addFranchiseMsg.append("Sucessfully Added the Franchise")
 
@@ -9924,10 +9736,10 @@ class updateFranchise(Resource):
                             director_email=%s, country_code=%s, director_contact_number=%s, postal_address=%s, city=%s, country=%s, 
                             bdm=%s, consultant_assigned=%s, contract_done=%s, processing_office=%s, commission_rate=%s where franchise_id=%s"""
             valFranchiseUpdate = (
-                companyName, companyWebsite, directorFirstName, directorLastName, directorEmail, countryCode,
-                directorContactNumber,
-                postalAddress, city, country, bdm, consultantAssigned, contractDone, processingOffice, commissionRate,
-                franchiseId,)
+            companyName, companyWebsite, directorFirstName, directorLastName, directorEmail, countryCode,
+            directorContactNumber,
+            postalAddress, city, country, bdm, consultantAssigned, contractDone, processingOffice, commissionRate,
+            franchiseId,)
             cursor.execute(sqlFranchiseUpdate, valFranchiseUpdate)
             updateFranchiseMsg.append("Sucessfully Updated the Franchise")
 
@@ -10583,7 +10395,6 @@ class getSelectedReassignData(Resource):
 
         return selectedData
 
-
 class getInstitutionReport(Resource):
     def post(self):
         data = request.get_json(force=True)
@@ -10651,7 +10462,6 @@ def generate_unique_id(insert_id, prefix="UAN"):
     random_number = random.randint(1000, 9999)
     return f"{prefix}{insert_id}{random_number}"
 
-
 # Individula Referral Insert
 class individualReferralInsert(Resource):
     def post(self):
@@ -10675,9 +10485,9 @@ class individualReferralInsert(Resource):
             cursor.execute(insert_query, (firstname, surname, phone, email, termsAccept))
             cnx.commit()
             insert_id = cursor.lastrowid
-
+            
             unique_id = generate_unique_id(insert_id)
-
+            
             # Update the record with the unique ID
             update_query = "UPDATE individualReferral SET person_uniqueId = %s WHERE person_id = %s"
             cursor.execute(update_query, (unique_id, insert_id))
@@ -10700,9 +10510,7 @@ class individualReferralInsert(Resource):
                                f"<p>Thanks<br>UAN Team</p>"
             sendMail(adminSubject, adminHtmlContent, "info@uanglobal.com")
 
-            return jsonify({"success": "Success",
-                            "message": "Your form has been successfully submitted. A unique code has been sent to your email. Please check your inbox",
-                            "unique_id": unique_id})
+            return jsonify({"success": "Success","message": "Your form has been successfully submitted. A unique code has been sent to your email. Please check your inbox","unique_id": unique_id})
         except mysql.Error as e:
             return jsonify({"error": str(e)})
 
@@ -10710,7 +10518,6 @@ class individualReferralInsert(Resource):
             cnx.commit()
             cursor.close()
             cnx.close()
-
 
 # Business Referral Insert
 class businessReferralInsert(Resource):
@@ -10760,9 +10567,7 @@ class businessReferralInsert(Resource):
                                f"<p>Thanks<br>UAN Team</p>"
             sendMail(adminSubject, adminHtmlContent, "info@uanglobal.com")
 
-            return jsonify({"success": "Success",
-                            "message": "Your form has been successfully submitted. A unique code has been sent to your email. Please check your inbox",
-                            "unique_id": unique_id})
+            return jsonify({"success": "Success","message": "Your form has been successfully submitted. A unique code has been sent to your email. Please check your inbox","unique_id": unique_id})
         except mysql.Error as e:
             return jsonify({"error": str(e)})
 
@@ -10770,7 +10575,6 @@ class businessReferralInsert(Resource):
             cnx.commit()
             cursor.close()
             cnx.close()
-
 
 class getRefferralDetails(Resource):
     def get(self):
@@ -10812,7 +10616,7 @@ class getRefferralDetails(Resource):
                     'name': row[2],
                     'phone': row[3],
                     'email': row[4],
-                    'students': row[5],
+                    'students':row[5],
                     'status': row[6]
                 })
 
@@ -10846,7 +10650,7 @@ class getIndividualUser(Resource):
                     'surname': row[3],
                     'phone': row[4],
                     'email': row[5],
-                    'status': row[6]
+                    'status':row[6]
                 })
         except mysql.Error as e:
             userData.append(str(e))
@@ -10855,7 +10659,6 @@ class getIndividualUser(Resource):
             cursor.close()
 
         return userData
-
 
 class getBusinessUser(Resource):
     def post(self):
@@ -10890,7 +10693,6 @@ class getBusinessUser(Resource):
 
         return userData
 
-
 class updateIndividualRefferal(Resource):
     def post(self):
         data = request.get_json(force=True)
@@ -10907,7 +10709,7 @@ class updateIndividualRefferal(Resource):
             sqlUpdateIndividualRefferals = """update individualReferral set person_firstname=%s, person_surname=%s, person_phone=%s, person_email=%s, status=%s
                                         where person_id=%s"""
             cursor.execute(sqlUpdateIndividualRefferals, (name, surname, phone, email, status, userId,))
-            userUpdateData.append({"status": "Success", "message": "Person Updated SuccessFully"})
+            userUpdateData.append({"status":"Success", "message": "Person Updated SuccessFully"})
         except mysql.Error as e:
             userUpdateData.append({"status": "Error", "message": str(e)})
         finally:
@@ -10915,7 +10717,6 @@ class updateIndividualRefferal(Resource):
             cursor.close()
 
         return userUpdateData
-
 
 class updateBusinessRefferal(Resource):
     def post(self):
@@ -10934,7 +10735,7 @@ class updateBusinessRefferal(Resource):
             sqlUpdateBusinessRefferals = """update business_referral set company_name=%s, company_phone=%s, company_email=%s, company_url=%s, company_address=%s,
                                         status=%s where business_id=%s"""
             cursor.execute(sqlUpdateBusinessRefferals, (name, phone, email, url, address, status, userId,))
-            userUpdateData.append({"status": "Success", "message": "Person Updated SuccessFully"})
+            userUpdateData.append({"status":"Success", "message": "Person Updated SuccessFully"})
         except mysql.Error as e:
             userUpdateData.append({"status": "Error", "message": str(e)})
         finally:
@@ -10988,7 +10789,6 @@ class getActiveRefferrals(Resource):
             cursor.close()
 
         return refferals
-
 
 cipher = AESCipher('OnePlaceMyPlaceJamboUrl111019808')
 
@@ -11217,3 +11017,4 @@ api.add_resource(getBusinessUser, '/getBusinessUser')
 api.add_resource(updateIndividualRefferal, '/updateIndividualRefferal')
 api.add_resource(updateBusinessRefferal, '/updateBusinessRefferal')
 api.add_resource(getActiveRefferrals, '/getActiveRefferrals')
+

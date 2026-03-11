@@ -62,6 +62,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 self.office = []
                 self.getOffices = ()=>{
                     $.ajax({
+                        //url: "http://35.154.193.243:8010/getOffices",
                         url: "/getOffices",
                         type: 'GET',
                         error: function (xhr, textStatus, errorThrown) {
@@ -128,6 +129,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             let popup = document.getElementById("popup1");
                             popup.open();
                             $.ajax({
+                                //url: "http://35.154.193.243:8010/bookCounseling",
                                 url: "/bookCounseling",
                                 type: 'POST',
                                 data: JSON.stringify({
