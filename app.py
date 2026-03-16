@@ -321,8 +321,8 @@ class getOffices(Resource):
 class student_register(Resource):
     def post(self):
         data = request.get_json(force=True)
-        firstName = data['firstName']
-        lastName = data['lastName']
+        firstName = data['firstName'].strip()
+        lastName = data['lastName'].strip()
         countryCode = data['countryCode']
         phone = data['phone']
         email = data['email']
@@ -410,8 +410,8 @@ class webSite_student_dataAdd(Resource):
 class addStudent(Resource):
     def post(self):
         data = request.get_json(force=True)
-        firstName = data['firstName']
-        lastName = data['lastName']
+        firstName = data['firstName'].strip()
+        lastName = data['lastName'].strip()
         countryCode = data["countryCode"]
         phone = data['phone']
         email = data['email']
@@ -652,8 +652,8 @@ class bulkStudentAdd(Resource):
 class bookCounseling(Resource):
     def post(self):
         data = request.get_json(force=True)
-        firstName = data['firstName']
-        lastName = data['lastName']
+        firstName = data['firstName'].strip()
+        lastName = data['lastName'].strip()
         countryCode = data['countryCode']
         phone = data['phone']
         email = data['email']
@@ -1056,8 +1056,8 @@ class personalUpdate(Resource):
     def post(self):
         data = request.get_json(force=True)
         studentId = data["studentId"]
-        firstName = data["firstName"]
-        lastName = data["lastName"]
+        firstName = data["firstName"].strip()
+        lastName = data["lastName"].strip()
         countryCode = data["countryCode"]
         phone = data["phone"]
         gender = data["gender"]
@@ -6912,8 +6912,8 @@ class getPartnerPassword(Resource):
 class addPartnerStudent(Resource):
     def post(self):
         data = request.get_json(force=True)
-        firstName = data['firstName']
-        lastName = data['lastName']
+        firstName = data['firstName'].strip()
+        lastName = data['lastName'].strip()
         countryCode = data["countryCode"]
         phone = data['phone']
         email = data['email']
@@ -8765,8 +8765,8 @@ class sendFranchiseCredential(Resource):
 class addFranchiseStudent(Resource):
     def post(self):
         data = request.get_json(force=True)
-        firstName = data['firstName']
-        lastName = data['lastName']
+        firstName = data['firstName'].strip()
+        lastName = data['lastName'].strip()
         countryCode = data["countryCode"]
         phone = data['phone']
         email = data['email']
