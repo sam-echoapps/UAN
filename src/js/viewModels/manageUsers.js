@@ -33,6 +33,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
 
                 self.activeStaffCount = ko.observable('0');
                 self.inactiveStaffCount = ko.observable('0');
+                self.activeCount = ko.observable(0);
 
                 self.handleValueChanged = ()=>{
                     self.filter(document.getElementById('filter').rawValue);
@@ -737,15 +738,13 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojpagingdataprovi
                 self.selectedTab = ko.observable("activeStaff");
                 self.selectedTabAction = ko.computed(() => {   
                     let addButton = document.getElementById("addButton");  
-                    if(self.selectedTab()=="deactiveStaff"){
-                        addButton.style.display = "none";
-                        activeCount.style.display = "none";
-                    }
-                    else{
-                        if(addButton!=null){
-                            addButton.style.display = "block";
-                            activeCount.style.display = "block";
-                        }
+                    let activeCountEl = document.getElementById("activeCount"); 
+                    if (self.selectedTab() === "deactiveStaff") {
+                        if (addButton) addButton.style.display = "none";
+                        if (activeCountEl) activeCountEl.style.display = "none";
+                    } else {
+                        if (addButton) addButton.style.display = "block";
+                        if (activeCountEl) activeCountEl.style.display = "block";
                     }
                     self.getUsers(self.selectedTab())
                 });
