@@ -56,7 +56,11 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 data = JSON.parse(data);
                                 let len = data.length;
                                 for(var i=0;i<len;i++){
-                                    self.students.push({value: `${data[i][0]}`, label: `${data[i][0]}. ${data[i][1]} ${data[i][2]}`})
+                                    self.students.push({
+                                        value: `${data[i][0]}`,
+                                        label: `${data[i][0]}. ${data[i][1]} ${data[i][2]} (${data[i][4]})`,
+                                        phone: data[i][4]
+                                    });                                
                                 }
                             }
                         }
@@ -68,20 +72,43 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                 });
 
                 self.handleValueAction = (event) => {
-                    self.studentData([])
-                    let studentDetails = self.student().split(". ");
+                    self.studentData([]);
+
+                    let value = self.student(); // user input (ID / name / phone)
+                    let studentId = null;
+
+                    // Case 1: Selected from dropdown (has "id. name")
+                    if (value && value.includes(". ")) {
+                        studentId = value.split(". ")[0];
+                    } 
+                    else {
+                        // Case 2: User typed phone → match from local list
+                        let match = self.students.find(s => 
+                            s.phone && s.phone.toString().includes(value)
+                        );
+
+                        if (match) {
+                            studentId = match.value;
+                        }
+                    }
+
+                    if (!studentId) {
+                        console.log("No matching student found");
+                        return;
+                    }
+
                     $.ajax({
-                        url: BaseURL+"/searchStudents",
+                        url: BaseURL + "/searchStudents",
                         type: 'POST',
                         data: JSON.stringify({
-                            studentId: studentDetails[0]
+                            studentId: studentId
                         }),
                         dataType: 'json',
                         error: function (xhr, textStatus, errorThrown) {
                             console.log(textStatus);
                         },
                         success: function (data) {
-                            if(data[0] != "No data found"){
+                            if (data[0] != "No data found") {
                                 data = JSON.parse(data);
                                 self.studentData.push({
                                     id: data[0][0],
@@ -90,8 +117,8 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                                 });
                             }
                         }
-                    })
-                }
+                    });
+                };
 
                 self.studentData = ko.observableArray([]);
                 self.searchDataProvider = new ArrayDataProvider(self.studentData, {

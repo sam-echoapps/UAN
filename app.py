@@ -142,7 +142,7 @@ def sendReminderMail():
         sqlGetReminderNotes = """
                             select reminder_date, note, first_name, last_name, note_user.name as noteAddedStaff, 
                             student_user.name as counsellor, note_user.email as noteAddedStaffEmail, 
-                            student_user.email as counselloremail from notes 
+                            student_user.email as counselloremail, students.student_id from notes 
                             left outer join users as note_user on note_user.user_id=notes.counsilor_id 
                             left outer join students on students.student_id=notes.student_id 
                             left outer join users as student_user on student_user.user_id = students.counsilor_id 
@@ -158,13 +158,14 @@ def sendReminderMail():
                 counselorName = reminderNote[5]
                 staffEmail = reminderNote[6]
                 counselorEmail = reminderNote[7]
+                studentId = reminderNote[8]
                 current_date = datetime.now().date()
                 if reminderDate == current_date:
-                    htmlContent = f"<p>Hi {staffName},</p><br><p>You have a reminder log for today.</p><p> student: {studentName}.</p><p>Reminder text: {note}</p>" \
+                    htmlContent = f"<p>Hi {staffName},</p><br><p>You have a reminder log for today.</p><p> Student ID: {studentId}.</p><p> Student: {studentName}.</p><p>Reminder text: {note}</p>" \
                                   f"<p>Please take the necessary action and mark the reminder as done.</p><br><p>Thanks<br>UAN CRM system</p>"
                     sendMail('Reminder Mail Alert', htmlContent, staffEmail)
                     if staffEmail != counselorEmail:
-                        htmlContent = f"<p>Hi {counselorName},</p><br><p>You have a reminder log for today.</p><p> student: {studentName}.</p><p>Reminder text: {note}</p>" \
+                        htmlContent = f"<p>Hi {counselorName},</p><br><p>You have a reminder log for today.</p><p> Student ID: {studentId}.</p><p> Student: {studentName}.</p><p>Reminder text: {note}</p>" \
                                       f"<p>Please take the necessary action and mark the reminder as done.</p><br><p>Thanks<br>UAN CRM system</p>"
                         sendMail('Reminder Mail Alert', htmlContent, counselorEmail)
     except mysql.Error as e:
@@ -178,7 +179,7 @@ def schedule_email():
         india_timezone = pytz.timezone('Asia/Kolkata')
         current_time = datetime.now(india_timezone)
         if ((current_time.hour == 9 and current_time.minute == 15) or (
-                current_time.hour == 19 and current_time.minute == 3)):
+                current_time.hour == 15 and current_time.minute == 15)):
             sendReminderMail()
         time.sleep(60)
 
@@ -10683,12 +10684,12 @@ class individualReferralInsert(Resource):
             cursor.execute(update_query, (unique_id, insert_id))
 
             subject = "Welcome to the UAN Global Referral Program!"
-            htmlContent = f"<p>Dear {firstname},</p><br><p>Thank you for registering with UAN Global! We’re thrilled to have you join our " \
+            htmlContent = f"<p>Dear {firstname},</p><br><p>Thank you for registering with UAN Global! Weâ€™re thrilled to have you join our " \
                           f"referral program, where your support can help more individuals realize their dreams of studying abroad.</p>" \
                           f"<p>As part of our referral community, you now have a unique referral code that allows you to invite friends, " \
                           f"family, and colleagues to explore opportunities with UAN Global. Each time someone uses your referral code to " \
                           f"join us, you both can enjoy exciting rewards and benefits.</p><br>" \
-                          f"<p>Here’s your unique referral code: {unique_id}</p>" \
+                          f"<p>Hereâ€™s your unique referral code: {unique_id}</p>" \
                           f"<p>Thanks<br>UAN Team</p>"
 
             sendMail(subject, htmlContent, email)
@@ -10743,7 +10744,7 @@ class businessReferralInsert(Resource):
             cursor.execute(update_query, (unique_id, insert_id))
 
             subject = "Welcome to the UAN Global Referral Program!"
-            htmlContent = f"<p>Dear {companyname},</p><br><p>Thank you for registering with UAN Global! We’re thrilled to have you join our " \
+            htmlContent = f"<p>Dear {companyname},</p><br><p>Thank you for registering with UAN Global! Weâ€™re thrilled to have you join our " \
                           f"referral program, where your support can help more individuals realize their dreams of studying abroad.</p>" \
                           f"<p>As part of our referral community, you now have a unique referral code that allows you to invite friends, " \
                           f"family, and colleagues to explore opportunities with UAN Global. Each time someone uses your referral code to " \
