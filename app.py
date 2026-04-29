@@ -1003,6 +1003,22 @@ class getAllStudents(Resource):
         # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         cnx, cursor = get_connection_and_cursor()
         try:
+            sqlGetUser = """
+                            SELECT role, office_id
+                            FROM users
+                            WHERE user_id = %s AND deactivate = 0
+                        """
+            cursor.execute(sqlGetUser, (userId,))
+            userData = cursor.fetchone()
+
+            if userData:
+                role = userData[0]
+                userOfficeId = userData[1]
+
+                if role == "counselor":
+                    officeId = userOfficeId
+                    userId = "All"
+
             if (officeId == "All" and userId == "All"):
                 sqlSelectStud = """select student_id, first_name, last_name, students.email, mobile_no, dob, name from students 
                                 left outer join users on students.counsilor_id=users.user_id"""
@@ -2524,7 +2540,7 @@ class getApplicationCSDReport(Resource):
 
                 sqlSelectAppReport = sqlSelectAppReport.format(courseTypeJoinData, institutionIdJoinData)
 
-                value = [fromDate, toDate, officeId] + courseTypes + institutionIds 
+                value = [fromDate, toDate, officeId] + courseTypes + institutionIds
             else:
                 sqlSelectAppReport = """select students.student_id as student_id, application_id, institution_name, first_name, 
                                     last_name, mobile_no, nationality, reference_no, course_type, course_start_date, 
