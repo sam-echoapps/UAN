@@ -2396,82 +2396,109 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
 
                 self.selectListenerDocument = (event) => {
                     const files = event.detail.files;
-                        Array.prototype.map.call(files, (file) => {
-                            self.fileNames.push({"file" : file.name});
-                            var formData = new FormData();
-                            formData.append("file", file);
-                            formData.append("studentId", self.student())
-                            $.ajax({
-                                url:   BaseURL + "/studentDocumentUpload",
-                                type: "POST",
-                                data:  formData,
-                                cache: false,
-                                contentType: false,
-                                processData: false,
-                                error: function (jqXHR, textStatus, errorThrown) {
-                                    console.log(textStatus);
-                                },
-                                success: (data) => {
-                                    console.log(data);
-                                }
-                            });
-                        })
-                }; 
 
-                self.getDocumentUploadFile = ()=>{
+                    Array.prototype.map.call(files, (file) => {
+
+                        let formData = new FormData();
+                        formData.append("file", file);
+                        formData.append("studentId", self.student());
+
+                        $.ajax({
+                            url: BaseURL + "/studentDocumentUpload",
+                            type: "POST",
+                            data: formData,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.log(textStatus);
+                            },
+
+                            success: (data) => {
+                                console.log(data);
+
+                                let uniqueFileName = data[1];
+
+                                self.fileNames.push({
+                                    file: uniqueFileName
+                                });
+                            }
+                        });
+                    });
+                };
+
+                self.getDocumentUploadFile = () => {
                     $.ajax({
-                        url: BaseURL+"/getStudentDocumentList",
-                        type: 'POST',
+                        url: BaseURL + "/getStudentDocumentList",
+                        type: "POST",
                         data: JSON.stringify({
-                            studentId:self.student(),
+                            studentId: self.student(),
                         }),
-                        dataType: 'json',
-                        error: function (xhr, textStatus, errorThrown) {
-                            console.log(textStatus);
-                        },
+                        dataType: "json",
+
                         success: function (data) {
-                            console.log(data)
+
                             let popup = document.getElementById("progress");
                             popup.close();
-                            if(data[0] != "No data found"){
+
+                            self.fileNames([]);
+
+                            if (!data || data.length === 0) {
+                                return;
+                            }
+
+                            if (typeof data === "string") {
+                                if (data === "No data found") {
+                                    return;
+                                }
                                 data = JSON.parse(data);
-                                let len = data.length;
-                                self.fileNames([])
-                                for(let i=0;i<len;i++){
-                                    if(data[i][1]!=null){
-                                        var filesArray = data[i][1].split(',');
-                                        let l = filesArray.length;
-                                     /*    for(let j=0;j<l;j++){
-                                            self.fileNames.push({"no": j+1, "file" :filesArray[j]});
-                                        } */
-                                        // desc list
-                                        for (let j = l - 1; j >= 0; j--) {
-                                            self.fileNames.push({"no": l - j, "file": filesArray[j]});
-                                        }
-                                    }
+                            }
+
+                            let serialNo = 1;
+
+                            for (let i = data.length - 1; i >= 0; i--) {
+
+                                let fileString = data[i]?.[1];
+
+                                if (!fileString) continue;
+
+                                let filesArray = fileString.split(",");
+
+                                for (let j = filesArray.length - 1; j >= 0; j--) {
+
+                                    let file = filesArray[j]?.trim();
+
+                                    if (!file) continue;
+
+                                    self.fileNames.push({
+                                        no: serialNo++,
+                                        file: file
+                                    });
                                 }
                             }
+                        },
+
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(textStatus);
                         }
-                    })
-                }
+                    });
+                };
     
                 self.fileDataProvider = new ArrayDataProvider(self.fileNames, {
                     keyAttributes: 'id'
                 });
 
-                self.removeFileDocument = (e)=>{
-                    var fileNamesOfObjects = self.fileNames().map(pair => pair.file);
-                    var index = fileNamesOfObjects.indexOf(e.target.id);
-                    if (index !== -1) {
-                        fileNamesOfObjects.splice(index, 1);
-                    }
-                    self.fileNames(fileNamesOfObjects.map((value, index) => ({"no":index+1, "file": value })));
-                }
+                self.removeFileDocument = (e) => {
+                    let fileNames = self.fileNames();
+                    let updated = fileNames.filter(x => x.file !== e.target.id);
+                    self.fileNames(updated);
+                };
 
                 self.previewClickDocument = (e)=>{
                     let popup = document.getElementById("progress");
-                    console.log(e.target.id);
-                    let fileName = e.target.id
+                    console.log(e.currentTarget.id);
+                    let fileName = e.currentTarget.id
                     popup.open();
                     $.ajax({
                         url: BaseURL+"/getStudentDocument",
@@ -2488,6 +2515,7 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                             popup.close();
                             var fileType = data[1]
                             var base64Code = data[0][0];
+                            console.log(base64Code.length)
                             console.log(data);
                             if(fileType=="pdf"){
                                 var byteCharacters = atob(base64Code);
@@ -2543,33 +2571,31 @@ define(['ojs/ojcore',"knockout","jquery","appController", "ojs/ojarraydataprovid
                     })
                 }
     
-                self.updateStudentDocument = ()=>{
+                self.updateStudentDocument = () => {
                     let popup = document.getElementById("progress");
                     popup.open();
-                    var fileNamesOfObjects = self.fileNames().map(pair => pair.file);
-                    let contractFiles = fileNamesOfObjects
-                    if(contractFiles.length!=0){
-                        contractFiles = contractFiles.join(",");
-                    }
-                    else{
-                        contractFiles = null;
-                    }
+
+                    let contractFiles = self.fileNames()
+                        .map(x => x.file)
+                        .filter(Boolean)
+                        .join(",");
+
                     $.ajax({
-                        url: BaseURL+"/updateStudentDocument",
-                        type: 'POST',
+                        url: BaseURL + "/updateStudentDocument",
+                        type: "POST",
+                        contentType: "application/json",
                         data: JSON.stringify({
-                            studentId:self.student(),
-                            contractFiles : contractFiles,
+                            studentId: self.student(),
+                            contractFiles: contractFiles || ""
                         }),
-                        dataType: 'json',
-                        error: function (xhr, textStatus, errorThrown) {
-                            console.log(textStatus);
-                        },
                         success: function (data) {
-                            self.getDocumentUploadFile()
+                            self.getDocumentUploadFile();
+                        },
+                        error: function (xhr) {
+                            console.log(xhr.responseText);
                         }
-                    })
-                }
+                    });
+                };
 
                 self.getInstitution = ()=>{
                     self.institutionData([]);

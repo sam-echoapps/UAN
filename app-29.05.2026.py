@@ -28,7 +28,6 @@ import pytz
 import math
 import re
 import random
-import uuid
 
 app = Flask(__name__, static_folder="./web", static_url_path="/")
 CORS(app)
@@ -8298,42 +8297,33 @@ class managerBulkAssignStudents(Resource):
 
 
 class studentDocumentUpload(Resource):
-
     def post(self):
-
         file = request.files["file"]
         studentId = request.form["studentId"]
-
-        result = []
-
+        filename = secure_filename(file.filename)
+        uploadFile = []
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         cnx, cursor = get_connection_and_cursor()
-
         try:
+            file.save(os.path.join(CONTRACT_FOLDER, filename))
+            uploadFile.append('File uploaded Successfully\n')
+            try:
+                sqlAddContractFile = """insert into student_document (student_document, student_id) values (%s, %s)"""
+                value = (filename, studentId,)
+                cursor.execute(sqlAddContractFile, value)
+                last_insert_id = cursor.lastrowid
+                uploadFile.append('File Added')
+                uploadFile.append(last_insert_id)
+            except mysql.Error as e:
+                uploadFile.append(str(e))
+            finally:
+                cnx.commit()
+                cursor.close()
+        except OSError as e:
+            uploadFile.append(str(e))
 
-            original_filename = secure_filename(file.filename)
-            name, ext = os.path.splitext(original_filename)
+        return uploadFile
 
-            unique_filename = f"{name}_{studentId}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:6]}{ext}"
-
-            file.save(os.path.join(CONTRACT_FOLDER, unique_filename))
-
-            cursor.execute("""
-                INSERT INTO student_document (student_document, student_id)
-                VALUES (%s, %s)
-            """, (unique_filename, studentId))
-
-            cnx.commit()
-
-            result = ["success", unique_filename]
-
-        except Exception as e:
-            result = [str(e)]
-
-        finally:
-            cursor.close()
-            cnx.close()
-
-        return result
 
 class getStudentDocumentList(Resource):
     def post(self):
@@ -8361,56 +8351,27 @@ class getStudentDocumentList(Resource):
 
 
 class updateStudentDocument(Resource):
-
     def post(self):
-
         data = request.get_json(force=True)
         studentId = data["studentId"]
-        contractFiles = data.get("contractFiles", "")
+        contractFiles = data["contractFiles"]
 
-        result = []
-
+        institution = []
+        # cnx = mysql.connect(user=dbUser, password=dbPassword, database=dataBase)
         cnx, cursor = get_connection_and_cursor()
-
         try:
-            uiFiles = [
-                f.strip()
-                for f in contractFiles.split(",")
-                if f.strip()
-            ] if contractFiles else []
-
-            cursor.execute("""
-                DELETE FROM student_document
-                WHERE student_id=%s
-            """, (studentId,))
-
-            sqlInsert = """
-                INSERT INTO student_document
-                (student_document, student_id)
-                VALUES (%s, %s)
-            """
-
-            for f in uiFiles:
-                cursor.execute(sqlInsert, (f, studentId))
-
-            cursor.execute("""
-                UPDATE students
-                SET student_document=%s
-                WHERE student_id=%s
-            """, (",".join(uiFiles), studentId))
-
-            cnx.commit()
-
-            result = ["Updated successfully"]
-
-        except Exception as e:
-            result = [str(e)]
-
+            sqlUpdateInstitution = """update students set student_document=%s where student_id=%s"""
+            value = (contractFiles, studentId,)
+            cursor.execute(sqlUpdateInstitution, value)
+            institution.append('Contract Files Updated')
+        except mysql.Error as e:
+            institution.append(str(e))
         finally:
+            cnx.commit()
             cursor.close()
-            cnx.close()
 
-        return result
+        return institution
+
 
 class getStudentDocument(Resource):
     def post(self):
